@@ -1,0 +1,27 @@
+[package]
+name = "qbz-music-link"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Frontend-agnostic cross-platform music-link resolver for QBZ (Qobuz/Spotify/Apple/Tidal/Deezer/Odesli -> Qobuz)"
+
+[dependencies]
+qbz-qobuz = { path = "../qbz-qobuz" }
+qbz-models = { path = "../qbz-models" }
+
+# Async
+tokio = { workspace = true }
+async-trait = { workspace = true }
+
+# HTTP
+reqwest = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Logging
+log = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }

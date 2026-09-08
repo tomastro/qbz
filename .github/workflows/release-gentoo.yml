@@ -1,0 +1,238 @@
+name: release-gentoo
+
+# qbz-overlay is automation-owned because every ebuild or metadata change must
+# regenerate its Manifest. workflow_dispatch is the supported way to publish
+# a template-only fix for an already released version.
+
+on:
+  workflow_run:
+    workflows: ["release-linux"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to prepare (e.g. 2.1.0)"
+        required: true
+        type: string
+      publish:
+        description: "Push all four packages and Manifests to qbz-overlay"
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: gentoo-overlay
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  update-overlay:
+    runs-on: ubuntu-24.04
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_repository.full_name == github.repository &&
+       startsWith(github.event.workflow_run.head_branch, 'v') &&
+       !contains(github.event.workflow_run.head_branch, '-'))
+    steps:
+      - name: Checkout app repo
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.ref }}
+          fetch-depth: 0
+
+      - name: Resolve and verify release
+        id: release
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RUN_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          RUN_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          DISPATCH_VERSION: ${{ inputs.version }}
+          DISPATCH_PUBLISH: ${{ inputs.publish }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == workflow_run ]]; then
+            tag="$RUN_HEAD_BRANCH"
+            version="${tag#v}"
+            should_publish=true
+          else
+            version="$DISPATCH_VERSION"
+            tag="v${version}"
+            should_publish="${DISPATCH_PUBLISH:-false}"
+          fi
+
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Invalid release version: $version"
+            exit 1
+          fi
+          if [[ "$should_publish" == true && ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Overlay publishing is limited to stable x.y.z releases"
+            exit 1
+          fi
+
+          if [[ "$should_publish" == true ]]; then
+            git fetch origin main --tags
+            if ! git show-ref --verify --quiet "refs/tags/${tag}"; then
+              echo "::error::Release tag ${tag} does not exist"
+              exit 1
+            fi
+            tag_sha="$(git rev-parse "refs/tags/${tag}^{commit}")"
+            if [[ "$EVENT_NAME" == workflow_run && "$tag_sha" != "$RUN_HEAD_SHA" ]]; then
+              echo "::error::workflow_run SHA does not match ${tag}"
+              exit 1
+            fi
+            if ! git merge-base --is-ancestor "$tag_sha" origin/main; then
+              echo "::error::${tag} is not on main"
+              exit 1
+            fi
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "should_publish=$should_publish" >> "$GITHUB_OUTPUT"
+
+      - name: Clone overlay repo
+        env:
+          OVERLAY_PAT: ${{ secrets.APT_REPO_TOKEN }}
+          SHOULD_PUBLISH: ${{ steps.release.outputs.should_publish }}
+        run: |
+          set -euo pipefail
+          if [[ "$SHOULD_PUBLISH" == true ]]; then
+            if [[ -z "$OVERLAY_PAT" ]]; then
+              echo "::error::APT_REPO_TOKEN is required for publishing"
+              exit 1
+            fi
+            url="https://x-access-token:${OVERLAY_PAT}@github.com/vicrodh/qbz-overlay.git"
+          else
+            url="https://github.com/vicrodh/qbz-overlay.git"
+          fi
+          git clone "$url" /tmp/qbz-overlay
+          git -C /tmp/qbz-overlay config user.name "GitHub Actions"
+          git -C /tmp/qbz-overlay config user.email "actions@github.com"
+
+      - name: Stamp all ebuilds and metadata
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          for package in qbz-bin qbz qbzd-bin qbzd; do
+            directory="/tmp/qbz-overlay/media-sound/${package}"
+            mkdir -p "$directory"
+            find "$directory" -maxdepth 1 -type f -name "${package}-*.ebuild" -delete
+            cp "packaging/gentoo/${package}.ebuild.template" \
+              "${directory}/${package}-${VERSION}.ebuild"
+            cp "packaging/gentoo/${package}.metadata.xml" \
+              "${directory}/metadata.xml"
+          done
+
+      - name: Download distfiles
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/qbz-distfiles
+          declare -A urls=(
+            ["qbz_${VERSION}_amd64.tar.gz"]="https://github.com/vicrodh/qbz/releases/download/v${VERSION}/qbz_${VERSION}_amd64.tar.gz"
+            ["qbz_${VERSION}_aarch64.tar.gz"]="https://github.com/vicrodh/qbz/releases/download/v${VERSION}/qbz_${VERSION}_aarch64.tar.gz"
+            ["qbzd-${VERSION}-linux-amd64.tar.gz"]="https://github.com/vicrodh/qbz/releases/download/v${VERSION}/qbzd-${VERSION}-linux-amd64.tar.gz"
+            ["qbzd-${VERSION}-linux-aarch64.tar.gz"]="https://github.com/vicrodh/qbz/releases/download/v${VERSION}/qbzd-${VERSION}-linux-aarch64.tar.gz"
+            ["qbz-${VERSION}-cargo-vendor.tar.xz"]="https://github.com/vicrodh/qbz/releases/download/v${VERSION}/qbz-${VERSION}-cargo-vendor.tar.xz"
+            ["qbz-${VERSION}.tar.gz"]="https://github.com/vicrodh/qbz/archive/refs/tags/v${VERSION}.tar.gz"
+          )
+
+          for filename in "${!urls[@]}"; do
+            ok=false
+            for attempt in $(seq 1 60); do
+              if curl -fsSL "${urls[$filename]}" -o "/tmp/qbz-distfiles/${filename}"; then
+                ok=true
+                break
+              fi
+              echo "Attempt ${attempt}/60 failed for ${filename}"
+              sleep 30
+            done
+            if [[ "$ok" != true ]]; then
+              echo "::error::Required distfile unavailable: ${filename}"
+              exit 1
+            fi
+          done
+
+      - name: Generate all Manifests
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          manifest_line() {
+            local type="$1" name="$2" file="$3" size blake2b sha512
+            size="$(stat -c%s "$file")"
+            blake2b="$(b2sum "$file" | awk '{print $1}')"
+            sha512="$(sha512sum "$file" | awk '{print $1}')"
+            printf '%s %s %s BLAKE2B %s SHA512 %s\n' \
+              "$type" "$name" "$size" "$blake2b" "$sha512"
+          }
+
+          write_manifest() {
+            local package="$1"
+            shift
+            local directory="/tmp/qbz-overlay/media-sound/${package}"
+            {
+              local distfile
+              for distfile in "$@"; do
+                manifest_line DIST "$distfile" "/tmp/qbz-distfiles/${distfile}"
+              done
+              manifest_line EBUILD "${package}-${VERSION}.ebuild" \
+                "${directory}/${package}-${VERSION}.ebuild"
+              manifest_line MISC metadata.xml "${directory}/metadata.xml"
+            } > "${directory}/Manifest"
+          }
+
+          write_manifest qbz-bin \
+            "qbz_${VERSION}_amd64.tar.gz" \
+            "qbz_${VERSION}_aarch64.tar.gz"
+          write_manifest qbz \
+            "qbz-${VERSION}.tar.gz" \
+            "qbz-${VERSION}-cargo-vendor.tar.xz"
+          write_manifest qbzd-bin \
+            "qbzd-${VERSION}-linux-amd64.tar.gz" \
+            "qbzd-${VERSION}-linux-aarch64.tar.gz"
+          write_manifest qbzd \
+            "qbz-${VERSION}.tar.gz" \
+            "qbz-${VERSION}-cargo-vendor.tar.xz"
+
+      - name: Validate generated overlay metadata
+        run: |
+          set -euo pipefail
+          # xmllint ships in libxml2-utils, not on the runner by default.
+          if ! command -v xmllint >/dev/null; then
+            sudo apt-get update && sudo apt-get install -y libxml2-utils
+          fi
+          for package in qbz-bin qbz qbzd-bin qbzd; do
+            directory="/tmp/qbz-overlay/media-sound/${package}"
+            bash -n "${directory}"/*.ebuild
+            xmllint --noout "${directory}/metadata.xml"
+            test "$(wc -l < "${directory}/Manifest")" -ge 4
+          done
+
+      - name: Commit and push
+        if: steps.release.outputs.should_publish == 'true'
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          git -C /tmp/qbz-overlay add -A
+          if git -C /tmp/qbz-overlay diff --cached --quiet; then
+            echo "No overlay changes to publish"
+            exit 0
+          fi
+          git -C /tmp/qbz-overlay commit -m "Update to v${VERSION}"
+          git -C /tmp/qbz-overlay push
+
+      - name: Upload dry-run overlay metadata
+        if: steps.release.outputs.should_publish != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: gentoo-four-package-dry-run
+          retention-days: 7
+          path: /tmp/qbz-overlay/media-sound/
+          if-no-files-found: error

@@ -1,0 +1,477 @@
+# Windows release — Qt frontend (crates/ workspace, package `qbz-qt`, binary `qbz.exe`).
+#
+# Added from the Windows port validated on the dedicated Windows build box.
+# Mirrors release-macos.yml where the packaging contracts match; Windows-only
+# differences are commented inline.
+#
+#   * Qt from aqt (official MSVC 2022 x64 build) — the same reasoning as macOS:
+#     the runner image has no Qt, and a Qt binary is not self-contained.
+#   * `windeployqt --qmldir` is the analogue of `macdeployqt -qmldir`
+#     (mandatory: QtQuick.Effects, Controls, labs.qmlmodels, the SVG image
+#     plugin and d3dcompiler_47.dll are dlopened, invisible to the linker).
+#   * The smoke gate runs the DEPLOYED DIRECTORY offscreen with the Qt install
+#     renamed away — the exact criterion of the Linux/macOS gates.
+#   * Signing is skipped when WINDOWS_CERT_PFX is absent (owner decision D4).
+#
+# `vars.QT_VERSION_WINDOWS` overrides the tested Windows Qt pin below.
+
+name: release-windows
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Optional release tag to build (e.g. v2.1.0). Empty = build HEAD with the Cargo.toml version, no Release publish."
+        required: false
+        type: string
+      authoring_only:
+        description: "Validate MSI authoring with a synthetic payload (no Rust/Qt build)"
+        required: false
+        default: false
+        type: boolean
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: release-windows-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # 6.9 until the SafeArea/padding guard lands: Main.qml:143-147/170-173 use
+  # Qt 6.9-only flags unconditionally, so a 6.8 build fails its own smoke at
+  # QML load (contract D2, 00-CONTRACTS §4 #0). Lower to the Linux pin after.
+  QT_VERSION: ${{ vars.QT_VERSION_WINDOWS || '6.9.3' }}
+  TARGET: x86_64-pc-windows-msvc
+  # `secrets.*` is NOT an allowed context in a step's `if:` (GitHub docs,
+  # "Context availability": steps.if gets github/needs/strategy/matrix/job/
+  # runner/env/vars/steps/inputs). Resolve it here, at workflow level, where
+  # `secrets` IS allowed, and test the env var in the steps.
+  HAVE_CERT: ${{ secrets.WINDOWS_CERT_PFX != '' }}
+
+jobs:
+  # Fast schema + install-layout gate for packaging/windows/qbz.wxs. The real
+  # release job remains authoritative for the deployed Qt payload and app
+  # launch; this gate prevents a WiX edit from spending a 30-minute cold Rust
+  # build merely to discover invalid installer authoring.
+  msi-authoring:
+    if: ${{ inputs.authoring_only }}
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install WiX 5.0.2 (pre-OSMF)
+        shell: pwsh
+        run: dotnet tool install --global wix --version 5.0.2
+
+      - name: Stage synthetic deployed tree
+        shell: pwsh
+        run: |
+          $root = "dist/qbz"
+          $dirs = @(
+            "$root/platforms",
+            "$root/qml/QtQuick/Controls/Basic",
+            "$root/imageformats",
+            "$root/licenses"
+          )
+          New-Item -ItemType Directory -Force -Path $dirs | Out-Null
+          Copy-Item "$env:WINDIR/System32/where.exe" "$root/qbz.exe"
+          Copy-Item LICENSE "$root/LICENSE.txt"
+          Set-Content "$root/platforms/qwindows.dll" "synthetic"
+          Set-Content "$root/qml/QtQuick/Controls/Basic/qmldir" "synthetic"
+          Set-Content "$root/imageformats/qsvg.dll" "synthetic"
+          Set-Content "$root/licenses/Qt.txt" "synthetic"
+
+      - name: Build synthetic MSI
+        shell: bash
+        run: |
+          set -euo pipefail
+          wix build packaging/windows/qbz.wxs \
+            -d SourceDir="$(pwd -W)/dist/qbz" \
+            -d ProductVersion="0.0.0" \
+            -d FullVersion="0.0.0-authoring" \
+            -d IconPath="$(pwd -W)/packaging/icons/icon.ico" \
+            -arch x64 \
+            -o dist/QBZ_authoring_x64.msi
+
+      - name: Install, verify layout, and uninstall synthetic MSI
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $msi = (Resolve-Path "dist/QBZ_authoring_x64.msi").Path
+          $install = Start-Process msiexec.exe -ArgumentList "/i `"$msi`" /qn /norestart" -Wait -PassThru
+          if ($install.ExitCode -ne 0) { throw "synthetic MSI install failed: $($install.ExitCode)" }
+          $root = "$env:LOCALAPPDATA\Programs\QBZ"
+          foreach ($f in "qbz.exe", "platforms\qwindows.dll", "qml\QtQuick\Controls\Basic\qmldir", "imageformats\qsvg.dll", "LICENSE.txt") {
+            if (-not (Test-Path "$root\$f")) { throw "installed layout is missing $f" }
+          }
+          foreach ($protocol in "qbz") {
+            if (-not (Test-Path "HKCU:\Software\Classes\$protocol")) { throw "$protocol protocol key missing" }
+          }
+          if (-not (Test-Path "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\QBZ.lnk")) { throw "Start-menu shortcut missing" }
+          $uninstall = Start-Process msiexec.exe -ArgumentList "/x `"$msi`" /qn /norestart" -Wait -PassThru
+          if ($uninstall.ExitCode -ne 0) { throw "synthetic MSI uninstall failed: $($uninstall.ExitCode)" }
+          foreach ($protocol in "qbz") {
+            if (Test-Path "HKCU:\Software\Classes\$protocol") { throw "$protocol protocol key survived uninstall" }
+          }
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: qbz-msi-authoring
+          path: dist/QBZ_authoring_x64.msi
+          if-no-files-found: error
+          retention-days: 7
+
+  build-windows:
+    if: ${{ !inputs.authoring_only }}
+    # Qt's archive below is the MSVC 2022 build. `windows-latest` currently
+    # resolves to a VS 18 image, so pin the matching toolchain deliberately.
+    runs-on: windows-2022
+    timeout-minutes: 150
+    # No continue-on-error: a red release leg must look red. Pre-flight
+    # without publishing = dispatch with an empty tag.
+    permissions:
+      contents: write
+    defaults:
+      run:
+        # Git-Bash: the version/gate scripts below are the macOS ones verbatim.
+        shell: bash
+    steps:
+      - name: Enable long paths (cxx-qt deep-copies include trees; qmlcachegen writes ~340 .cpp under OUT_DIR)
+        shell: pwsh
+        run: |
+          git config --system core.longpaths true
+          New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name LongPathsEnabled -Value 1 -PropertyType DWORD -Force | Out-Null
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # A manual dispatch with a tag must BUILD that tag, not HEAD labelled as it.
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - name: Resolve release version
+        id: release
+        run: |
+          VERSION=""
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          elif [[ -n "${{ inputs.tag }}" ]]; then
+            VERSION="${{ inputs.tag }}"
+            VERSION="${VERSION#v}"
+          else
+            VERSION="$(grep -m1 '^version = ' crates/Cargo.toml | sed 's/version = \"\(.*\)\"/\1/' | tr -d '\r')"
+          fi
+          # CRLF checkout (Git for Windows autocrlf) leaves a trailing CR that
+          # prints identically and never compares equal — stripped above.
+          PRERELEASE=false
+          if [[ "$VERSION" =~ -(rc|beta|alpha|pre) ]]; then
+            PRERELEASE=true
+          fi
+          # MSI ProductVersion must be numeric x.y.z; the full string goes to ARPCOMMENTS.
+          MSI_VERSION="$(echo "$VERSION" | sed -E 's/^([0-9]+\.[0-9]+\.[0-9]+).*/\1/')"
+          {
+            echo "version=$VERSION"
+            echo "msi_version=$MSI_VERSION"
+            echo "prerelease=$PRERELEASE"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Verify tag is on main
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          git fetch origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::Tag ${GITHUB_REF#refs/tags/} is not on main. Releases are cut from main only."
+            exit 1
+          fi
+
+      - name: Assert Cargo.toml version matches tag
+        if: startsWith(github.ref, 'refs/tags/') || inputs.tag != ''
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          CARGO_VERSION="$(grep -m1 '^version = ' crates/Cargo.toml | sed 's/version = \"\(.*\)\"/\1/' | tr -d '\r')"
+          if [[ "$CARGO_VERSION" != "$VERSION" ]]; then
+            echo "::error::crates/Cargo.toml workspace version ($CARGO_VERSION) != tag version ($VERSION)."
+            exit 1
+          fi
+
+      - name: Install Qt ${{ env.QT_VERSION }} (MSVC 2022 x64)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          modules: qtshadertools
+          cache: true
+
+      # MSVC: `cc` finds VS2022 through vswhere on windows-latest. Kept explicit
+      # so the C++ in crates/qbz-qt/cxx and cxx-qt's generated code use the
+      # same toolchain as the Qt binaries (MSVC 2022, x64).
+      - name: MSVC dev environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      # Git for Windows also ships a POSIX `link.exe`. If it wins executable
+      # lookup, rustc sends MSVC flags to /usr/bin/link and dies immediately.
+      # Give Cargo the absolute MSVC linker selected by the dev environment.
+      - name: Pin MSVC linker
+        shell: pwsh
+        run: |
+          $linker = Join-Path $env:VCToolsInstallDir "bin\Hostx64\x64\link.exe"
+          if (-not (Test-Path $linker)) { throw "MSVC linker not found at $linker" }
+          "CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER=$linker" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Cargo linker: $linker"
+
+      # Decision D1: only needed while rustls still pulls aws-lc-sys. Delete
+      # this step once the ring flip (W8) lands.
+      - name: NASM (aws-lc-sys)
+        uses: ilammy/setup-nasm@v1
+
+      - name: Setup Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ env.TARGET }}
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crates -> target
+          shared-key: qt-windows-x86_64-${{ env.QT_VERSION }}
+          cache-on-failure: true
+          save-if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/pre-release' }}
+
+      # NEVER `-p qbz` (the frozen Slint binary shares the bin name).
+      - name: Build (release)
+        env:
+          CARGO_INCREMENTAL: "0"
+          CMAKE_PREFIX_PATH: ${{ env.QT_ROOT_DIR }}
+          QMAKE: ${{ env.QT_ROOT_DIR }}/bin/qmake.exe
+          # The workspace release profile strips symbols and sets no `debug`,
+          # so MSVC would emit NO .pdb. Line tables are enough for symbolication
+          # and cost nothing in the exe (it stays stripped). Linux's analogue is
+          # CARGO_PROFILE_RELEASE_STRIP=none + `strip -o`.
+          CARGO_PROFILE_RELEASE_DEBUG: "1"
+          # strip="symbols" in the workspace profile may suppress PDB emission on
+          # *-msvc (unverified). The PDB is a separate file, so keep symbols in
+          # the link and let the PDB carry them.
+          CARGO_PROFILE_RELEASE_STRIP: "none"
+        run: |
+          python3 scripts/qt-cargo.py build --release --manifest-path crates/Cargo.toml \
+            -p qbz-qt --target "$TARGET"
+          ls -la "crates/target/$TARGET/release/qbz.exe" "crates/target/$TARGET/release/qbz.pdb"
+
+      - name: Slint-free dep-graph gate (qbz-qt)
+        run: |
+          set -euo pipefail
+          hits=$(cargo tree --manifest-path crates/Cargo.toml -p qbz-qt -e normal --target "$TARGET" \
+                 | grep -E '\b(slint|qbz-ui|qbz-slint-common|qbz-dac-wizard) v' || true)
+          [ -z "$hits" ] || { echo "::error::qbz-qt graph resolves Slint crates:"; echo "$hits"; exit 1; }
+
+      # W4: #![windows_subsystem = "windows"] — otherwise a console window opens
+      # next to the app. The analogue of the macOS `minos` assert.
+      - name: Assert PE subsystem is WINDOWS (not CONSOLE)
+        shell: cmd
+        run: |
+          dumpbin /headers crates\target\%TARGET%\release\qbz.exe | findstr /C:"subsystem (Windows GUI)" || (echo ::error::qbz.exe is a CONSOLE-subsystem binary && exit /b 1)
+
+      - name: Assemble dist + windeployqt
+        run: |
+          set -euo pipefail
+          DIST="dist/qbz"
+          mkdir -p "$DIST"
+          cp "crates/target/$TARGET/release/qbz.exe" "$DIST/qbz.exe"
+          # windeployqt: the Windows `macdeployqt -qmldir`. Keep d3dcompiler_47.dll
+          # (the committed .qsb carry HLSL 50 *source*; d3d11 compiles it at runtime).
+          # Exit code is checked (pipefail); the grep is a separate, informational pass.
+          "$QT_ROOT_DIR/bin/windeployqt.exe" --release --qmldir crates/qbz-qt/qml \
+            --no-translations --no-opengl-sw --no-compiler-runtime "$DIST/qbz.exe" 2>&1 | tee windeploy.log
+          grep -iE 'error|warning' windeploy.log || true
+          # Nothing uses Qt SQL, Qt TLS (rustls) or network-information.
+          rm -rf "$DIST/sqldrivers" "$DIST/tls" "$DIST/networkinformation"
+          # windeployqt follows QML imports, not Image sources: the SVG plugin
+          # (1106 icons) rides only on its Gui default. Provision it explicitly
+          # rather than trusting that default.
+          if [ ! -f "$DIST/imageformats/qsvg.dll" ]; then
+            mkdir -p "$DIST/imageformats"
+            cp "$QT_ROOT_DIR/plugins/imageformats/qsvg.dll" "$DIST/imageformats/"
+            cp "$QT_ROOT_DIR/bin/Qt6Svg.dll" "$DIST/"
+          fi
+          # Assertions — the dlopened pieces the linker cannot see.
+          test -f "$DIST/platforms/qwindows.dll"
+          test -f "$DIST/qml/QtQuick/Effects/effectsplugin.dll"
+          test -f "$DIST/Qt6QuickEffects.dll"
+          test -d "$DIST/qml/Qt/labs/qmlmodels"
+          # D7: the tree pins the Basic style. Without the pin Windows loads the
+          # `Windows` style and this directory is Controls/Windows instead.
+          test -d "$DIST/qml/QtQuick/Controls/Basic"
+          test -f "$DIST/imageformats/qsvg.dll"
+          test -f "$DIST/Qt6Svg.dll"
+          test -f "$DIST/Qt6QuickControls2.dll"
+          # d3dcompiler_47.dll: the committed .qsb carry HLSL *source*; d3d11
+          # compiles it at runtime. Copy-then-assert, like qsvg above.
+          if [ ! -f "$DIST/d3dcompiler_47.dll" ]; then cp "$QT_ROOT_DIR/bin/d3dcompiler_47.dll" "$DIST/"; fi
+          test -f "$DIST/d3dcompiler_47.dll"
+          # LGPL notices ride into the MSI via the harvest (research/04 §8).
+          cp LICENSE "$DIST/LICENSE.txt"
+          # Qt is LGPLv3: the notice ships with every artifact that bundles it.
+          # Hard fail, not a warning — plan A task 14 adds licenses/.
+          if [ ! -d licenses ]; then echo "::error::licenses/ (Qt LGPL notice) is missing; refusing to package Qt without it"; exit 1; fi
+          cp -r licenses "$DIST/licenses"
+          du -sh "$DIST"
+
+      # Both products harvest this exact app-local runtime. Audit every EXE,
+      # DLL and plugin (normal + delay imports) before making either artifact.
+      - name: Deploy official MSVC CRT app-local and audit imports
+        shell: pwsh
+        run: ./scripts/packaging/deploy_windows_crt.ps1 -Dist dist/qbz
+
+      # D4 = unsigned, so this is a no-op until a cert exists (HAVE_CERT is
+      # resolved at workflow level — see the env block at the top). PLACEHOLDER
+      # for an OV cert in a PFX: cloud-issued keys (Azure Trusted Signing,
+      # SignPath) are non-exportable — when signing arrives, replace these two
+      # steps with the provider's action (azure/trusted-signing-action or
+      # SignPath's), not a PFX secret (Sol F3).
+      - name: Sign qbz.exe
+        if: ${{ env.HAVE_CERT == 'true' }}
+        env:
+          WINDOWS_CERT_PFX: ${{ secrets.WINDOWS_CERT_PFX }}
+          WINDOWS_CERT_PASSWORD: ${{ secrets.WINDOWS_CERT_PASSWORD }}
+        shell: pwsh
+        run: |
+          [IO.File]::WriteAllBytes("cert.pfx", [Convert]::FromBase64String($env:WINDOWS_CERT_PFX))
+          & "$(vswhere -latest -find '**\signtool.exe' | Select-Object -First 1)" sign /f cert.pfx /p $env:WINDOWS_CERT_PASSWORD /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 dist\qbz\qbz.exe
+
+      # WiX 6+ binary releases require accepting the OSMF EULA. Keep the
+      # installer on the last compatible pre-OSMF toolchain instead of making
+      # a CI job accept legal terms on a maintainer's behalf. The committed
+      # authoring deliberately stays within WiX 5 syntax.
+      - name: WiX
+        run: dotnet tool install --global wix --version 5.0.2 && wix --version
+
+      - name: Build MSI
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+          MSI_VERSION: ${{ steps.release.outputs.msi_version }}
+        run: |
+          set -euo pipefail
+          # qbz.wxs harvests dist/qbz/ wholesale (Files Include="**"); the
+          # exe, icon and shortcuts are authored explicitly. No UI extension:
+          # a per-user POC needs no dialog set (msiexec's default progress UI).
+          # `-arch x64` is load-bearing (harvester stamps Win64 from it; CLI
+          # default is x86). packaging/windows/qbz.wxs is committed beside
+          # the installer assets so this workflow and local packaging agree.
+          wix build packaging/windows/qbz.wxs \
+            -d SourceDir="$(pwd -W)/dist/qbz" \
+            -d ProductVersion="$MSI_VERSION" \
+            -d FullVersion="$VERSION" \
+            -d IconPath="$(pwd -W)/packaging/icons/icon.ico" \
+            -arch x64 \
+            -o "dist/QBZ_${VERSION}_x64.msi"
+          ls -la dist
+
+      # Product smoke uses qwindows from the installed payload with an isolated
+      # profile/PATH. A VS runner still does not certify a clean Windows image.
+      - name: Install / upgrade / launch / uninstall the MSI (runner smoke)
+        shell: pwsh
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $msi = (Resolve-Path "dist\QBZ_$($env:VERSION)_x64.msi").Path
+          $root = "$env:LOCALAPPDATA\Programs\QBZ"
+          $installed = $false
+          try {
+            foreach ($stage in @('install','upgrade')) {
+              $p = Start-Process msiexec -ArgumentList "/i `"$msi`" /qn /l*v $stage.log" -Wait -PassThru
+              if ($p.ExitCode -ne 0) { Get-Content "$stage.log" -Tail 60; throw "msiexec $stage exit $($p.ExitCode)" }
+              $installed = $true
+            }
+            foreach ($f in @('qbz.exe','platforms\qwindows.dll','qml\QtQuick\Controls\Basic','imageformats\qsvg.dll','LICENSE.txt')) {
+              if (-not (Test-Path "$root\$f")) { throw "Installed layout is missing $f" }
+            }
+            if (-not (Test-Path 'HKCU:\Software\Classes\qbz')) { throw 'qbz protocol key missing' }
+            if (-not (Test-Path "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\QBZ.lnk")) { throw 'Start-menu shortcut missing' }
+            $sourceHash = (Get-FileHash 'dist/qbz/licenses/msvc-runtime.json').Hash
+            if ((Get-FileHash "$root/licenses/msvc-runtime.json").Hash -ne $sourceHash) { throw 'MSI CRT inventory differs from shared payload' }
+            python scripts/packaging/windows_crt.py $root --report windows-msi-imports.json
+            if ($LASTEXITCODE -ne 0) { throw 'Installed MSI CRT audit failed' }
+            ./scripts/packaging/smoke_windows_deploy.ps1 -Directory $root -LogPrefix inst
+          }
+          finally {
+            if ($installed) {
+              $u = Start-Process msiexec -ArgumentList "/x `"$msi`" /qn /l*v uninstall.log" -Wait -PassThru
+              if ($u.ExitCode -ne 0) { Get-Content uninstall.log -Tail 60; throw "msiexec uninstall exit $($u.ExitCode)" }
+            }
+          }
+          if (Test-Path "$root\qbz.exe") { throw 'Uninstall left qbz.exe' }
+          if (Test-Path 'HKCU:\Software\Classes\qbz') { throw 'Uninstall left the qbz protocol key' }
+          Write-Host 'MSI install/upgrade/GUI launch/uninstall OK'
+
+      - name: Sign MSI
+        if: ${{ env.HAVE_CERT == 'true' }}
+        env:
+          WINDOWS_CERT_PASSWORD: ${{ secrets.WINDOWS_CERT_PASSWORD }}
+          VERSION: ${{ steps.release.outputs.version }}
+        shell: pwsh
+        run: |
+          & "$(vswhere -latest -find '**\signtool.exe' | Select-Object -First 1)" sign /f cert.pfx /p $env:WINDOWS_CERT_PASSWORD /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "dist\QBZ_$env:VERSION`_x64.msi"
+
+      # Portable zip of the same directory (testers without install rights),
+      # plus the PDB (MSVC emits it regardless of `strip = "symbols"`).
+      - name: Portable zip + symbols
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist\qbz\* -DestinationPath "dist\qbz_$($env:VERSION)_windows_x64.zip"
+          Copy-Item "crates\target\$env:TARGET\release\qbz.pdb" "dist\qbz_$($env:VERSION)_windows_x64.pdb"
+          $unpacked = Join-Path $env:RUNNER_TEMP ('qbz-portable-' + [guid]::NewGuid())
+          try {
+            Expand-Archive -LiteralPath "dist\qbz_$($env:VERSION)_windows_x64.zip" -DestinationPath $unpacked
+            if ((Get-FileHash "$unpacked/licenses/msvc-runtime.json").Hash -ne (Get-FileHash 'dist/qbz/licenses/msvc-runtime.json').Hash) { throw 'ZIP CRT inventory differs from shared payload' }
+            python scripts/packaging/windows_crt.py $unpacked --report windows-zip-imports.json
+            if ($LASTEXITCODE -ne 0) { throw 'Portable ZIP CRT audit failed' }
+            ./scripts/packaging/smoke_windows_deploy.ps1 -Directory $unpacked -LogPrefix portable
+          }
+          finally { if (Test-Path $unpacked) { Remove-Item -LiteralPath $unpacked -Recurse -Force } }
+
+      - name: Upload deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: qbz-windows-deployment-checks
+          retention-days: 14
+          if-no-files-found: ignore
+          path: |
+            windows-*-imports.json
+            inst.*
+            portable.*
+            install.log
+            upgrade.log
+            uninstall.log
+            dist/qbz/licenses/msvc-runtime.json
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: qbz-windows-x86_64
+          retention-days: ${{ startsWith(github.ref, 'refs/tags/v') && 90 || 7 }}
+          path: |
+            dist/*.msi
+            dist/*.zip
+            dist/*.pdb
+
+      # Attaches to the Release created by release-linux.yml.
+      - name: Publish GitHub Release Assets
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v3
+        with:
+          files: |
+            dist/*.msi
+            dist/*.zip
+          prerelease: ${{ steps.release.outputs.prerelease }}
+          make_latest: ${{ steps.release.outputs.prerelease == 'true' && 'false' || 'true' }}

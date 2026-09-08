@@ -1,0 +1,1199 @@
+openapi: 3.1.0
+info:
+  title: QBZ Remote Control API (historical, not available in 2.0 Slint)
+  description: |
+    **STATUS (2.0+):** This OpenAPI document describes the LAN Remote Control HTTP
+    API that shipped with the pre-2.0 Tauri/Svelte tree. That server is **not**
+    part of the shipping Slint binary. Settings storage for remote-control
+    preferences may still exist in `qbz-app`, but there is no in-process Axum
+    API, SSE `/api/events` stream, or Settings UI panel that exposes this surface
+    on current `pre-release` / 2.0.x.
+
+    Keep this file only as a historical reference for the `legacy-tauri-svelte`
+    tag and any future re-port. Do not treat endpoints below as live.
+
+    ---
+
+    REST API for controlling QBZ music player remotely (1.x era). This API
+    allowed custom clients (web, CLI, mobile) to control playback, manage queue,
+    search music, and receive real-time updates.
+
+    ## Authentication
+
+    All endpoints (except `/api/cert`) require authentication via one of:
+    - Header: `X-API-Key: <token>`
+    - Header: `Authorization: Bearer <token>`
+    - Query parameter: `?token=<token>` (historical; prefer headers)
+
+    ## Network Requirements
+
+    - API only accepts connections from LAN (private IP addresses)
+    - Default port: 8182 (configurable)
+    - Supports HTTP and HTTPS (self-signed certificate)
+
+    ## Real-time Updates
+
+    Clients used the `/api/events` SSE endpoint for real-time playback state updates instead of polling.
+
+  version: 1.0.0-historical
+  contact:
+    name: QBZ Project
+    url: https://github.com/vicrodh/qbz
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://{host}:{port}
+    description: QBZ Remote Control Server (HTTP)
+    variables:
+      host:
+        default: 192.168.1.100
+        description: Local IP address of the machine running QBZ
+      port:
+        default: "8182"
+        description: Remote control port (configurable in QBZ settings)
+  - url: https://{host}:{port}
+    description: QBZ Remote Control Server (HTTPS)
+    variables:
+      host:
+        default: 192.168.1.100
+      port:
+        default: "8182"
+
+tags:
+  - name: Connection
+    description: Connection and authentication endpoints
+  - name: Playback
+    description: Playback control (play, pause, seek, volume)
+  - name: Queue
+    description: Queue management (add, remove, shuffle, repeat)
+  - name: Search
+    description: Search for tracks, albums, and artists
+  - name: Favorites
+    description: Manage user favorites
+  - name: Library
+    description: Album and artist information
+  - name: Real-time
+    description: Real-time updates via SSE/WebSocket
+
+security:
+  - ApiKeyHeader: []
+  - BearerAuth: []
+  - ApiKeyQuery: []
+
+paths:
+  /api/ping:
+    get:
+      tags: [Connection]
+      summary: Test connection
+      description: Check if the server is running and get device info. Use this to verify your connection is working.
+      responses:
+        "200":
+          description: Server is running
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PingResponse"
+              example:
+                ok: true
+                version: "1.1.8"
+                name: "blitzkrieg-pc"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/cert:
+    get:
+      tags: [Connection]
+      summary: Download TLS certificate
+      description: |
+        Download the self-signed TLS certificate for HTTPS connections.
+        Only available when secure mode is enabled. This endpoint does NOT require authentication.
+      security: []
+      responses:
+        "200":
+          description: PEM certificate file
+          content:
+            application/x-pem-file:
+              schema:
+                type: string
+                format: binary
+        "500":
+          description: Certificate not available
+
+  /api/now-playing:
+    get:
+      tags: [Playback]
+      summary: Get current playback state
+      description: Returns the current playback state and track information.
+      responses:
+        "200":
+          description: Current playback state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NowPlayingResponse"
+              example:
+                playback:
+                  isPlaying: true
+                  position: 125
+                  duration: 320
+                  trackId: 12345678
+                  volume: 0.75
+                track:
+                  id: 12345678
+                  title: "Bohemian Rhapsody"
+                  artist: "Queen"
+                  album: "A Night at the Opera"
+                  durationSecs: 320
+                  artworkUrl: "https://static.qobuz.com/images/..."
+                  hires: true
+                  bitDepth: 24
+                  sampleRate: 96.0
+                  isLocal: false
+                  albumId: "abc123"
+                  artistId: 456
+                  streamable: true
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/status:
+    get:
+      tags: [Playback]
+      summary: Get current playback state (alias)
+      description: Alias for `/api/now-playing`.
+      responses:
+        "200":
+          description: Current playback state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NowPlayingResponse"
+
+  /api/playback/play:
+    post:
+      tags: [Playback]
+      summary: Resume playback
+      description: Resume playback if paused.
+      responses:
+        "204":
+          description: Playback resumed
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          description: Playback error
+
+  /api/playback/pause:
+    post:
+      tags: [Playback]
+      summary: Pause playback
+      description: Pause current playback.
+      responses:
+        "204":
+          description: Playback paused
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          description: Playback error
+
+  /api/playback/next:
+    post:
+      tags: [Playback]
+      summary: Skip to next track
+      description: Skip to the next track in the queue.
+      responses:
+        "200":
+          description: Next track info (or null if queue ended)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueTrack"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/playback/previous:
+    post:
+      tags: [Playback]
+      summary: Go to previous track
+      description: Go back to the previous track in history.
+      responses:
+        "200":
+          description: Previous track info (or null if no history)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueTrack"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/playback/seek:
+    post:
+      tags: [Playback]
+      summary: Seek to position
+      description: Seek to a specific position in the current track.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SeekRequest"
+            example:
+              position: 60
+      responses:
+        "204":
+          description: Seek successful
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          description: Seek error
+
+  /api/playback/volume:
+    post:
+      tags: [Playback]
+      summary: Set volume
+      description: Set the playback volume (0.0 to 1.0).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VolumeRequest"
+            example:
+              volume: 0.75
+      responses:
+        "204":
+          description: Volume set
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          description: Volume error
+
+  /api/playback/preferences:
+    get:
+      tags: [Playback]
+      summary: Get playback preferences
+      description: Get current playback preferences including autoplay mode.
+      responses:
+        "200":
+          description: Playback preferences
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlaybackPreferences"
+              example:
+                autoplayMode: "continue"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/playback/autoplay:
+    post:
+      tags: [Playback]
+      summary: Set autoplay mode
+      description: |
+        Set what happens when the current track/queue ends.
+        - `continue`: Continue playing within the current album/playlist
+        - `track_only`: Stop after current track
+        - `infinite`: Start infinite radio based on current track
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AutoplayRequest"
+            example:
+              mode: "continue"
+      responses:
+        "204":
+          description: Autoplay mode set
+        "400":
+          description: Invalid mode
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/queue:
+    get:
+      tags: [Queue]
+      summary: Get queue state
+      description: Get the current queue including upcoming tracks, history, and settings.
+      responses:
+        "200":
+          description: Queue state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueState"
+              example:
+                currentTrack:
+                  id: 12345678
+                  title: "Bohemian Rhapsody"
+                  artist: "Queen"
+                  album: "A Night at the Opera"
+                  durationSecs: 320
+                currentIndex: 2
+                upcoming:
+                  - id: 12345679
+                    title: "Another Track"
+                    artist: "Artist"
+                    album: "Album"
+                    durationSecs: 240
+                history:
+                  - id: 12345677
+                    title: "Previous Track"
+                    artist: "Artist"
+                    album: "Album"
+                    durationSecs: 180
+                shuffle: false
+                repeat: "Off"
+                totalTracks: 10
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/queue/add:
+    post:
+      tags: [Queue]
+      summary: Add track to queue
+      description: Add a track to the end of the queue.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddToQueueRequest"
+      responses:
+        "204":
+          description: Track added
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/queue/add-next:
+    post:
+      tags: [Queue]
+      summary: Add track to play next
+      description: Add a track to play immediately after the current track.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddToQueueRequest"
+      responses:
+        "204":
+          description: Track added to play next
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/queue/play:
+    post:
+      tags: [Queue]
+      summary: Play track at index
+      description: Start playing a specific track in the queue by its index.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlayIndexRequest"
+            example:
+              index: 3
+      responses:
+        "200":
+          description: Track info (or null if index invalid)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueTrack"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "502":
+          description: Playback failed
+
+  /api/queue/shuffle:
+    post:
+      tags: [Queue]
+      summary: Set shuffle mode
+      description: Enable or disable shuffle mode.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShuffleRequest"
+            example:
+              enabled: true
+      responses:
+        "200":
+          description: Updated shuffle/repeat state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShuffleRepeatResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/queue/repeat:
+    post:
+      tags: [Queue]
+      summary: Set repeat mode
+      description: |
+        Set the repeat mode:
+        - `off`: No repeat
+        - `all`: Repeat entire queue
+        - `one`: Repeat current track
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RepeatRequest"
+            example:
+              mode: "all"
+      responses:
+        "200":
+          description: Updated shuffle/repeat state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShuffleRepeatResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/search:
+    get:
+      tags: [Search]
+      summary: Search tracks
+      description: Search for tracks by query string.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Search query
+          schema:
+            type: string
+          example: "bohemian rhapsody"
+        - name: limit
+          in: query
+          description: Maximum results (default 20)
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Results offset for pagination
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResultsPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "502":
+          description: Search service unavailable
+
+  /api/search/all:
+    get:
+      tags: [Search]
+      summary: Search all types
+      description: Search for tracks, albums, and artists simultaneously.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Search query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Maximum results per type (default 10)
+          schema:
+            type: integer
+            default: 10
+        - name: offset
+          in: query
+          description: Results offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Search results for all types
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchAllResults"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "502":
+          description: Search service unavailable
+
+  /api/favorites:
+    get:
+      tags: [Favorites]
+      summary: Get favorites
+      description: Get user's favorite items by type.
+      parameters:
+        - name: fav_type
+          in: query
+          required: true
+          description: Type of favorites to retrieve
+          schema:
+            type: string
+            enum: [tracks, albums, artists]
+        - name: limit
+          in: query
+          description: Maximum results (default 50)
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          description: Results offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Favorites list
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Paginated favorites (structure varies by type)
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "502":
+          description: Service unavailable
+
+  /api/favorites/add:
+    post:
+      tags: [Favorites]
+      summary: Add to favorites
+      description: Add an item to user's favorites.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FavoriteRequest"
+            example:
+              favType: "tracks"
+              itemId: "12345678"
+      responses:
+        "204":
+          description: Added to favorites
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "502":
+          description: Service unavailable
+
+  /api/favorites/remove:
+    post:
+      tags: [Favorites]
+      summary: Remove from favorites
+      description: Remove an item from user's favorites.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FavoriteRequest"
+            example:
+              favType: "tracks"
+              itemId: "12345678"
+      responses:
+        "204":
+          description: Removed from favorites
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "502":
+          description: Service unavailable
+
+  /api/album/{id}:
+    get:
+      tags: [Library]
+      summary: Get album details
+      description: Get full album information including track list.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Album ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Album details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Album"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "502":
+          description: Service unavailable
+
+  /api/album/play:
+    post:
+      tags: [Library]
+      summary: Play album
+      description: Clear queue and play all tracks from an album.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlayAlbumRequest"
+            example:
+              albumId: "abc123xyz"
+      responses:
+        "204":
+          description: Album playback started
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Album not found or has no tracks
+        "502":
+          description: Playback failed
+
+  /api/artist/{id}:
+    get:
+      tags: [Library]
+      summary: Get artist details
+      description: Get artist information including discography.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Artist ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Artist details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Artist"
+        "400":
+          description: Invalid artist ID
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "502":
+          description: Service unavailable
+
+  /api/events:
+    get:
+      tags: [Real-time]
+      summary: SSE event stream
+      description: |
+        Server-Sent Events stream for real-time playback updates. This is the recommended
+        way to receive updates instead of polling `/api/now-playing`.
+
+        **Connection:**
+        ```javascript
+        const es = new EventSource('http://host:port/api/events?token=YOUR_TOKEN');
+        es.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          console.log('Playback update:', data);
+        };
+        ```
+
+        **Events:**
+        - Playback state changes (play/pause, position, volume)
+        - Track changes
+        - Shuffle/repeat mode changes
+
+        **Keep-alive:** Server sends ping every 15 seconds.
+
+        **Reconnection:** EventSource automatically reconnects on connection loss.
+      responses:
+        "200":
+          description: SSE event stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: |
+                  Stream of SSE events. Each event contains JSON data:
+                  ```
+                  data: {"isPlaying":true,"position":125,"duration":320,"trackId":12345678,"volume":0.75,"sampleRate":96000,"bitDepth":24,"shuffle":false,"repeat":"off"}
+                  ```
+              example: |
+                data: {"isPlaying":true,"position":125,"duration":320,"trackId":12345678,"volume":0.75}
+
+                data: {"isPlaying":true,"position":126,"duration":320,"trackId":12345678,"volume":0.75}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/ws:
+    get:
+      tags: [Real-time]
+      summary: WebSocket connection (deprecated)
+      description: |
+        WebSocket endpoint for real-time updates. **Deprecated:** Use `/api/events` (SSE) instead
+        for simpler integration and automatic reconnection.
+
+        **Connection:**
+        ```javascript
+        const ws = new WebSocket('ws://host:port/api/ws?token=YOUR_TOKEN');
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          console.log('Playback update:', data);
+        };
+        ```
+      deprecated: true
+      responses:
+        "101":
+          description: WebSocket upgrade
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+components:
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API token, generated in the 1.x Settings > Remote Control panel (no longer present in 2.0)
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: API token as Bearer token
+    ApiKeyQuery:
+      type: apiKey
+      in: query
+      name: token
+      description: API token as query parameter (useful for SSE/WebSocket)
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid authentication token
+      content:
+        text/plain:
+          schema:
+            type: string
+          example: "Unauthorized"
+
+  schemas:
+    PingResponse:
+      type: object
+      required: [ok, version, name]
+      properties:
+        ok:
+          type: boolean
+          description: Always true if server is running
+        version:
+          type: string
+          description: QBZ version
+          example: "1.1.8"
+        name:
+          type: string
+          description: Device hostname
+          example: "my-pc"
+
+    NowPlayingResponse:
+      type: object
+      required: [playback]
+      properties:
+        playback:
+          $ref: "#/components/schemas/PlaybackState"
+        track:
+          $ref: "#/components/schemas/QueueTrack"
+          nullable: true
+          description: Current track info (null if nothing playing)
+
+    PlaybackState:
+      type: object
+      required: [isPlaying, position, duration, trackId, volume]
+      properties:
+        isPlaying:
+          type: boolean
+          description: Whether playback is active
+        position:
+          type: integer
+          format: int64
+          description: Current position in seconds
+        duration:
+          type: integer
+          format: int64
+          description: Track duration in seconds
+        trackId:
+          type: integer
+          format: int64
+          description: Current track ID (0 if nothing playing)
+        volume:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Volume level (0.0 to 1.0)
+
+    PlaybackEvent:
+      type: object
+      description: Real-time playback event (sent via SSE/WebSocket)
+      required: [isPlaying, position, duration, trackId, volume]
+      properties:
+        isPlaying:
+          type: boolean
+        position:
+          type: integer
+          format: int64
+        duration:
+          type: integer
+          format: int64
+        trackId:
+          type: integer
+          format: int64
+        volume:
+          type: number
+          format: float
+        sampleRate:
+          type: integer
+          nullable: true
+          description: Current stream sample rate in Hz
+          example: 96000
+        bitDepth:
+          type: integer
+          nullable: true
+          description: Current stream bit depth
+          example: 24
+        shuffle:
+          type: boolean
+          nullable: true
+          description: Queue shuffle state
+        repeat:
+          type: string
+          nullable: true
+          enum: [off, all, one]
+          description: Queue repeat mode
+
+    QueueTrack:
+      type: object
+      required: [id, title, artist, album, durationSecs]
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Track ID
+        title:
+          type: string
+          description: Track title
+        artist:
+          type: string
+          description: Artist name
+        album:
+          type: string
+          description: Album title
+        durationSecs:
+          type: integer
+          format: int64
+          description: Duration in seconds
+        artworkUrl:
+          type: string
+          format: uri
+          nullable: true
+          description: Album artwork URL
+        hires:
+          type: boolean
+          default: false
+          description: Whether track is Hi-Res
+        bitDepth:
+          type: integer
+          nullable: true
+          description: Maximum bit depth available
+          example: 24
+        sampleRate:
+          type: number
+          nullable: true
+          description: Maximum sample rate in kHz
+          example: 96.0
+        isLocal:
+          type: boolean
+          default: false
+          description: Whether track is from local library
+        albumId:
+          type: string
+          nullable: true
+          description: Album ID for navigation
+        artistId:
+          type: integer
+          format: int64
+          nullable: true
+          description: Artist ID for navigation
+        streamable:
+          type: boolean
+          default: true
+          description: Whether track is available for streaming
+
+    QueueState:
+      type: object
+      required: [shuffle, repeat, totalTracks]
+      properties:
+        currentTrack:
+          $ref: "#/components/schemas/QueueTrack"
+          nullable: true
+        currentIndex:
+          type: integer
+          nullable: true
+          description: Index of current track in queue
+        upcoming:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueueTrack"
+          description: Upcoming tracks
+        history:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueueTrack"
+          description: Previously played tracks
+        shuffle:
+          type: boolean
+          description: Shuffle mode enabled
+        repeat:
+          type: string
+          enum: [Off, All, One]
+          description: Repeat mode
+        totalTracks:
+          type: integer
+          description: Total tracks in queue
+
+    SeekRequest:
+      type: object
+      required: [position]
+      properties:
+        position:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Target position in seconds
+
+    VolumeRequest:
+      type: object
+      required: [volume]
+      properties:
+        volume:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Volume level (0.0 to 1.0)
+
+    PlayIndexRequest:
+      type: object
+      required: [index]
+      properties:
+        index:
+          type: integer
+          minimum: 0
+          description: Queue index to play
+
+    AddToQueueRequest:
+      type: object
+      required: [track]
+      properties:
+        track:
+          $ref: "#/components/schemas/QueueTrack"
+
+    ShuffleRequest:
+      type: object
+      required: [enabled]
+      properties:
+        enabled:
+          type: boolean
+          description: Enable shuffle mode
+
+    RepeatRequest:
+      type: object
+      required: [mode]
+      properties:
+        mode:
+          type: string
+          enum: [off, all, one]
+          description: Repeat mode
+
+    ShuffleRepeatResponse:
+      type: object
+      required: [shuffle, repeat]
+      properties:
+        shuffle:
+          type: boolean
+        repeat:
+          type: string
+          enum: [off, all, one]
+
+    PlaybackPreferences:
+      type: object
+      properties:
+        autoplayMode:
+          type: string
+          enum: [continue, track_only, infinite]
+          description: What happens when queue ends
+
+    AutoplayRequest:
+      type: object
+      required: [mode]
+      properties:
+        mode:
+          type: string
+          enum: [continue, track_only, infinite]
+          description: |
+            - `continue`: Continue within current source
+            - `track_only`: Stop after current track
+            - `infinite`: Start infinite radio
+
+    FavoriteRequest:
+      type: object
+      required: [favType, itemId]
+      properties:
+        favType:
+          type: string
+          enum: [tracks, albums, artists]
+        itemId:
+          type: string
+          description: Item ID to add/remove
+
+    PlayAlbumRequest:
+      type: object
+      required: [albumId]
+      properties:
+        albumId:
+          type: string
+          description: Album ID to play
+
+    SearchResultsPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Track"
+        total:
+          type: integer
+          description: Total matching results
+        offset:
+          type: integer
+        limit:
+          type: integer
+
+    SearchAllResults:
+      type: object
+      properties:
+        albums:
+          $ref: "#/components/schemas/SearchResultsPage"
+        tracks:
+          $ref: "#/components/schemas/SearchResultsPage"
+        artists:
+          $ref: "#/components/schemas/SearchResultsPage"
+        playlists:
+          $ref: "#/components/schemas/SearchResultsPage"
+
+    Track:
+      type: object
+      description: Track from search results
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        duration:
+          type: integer
+          description: Duration in seconds
+        hires:
+          type: boolean
+        maximumBitDepth:
+          type: integer
+        maximumSamplingRate:
+          type: number
+        streamable:
+          type: boolean
+        performer:
+          $ref: "#/components/schemas/ArtistSummary"
+        album:
+          $ref: "#/components/schemas/AlbumSummary"
+
+    Album:
+      type: object
+      description: Full album details
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        artist:
+          $ref: "#/components/schemas/ArtistSummary"
+        image:
+          type: object
+          properties:
+            small:
+              type: string
+              format: uri
+            large:
+              type: string
+              format: uri
+        tracks:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/Track"
+            total:
+              type: integer
+
+    AlbumSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        image:
+          type: object
+          properties:
+            small:
+              type: string
+              format: uri
+            large:
+              type: string
+              format: uri
+
+    Artist:
+      type: object
+      description: Full artist details
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        image:
+          type: object
+          nullable: true
+          properties:
+            small:
+              type: string
+              format: uri
+            large:
+              type: string
+              format: uri
+        albums:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/AlbumSummary"
+
+    ArtistSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string

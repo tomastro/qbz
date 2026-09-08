@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>blitzkriegfc@gmail.com</email>
+		<name>blitzkriegfc</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">vicrodh/qbz</remote-id>
+		<bugs-to>https://github.com/vicrodh/qbz/issues</bugs-to>
+	</upstream>
+	<use>
+		<flag name="jack">Install the JACK runtime backend</flag>
+		<flag name="pipewire">Install PipeWire discovery and routing helpers</flag>
+		<flag name="pulseaudio">Install PulseAudio discovery and routing helpers</flag>
+	</use>
+	<longdescription lang="en">
+		QBZ is a native Qt/QML hi-fi Qobuz desktop player with bit-perfect
+		playback, DAC passthrough, local and remote libraries, offline cache,
+		scrobbling and network playback integrations.
+	</longdescription>
+</pkgmetadata>

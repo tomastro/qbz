@@ -1,0 +1,63 @@
+{
+  "album_id": "gvcirtodd95kc",
+  "track_id": 266725027,
+  "translation_langs": ["pt", "de", "fr", "es", "it"],
+  "publishers": [
+    {"copyright": "(c) Example Publishing", "zones": ["WW"]}
+  ],
+  "writers": "Writer One, Writer Two",
+  "original": {
+    "type": "wsync",
+    "lang": "en",
+    "lines": [
+      {
+        "line": "First original line",
+        "start": 1750,
+        "end": 4770,
+        "words": [
+          {"word": "First", "start": 1750, "end": 2480},
+          {"word": "original", "start": 2480, "end": 3600},
+          {"word": "line", "start": 3600, "end": 4770}
+        ]
+      },
+      {"line": "", "words": []},
+      {
+        "line": "Second original line",
+        "start": 19690,
+        "end": 22180,
+        "words": [
+          {"word": "Second", "start": 19690, "end": 20560},
+          {"word": "original", "start": 20560, "end": 21310},
+          {"word": "line", "start": 21310, "end": 22180}
+        ]
+      }
+    ]
+  },
+  "translation": {
+    "type": "wsync",
+    "lang": "es",
+    "lines": [
+      {
+        "line": "Primera linea traducida",
+        "start": 1750,
+        "end": 4770,
+        "words": [
+          {"word": "Primera", "start": 1750, "end": 2900},
+          {"word": "linea", "start": 2900, "end": 3800},
+          {"word": "traducida", "start": 3800, "end": 4770}
+        ]
+      },
+      {"line": "", "words": []},
+      {
+        "line": "Segunda linea traducida",
+        "start": 19690,
+        "end": 22180,
+        "words": [
+          {"word": "Segunda", "start": 19690, "end": 20800},
+          {"word": "linea", "start": 20800, "end": 21500},
+          {"word": "traducida", "start": 21500, "end": 22180}
+        ]
+      }
+    ]
+  }
+}

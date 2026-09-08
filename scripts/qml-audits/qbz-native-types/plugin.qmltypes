@@ -1,0 +1,84 @@
+import QtQuick.tooling 1.2
+
+// Tooling-only descriptions for the hand-written C++ QML types registered
+// with qmlRegisterType(). They are linked statically into qbz, so standalone
+// qmllint cannot discover their metaobjects by loading a QML plugin.
+//
+// Keep this file aligned with cxx/*_item.h. qml_native_types_audit.py enforces
+// that every registered type and every Q_PROPERTY remains represented here.
+Module {
+    Component {
+        name: "ScopeTraceItem"
+        prototype: "QQuickItem"
+        exports: ["com.blitzfc.qbz/ScopeTraceItem 1.0"]
+        Property { name: "points"; type: "QVariant" }
+        Property { name: "traceColor"; type: "QColor" }
+        Property { name: "mode"; type: "int" }
+        Property { name: "lineWidth"; type: "double" }
+        Property { name: "trailDepth"; type: "int" }
+        Property { name: "fillOpacity"; type: "double" }
+    }
+    Component {
+        name: "LineBedItem"
+        prototype: "QQuickItem"
+        exports: ["com.blitzfc.qbz/LineBedItem 1.0"]
+        Property { name: "mirrorVertically"; type: "bool" }
+        Property { name: "heights"; type: "QByteArray" }
+        Property { name: "primary"; type: "QColor" }
+        Property { name: "accent"; type: "QColor" }
+    }
+    Component {
+        name: "PlasmaItem"
+        prototype: "QQuickItem"
+        exports: ["com.blitzfc.qbz/PlasmaItem 1.0"]
+        Property { name: "mirrorVertically"; type: "bool" }
+        Property { name: "time"; type: "float" }
+        Property { name: "beat"; type: "float" }
+        Property { name: "level"; type: "float" }
+        Property { name: "levelSmooth"; type: "float" }
+        Property { name: "energyLo"; type: "QVector4D" }
+        Property { name: "energyHi"; type: "QVector4D" }
+        Property { name: "transientAmp"; type: "float" }
+        Property { name: "bandsLo"; type: "QVector4D" }
+        Property { name: "bandsHi"; type: "QVector4D" }
+        Property { name: "primary"; type: "QColor" }
+        Property { name: "secondary"; type: "QColor" }
+        Property { name: "accent"; type: "QColor" }
+    }
+    Component {
+        name: "RibbonItem"
+        prototype: "QQuickItem"
+        exports: ["com.blitzfc.qbz/RibbonItem 1.0"]
+        Property { name: "mirrorVertically"; type: "bool" }
+        Property { name: "frame"; type: "QByteArray" }
+        Property { name: "energyHi"; type: "QVector4D" }
+    }
+    Component {
+        name: "TunnelFlowItem"
+        prototype: "QQuickItem"
+        exports: ["com.blitzfc.qbz/TunnelFlowItem 1.0"]
+        Property { name: "mirrorVertically"; type: "bool" }
+        Property { name: "time"; type: "float" }
+        Property { name: "phase"; type: "float" }
+        Property { name: "bass"; type: "float" }
+        Property { name: "mid"; type: "float" }
+        Property { name: "high"; type: "float" }
+        Property { name: "kick"; type: "float" }
+        Property { name: "palette0"; type: "QColor" }
+        Property { name: "palette1"; type: "QColor" }
+        Property { name: "palette2"; type: "QColor" }
+        Property { name: "palette3"; type: "QColor" }
+    }
+    Component {
+        name: "SeekWaveformItem"
+        prototype: "QQuickItem"
+        exports: ["com.blitzfc.qbz/SeekWaveformItem 1.0"]
+        Property { name: "values"; type: "QVariant" }
+        Property { name: "playedProgress"; type: "double" }
+        Property { name: "cacheProgress"; type: "double" }
+        Property { name: "baseColor"; type: "QColor" }
+        Property { name: "cacheColor"; type: "QColor" }
+        Property { name: "playedColor"; type: "QColor" }
+        Property { name: "renderMode"; type: "int" }
+    }
+}

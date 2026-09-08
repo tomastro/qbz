@@ -1,0 +1,31 @@
+[package]
+name = "qconnect-app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "UI-agnostic Qobuz Connect application adapter"
+
+[dependencies]
+qconnect-core = { path = "../qconnect-core" }
+qconnect-lan = { path = "../qconnect-lan" }
+qconnect-protocol = { path = "../qconnect-protocol" }
+qconnect-transport-ws = { path = "../qconnect-transport-ws" }
+qbz-models = { path = "../qbz-models" }
+# Renderer-engine seam (slice 6): the trait carries qbz_player::PlaybackState
+# (read by the echo gate + should_reload). qbz-player does NOT depend on
+# qconnect-app, so there is no cycle. play_data/play_streaming_dynamic are
+# reached ONLY through the trait's start_track_stream and are never modified.
+qbz-player = { path = "../qbz-player" }
+async-trait = { workspace = true }
+futures-util = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+uuid = { version = "1", features = ["v4"] }
+zeroize = "1"
+log = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }
+prost = "0.14"

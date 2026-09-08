@@ -1,0 +1,29 @@
+[package]
+name = "qbz-local-catalog"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+log.workspace = true
+rusqlite = { version = "0.40", features = ["backup", "bundled"] }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[target.'cfg(unix)'.dependencies]
+rustix = { version = "1", features = ["fs"] }
+
+[target.'cfg(windows)'.dependencies]
+# GetDiskFreeSpaceExW for the free-space preflight; LockFileEx (+ OVERLAPPED,
+# hence Win32_System_IO) for the bootstrap lock. 0.61 is already in the
+# workspace lock, so this pulls nothing new.
+windows-sys = { version = "0.61", features = [
+  "Win32_Foundation",
+  "Win32_Storage_FileSystem",
+  "Win32_System_IO",
+] }
+
+[dev-dependencies]
+tempfile = "3"

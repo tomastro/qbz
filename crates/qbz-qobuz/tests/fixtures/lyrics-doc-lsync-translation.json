@@ -1,0 +1,23 @@
+{
+  "album_id": "abc123",
+  "track_id": 111111111,
+  "translation_langs": ["fr"],
+  "publishers": [],
+  "writers": "Writer Three",
+  "original": {
+    "type": "lsync",
+    "lang": "en",
+    "lines": [
+      {"line": "Line-synced original one", "start": 1000, "end": 4000},
+      {"line": "Line-synced original two", "start": 5000, "end": 9000}
+    ]
+  },
+  "translation": {
+    "type": "lsync",
+    "lang": "fr",
+    "lines": [
+      {"line": "Traduction synchronisee un", "start": 1000, "end": 4000},
+      {"line": "Traduction synchronisee deux", "start": 5000, "end": 9000}
+    ]
+  }
+}

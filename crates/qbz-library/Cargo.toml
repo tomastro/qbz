@@ -1,0 +1,44 @@
+[package]
+name = "qbz-library"
+version = "0.1.0"
+edition = "2021"
+description = "Local music library management for QBZ - scanning, indexing, metadata extraction"
+authors = ["blitzkriegfc"]
+
+[dependencies]
+# Logging
+log = "0.4"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Error handling
+thiserror = "2"
+
+# Database
+rusqlite = { version = "0.40", features = ["bundled"] }
+
+# Filesystem
+walkdir = "2"
+notify = "8"
+dirs = "6"
+
+# Audio metadata
+lofty.workspace = true
+qbz-dsd = { path = "../qbz-dsd" }
+# SACD images found by the folder scan: signature sniff + Scarlet Book TOC
+# parse + the disc memory (sacd_scan.rs). qbz-disc depends on nothing here.
+qbz-disc = { path = "../qbz-disc" }
+
+# Image processing (thumbnails)
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp"] }
+
+# File system utilities
+glob = "0.3"
+
+# UUID generation
+uuid = { version = "1", features = ["v4"] }
+
+[dev-dependencies]
+tempfile = "3"

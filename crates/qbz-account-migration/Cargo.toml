@@ -1,0 +1,20 @@
+[package]
+name = "qbz-account-migration"
+version = "0.1.0"
+edition = "2021"
+description = "Qobuz account migration for QBZ — snapshot one account's favorites and playlists, plan and apply them additively into another (headless, frontend-agnostic)"
+authors = ["blitzkriegfc"]
+
+[dependencies]
+qbz-models = { path = "../qbz-models" }
+qbz-qobuz = { path = "../qbz-qobuz" }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+log = { workspace = true }
+tokio = { workspace = true }
+chrono = { workspace = true }
+rusqlite = { version = "0.40", features = ["bundled"] }
+
+[dev-dependencies]
+tempfile = "3"

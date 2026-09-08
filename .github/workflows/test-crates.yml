@@ -1,0 +1,225 @@
+# CI for the crates/ workspace on the integration branch.
+#
+# Three jobs, three economies:
+#   test      — validate all eight gettext catalogs, then `cargo test` on
+#               every crate that needs no Qt (scripts/cargo-test.sh:
+#               excludes the frozen Slint crates and qbz-qt), then the named
+#               listen-log suite check (qbz-app::listen_log must exist and be
+#               green — the per-user listen store's schema, accumulator, end
+#               reasons and pause/clear rules), and the account-migration +
+#               portable-blacklist suite check (Settings > Import / Export:
+#               snapshot/plan/apply/ledger/local copy, additive blacklist
+#               merge), plus QConnect controller handoff/read-vs-write,
+#               proto3-zero cursor, manual skip/loop/shuffle/autoplay and
+#               consecutive-log repetition regression checks, plus SACD
+#               2048/2064-sector TOC/frame/seek equivalence and scanner import/
+#               failed-read preservation. ~5 min cold.
+#   qt-gate   — the Qt frontend: the five static QML audits, `cargo test -p
+#               qbz-qt`, the Slint-free dep-graph gate, and an OFFSCREEN BOOT of
+#               debug AND release binaries (including process liveness).
+#               Release also boots on Xvfb with a deliberately silent D-Bus.
+#               Node executes the actual Local Library filter/tab expressions.
+#               This is the thing `cargo check` cannot give:
+#               a missing QML component or a call to a bridge member that does
+#               not exist compiles clean and throws when the user opens the
+#               view. Qt comes from aqt — ubuntu-24.04's own Qt is 6.4.2 and has
+#               no QtQuick.Effects module.
+#
+# Rewritten 2026-08-25 for the Slint -> Qt frontend switch. Release packaging
+# stays tag/dispatch-only; this workflow also tests optimized startup on
+# pre-release
+# integration so regressions land before a release cut.
+
+name: test-crates
+
+on:
+  pull_request:
+    # pre-release is the real base; main is listed so a PR opened against main
+    # still runs once before redirect-pr-to-prerelease retargets it.
+    branches: [pre-release, main]
+    paths:
+      - "crates/**"
+      - "scripts/cargo-test.sh"
+      - "scripts/qt-*.py"
+      - "scripts/qt-*.sh"
+      - "scripts/test_qt_build_gates.py"
+      - "scripts/packaging/windows_crt.py"
+      - "scripts/packaging/test_windows_crt.py"
+      - "scripts/packaging/smoke_release.py"
+      - "scripts/packaging/test_smoke_release.py"
+      - "scripts/qml-audits/**"
+      - ".github/workflows/test-crates.yml"
+  push:
+    # Integration branch only — never main (a push to main is a release merge).
+    branches: [pre-release]
+    paths:
+      - "crates/**"
+      - "scripts/cargo-test.sh"
+      - "scripts/qt-*.py"
+      - "scripts/qt-*.sh"
+      - "scripts/test_qt_build_gates.py"
+      - "scripts/packaging/windows_crt.py"
+      - "scripts/packaging/test_windows_crt.py"
+      - "scripts/packaging/smoke_release.py"
+      - "scripts/packaging/test_smoke_release.py"
+      - "scripts/qml-audits/**"
+      - ".github/workflows/test-crates.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: test-crates-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Same pin as build-qt-linux.yml (the Linux floor). Bump both together.
+  QT_VERSION: ${{ vars.QT_VERSION_LINUX || '6.8.3' }}
+
+jobs:
+  test:
+    name: cargo test (workspace, no UI)
+    runs-on: ubuntu-24.04
+    # The rule: --no-fail-fast, 20 minutes. All cores: measured cold on an
+    # equivalent 4-vCPU VM, 392 s (jobs=4) vs 589 s (jobs=2), 2.7 GB peak —
+    # the old jobs=2 was a Slint-era memory tier with nothing left to protect.
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install system dependencies
+        run: |
+          # Non-UI crates still link ALSA / JACK / D-Bus (qbz-audio) and
+          # OpenSSL (reqwest).
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential pkg-config gettext \
+            libasound2-dev libjack-jackd2-dev \
+            libdbus-1-dev libssl-dev
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crates -> target
+          shared-key: test-crates-linux
+          cache-on-failure: true
+          save-if: ${{ github.ref == 'refs/heads/pre-release' }}
+
+      - name: cargo test (scripts/cargo-test.sh — the local mirror)
+        env:
+          CARGO_TERM_COLOR: always
+        run: |
+          rustc -V; cargo -V
+          START=$(date +%s)
+          ./scripts/cargo-test.sh
+          echo "cargo test wall time: $(( $(date +%s) - START ))s"
+
+  # Every shader must bake. Separate job so qsb is never on PATH while cargo
+  # runs (see qt-gate). The BAKE toolchain is pinned apart from the runtime
+  # floor: the committed .qsb need qsb >= 6.9 (plasma/ambient's uint hash
+  # constants vs the GLSL 1.20 variant, which desktop GL <= 3.1 selects at
+  # runtime, so it must stay in the pack) — see shader_bake_gate.sh.
+  shader-gate:
+    name: shader bake gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      QT_SHADERTOOLS_VERSION: ${{ vars.QT_VERSION_SHADERTOOLS || '6.9.3' }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Qt ${{ env.QT_SHADERTOOLS_VERSION }} + shader tools
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_SHADERTOOLS_VERSION }}
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          modules: qtshadertools
+          cache: true
+      - name: Bake every shader to a temp dir
+        run: scripts/qml-audits/shader_bake_gate.sh "$QT_ROOT_DIR/bin/qsb"
+
+  qt-gate:
+    name: qt gate (audits, tests, offscreen boot)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential pkg-config cmake clang libclang-dev lld nasm dbus \
+            libasound2-dev libjack-jackd2-dev libdbus-1-dev libssl-dev \
+            libgl1-mesa-dev libegl1-mesa-dev libxkbcommon-dev libwayland-dev \
+            xvfb nodejs libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
+            libxcb-render-util0 libxcb-xinerama0 libxcb-xkb1 libxkbcommon-x11-0
+          # cxx-qt prefers LLD when present; without it, Ubuntu falls back to
+          # the deprecated gold linker. Do not add workspace-wide RUSTFLAGS.
+          ld.lld --version
+
+      # No qtshadertools here ON PURPOSE: with qsb on PATH build.rs re-bakes
+      # shaders by mtime, which makes a fresh checkout nondeterministic. The
+      # build explicitly validates/uses committed .qsb; shader health is the
+      # shader-gate job, independent of tools accidentally present on PATH.
+      - name: Install Qt ${{ env.QT_VERSION }}
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          cache: true
+
+      - name: qmllint (QML type check)
+        run: scripts/qml-audits/qmllint_gate.sh "$QT_ROOT_DIR"
+
+      # The audits need Qt's own plugins.qmltypes to resolve QtQuick types —
+      # hence after the Qt install, pointed at it. ~1 s, and the class of
+      # mistake nothing else in CI can see (a missing component, a bridge
+      # member that does not exist).
+      - name: QML audits
+        env:
+          QBZ_QT_QML_DIR: ${{ env.QT_ROOT_DIR }}/qml
+        run: |
+          set -euo pipefail
+          for a in qml_resolution_audit qml_singleton_xref qml_eager_tab_audit qml_module_registration_audit qml_icon_bake_audit qml_on_prefixed_property_audit; do
+            echo "::group::$a"
+            python3 "scripts/qml-audits/$a.py" "$PWD/crates/qbz-qt"
+            echo "::endgroup::"
+          done
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crates -> target
+          shared-key: qt-gate-${{ env.QT_VERSION }}
+          cache-on-failure: true
+          save-if: ${{ github.ref == 'refs/heads/pre-release' }}
+
+      # The exact QT=1 half of scripts/cargo-test.sh, minus its `test` job
+      # (already run above) and its shader gate (the shader-gate job, so qsb
+      # is never on PATH while cargo runs here): dep-graph gate, cargo test
+      # -p qbz-qt, Local Library/Kiosk artwork/navigation regressions, debug/release
+      # offscreen boot. One shared runtime script.
+      - name: qt gates (scripts/cargo-test.sh QT=1, without the workspace test)
+        env:
+          CARGO_TERM_COLOR: always
+          QBZ_QT_QML_DIR: ${{ env.QT_ROOT_DIR }}/qml
+          QBZ_PREBUILT_SHADERS: '1'
+        run: |
+          set -euo pipefail
+          hits=$(cargo tree --manifest-path crates/Cargo.toml -p qbz-qt -e normal \
+                 | grep -E '\b(slint|qbz-ui|qbz-slint-common|qbz-dac-wizard) v' || true)
+          [ -z "$hits" ] || { echo "::error::qbz-qt graph resolves Slint crates:"; echo "$hits"; exit 1; }
+          bash scripts/qt-runtime-gate.sh

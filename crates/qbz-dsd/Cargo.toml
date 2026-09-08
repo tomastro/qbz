@@ -1,0 +1,13 @@
+[package]
+name = "qbz-dsd"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "DSD (DSF/DFF) demuxing and DSD-to-PCM conversion"
+
+[dependencies]
+qbz-disc = { path = "../qbz-disc" }
+thiserror = { workspace = true }
+log = { workspace = true }
+id3 = "1"
+dst-decoder = "=0.1.2"

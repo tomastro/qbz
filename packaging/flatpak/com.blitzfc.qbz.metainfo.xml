@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.blitzfc.qbz</id>
+  <name>QBZ</name>
+  <summary>Hi-fi music player for Qobuz</summary>
+  <description>
+    <p>
+      QBZ is a native Qobuz client for Linux focused on reliable hi-res playback and desktop integration.
+    </p>
+    <ul>
+      <li>Bit-perfect playback up to 24-bit/192kHz</li>
+      <li>PipeWire and PulseAudio audio output</li>
+      <li>DAC routing and exclusive mode support</li>
+      <li>Local music library with offline playback</li>
+      <li>Immersive and miniplayer display modes</li>
+      <li>Artist blacklist for personalized listening</li>
+      <li>MPRIS integration for desktop media controls</li>
+      <li>Last.fm and ListenBrainz scrobbling</li>
+      <li>Plex library integration</li>
+      <li>Direct streaming or smart cache playback</li>
+      <li>Highly customizable interface and behavior</li>
+    </ul>
+  </description>
+  <developer id="com.blitzfc">
+    <name>QBZ Contributors</name>
+  </developer>
+  <url type="homepage">https://github.com/vicrodh/qbz</url>
+  <url type="bugtracker">https://github.com/vicrodh/qbz/issues</url>
+  <url type="vcs-browser">https://github.com/vicrodh/qbz</url>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <branding>
+    <color type="primary" scheme_preference="light">#2b6cb0</color>
+    <color type="primary" scheme_preference="dark">#63b3ed</color>
+  </branding>
+  <launchable type="desktop-id">com.blitzfc.qbz.desktop</launchable>
+  <provides>
+    <binary>qbz</binary>
+  </provides>
+  <content_rating type="oars-1.1" />
+  <screenshots>
+    <screenshot type="default">
+      <caption xml:lang="en">Home and discovery view</caption>
+      <image>https://raw.githubusercontent.com/vicrodh/qbz/5f759514d35d4f07bec531c09a5384baea7fc073/packaging/flatpak/screenshots/home-discover.png</image>
+    </screenshot>
+    <screenshot>
+      <caption xml:lang="en">Immersive cover flow mode</caption>
+      <image>https://raw.githubusercontent.com/vicrodh/qbz/5f759514d35d4f07bec531c09a5384baea7fc073/packaging/flatpak/screenshots/immersive-cover-flow.png</image>
+    </screenshot>
+    <screenshot>
+      <caption xml:lang="en">Immersive line-bed playback view</caption>
+      <image>https://raw.githubusercontent.com/vicrodh/qbz/5f759514d35d4f07bec531c09a5384baea7fc073/packaging/flatpak/screenshots/immersive-line-bed.png</image>
+    </screenshot>
+    <screenshot>
+      <caption xml:lang="en">Artist page with editorial enrichment</caption>
+      <image>https://raw.githubusercontent.com/vicrodh/qbz/5f759514d35d4f07bec531c09a5384baea7fc073/packaging/flatpak/screenshots/enriched-artist-page.png</image>
+    </screenshot>
+    <screenshot>
+      <caption xml:lang="en">Local library view</caption>
+      <image>https://raw.githubusercontent.com/vicrodh/qbz/5f759514d35d4f07bec531c09a5384baea7fc073/packaging/flatpak/screenshots/local-library.png</image>
+    </screenshot>
+    <screenshot>
+      <caption xml:lang="en">Hi-Fi DAC setup wizard</caption>
+      <image>https://raw.githubusercontent.com/vicrodh/qbz/5f759514d35d4f07bec531c09a5384baea7fc073/packaging/flatpak/screenshots/hifi-wizard.png</image>
+    </screenshot>
+    <screenshot>
+      <caption xml:lang="en">Audio settings — backend, device, and quality</caption>
+      <image>https://raw.githubusercontent.com/vicrodh/qbz/5f759514d35d4f07bec531c09a5384baea7fc073/packaging/flatpak/screenshots/default-settings.png</image>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="2.1.0" date="2026-09-06">
+      <description>
+        <p>QBZ 2.1.0 brings the Qt frontend to its first minor release: QConnect grows official LAN pairing parity, casting gets a second hardening round, and playlists, hotkeys and the audio stack all move forward.</p>
+        <ul>
+          <li>QConnect: LAN discovery and pairing aligned with the official clients, shuffle and volume authority fixes, and a hardened handoff/takeover lifecycle</li>
+          <li>Casting: progressive serving, a Plex proxy, visualizer while casting, and X.509 v1 device certificates for Chromecast built-in</li>
+          <li>Playlists: a redesigned Add-to-Playlist picker with membership badges, drag from the Library Explorer, and Jellyfin/Subsonic rows in playlists</li>
+          <li>Audio: ALSA hardware-volume hardening with capability-based control detection, and gapless fixes for the headless daemon</li>
+          <li>Quality of life: Spotify-parity hotkeys with a Vim preset, a listening log, playback stall recovery, and a fresher favorites view</li>
+        </ul>
+      </description>
+    </release>
+    <release version="2.0.2" date="2026-07-20">
+      <description>
+        <p>QBZ 2.0.2 is a big maintenance release: a brand-new headless daemon you can drive entirely from the terminal, a touch-first Kiosk mode, an app-wide dynamic album-art background, and a wave of audio, casting and rendering work — all on the 2.0 rebuild.</p>
+        <ul>
+          <li>Headless daemon (qbzd): a slint-free binary that plays music, scrobbles, exposes MPRIS and a full CLI/HTTP control plane, and configures itself over SSH — from a Raspberry Pi or a server</li>
+          <li>Kiosk mode: an opt-in touch-first interface (QBZ_PROFILE=kiosk) for touchscreens and small displays, with a live Kiosk↔Desktop toggle</li>
+          <li>Dynamic background: an app-wide album-art backdrop with ambient shaders and translucent chrome, plus a per-GPU selector</li>
+          <li>Truthful casting and quality: badges that report the delivered quality and name any downgrade, per-renderer quality caps, and honored streaming-quality when casting (#638)</li>
+          <li>Audio, rendering and library: ALSA-exclusive and DAC fixes, femtovg partial rendering, a mixed Library "All" feed, Catppuccin themes, and hardened credential storage</li>
+        </ul>
+      </description>
+    </release>
+    <release version="2.0.1" date="2026-07-08">
+      <description>
+        <p>QBZ 2.0.1 is the first maintenance release on top of the 2.0 native rebuild: lighter scrolling, self-recovery from bad states, and more faithful text rendering across languages, plus a few features that missed the 2.0 cutoff.</p>
+        <ul>
+          <li>Performance: viewport windowing across Home, Discover, Favorites, Search and the carousels; near-zero idle CPU</li>
+          <li>Resilience: autonomous renderer degradation with a UI watchdog, startup crash-chain recovery, and a single-instance guard on Linux</li>
+          <li>Text: faithful CJK/Korean rendering on macOS, decoded HTML entities, lenient list parsing, and a new Dutch translation (8 languages)</li>
+          <li>New: automatic theme from your wallpaper or accent, an inline custom-theme editor, and a guest offline mode</li>
+          <li>Fixes: auto-skip unavailable tracks, visible stream errors, DLNA casting compatibility, and working Queue row menu actions</li>
+        </ul>
+      </description>
+    </release>
+    <release version="2.0.0" date="2026-07-03">
+      <description>
+        <p>QBZ 2.0 "Rebuild": the frontend is completely rebuilt as a native application — considerably smaller CPU and memory footprint, first-class macOS support, and a friendlier, more minimalist layout.</p>
+        <ul>
+          <li>Native UI rebuild: memory goes to playback, not to drawing the app; Wayland, X11 and Metal all work out of the box</li>
+          <li>DSD support (DSF/DFF): plays everywhere via high-quality PCM conversion, plus bit-perfect DoP and native DSD delivery on capable DACs</li>
+          <li>Gapless playback for local files, granular artist/album blocking, new search overlay, faster lyrics, offline mode hardening</li>
+          <li>Russian and Japanese translations — the UI now ships in 7 languages</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.15" date="2026-06-05">
+      <description>
+        <p>A small maintenance release while a major update is in the works: two bug fixes, no new features.</p>
+        <ul>
+          <li>Startup no longer freezes on a blank screen when Qobuz is slow to serve its web bundle; the download is bounded by a timeout and retried, and the connection tokens are cached so later launches go straight to the app</li>
+          <li>Fixed a "Too many open files" crash on image-heavy views like Discover: image and artwork downloads now reuse a single shared connection instead of opening a new one per image</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.14" date="2026-05-25">
+      <description>
+        <p>Just cleaning: a maintenance release — audio that works out of the box, a smarter backend picker, and a round of fixes and dependency updates.</p>
+        <ul>
+          <li>New "System" audio output: the shared system default that works out of the box and mixes with other apps like any normal player; "Auto" now picks the best available backend for your machine</li>
+          <li>PipeWire is detected via its runtime socket, so its backend is no longer hidden on systems without pactl</li>
+          <li>The album hover overlay shows the full release date again, not just the year</li>
+          <li>Fixes: queue drag-and-drop on macOS, favorites edition/version on click-to-play, the favorite button on browse pages, and gapless/offline robustness</li>
+          <li>Hardened redaction of sensitive data in logs, cpal/alsa and dependency updates, and continued app-core groundwork</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.13" date="2026-05-16">
+      <description>
+        <p>400+ stars: a polish and stability release led by macOS fixes, with the usual round of bug fixes and groundwork under the hood.</p>
+        <ul>
+          <li>macOS Shared Mode: playback no longer drifts in speed, CoreAudio retries on a sample-rate mismatch, and rate-mismatch errors are rephrased for end users (PRs by @Vudgekek and @afonsojramos)</li>
+          <li>macOS title bar and window drag regions reworked; lyrics active-line color corrected on WebKit; auto-updater bundle naming fixed</li>
+          <li>Session restore now brings back the full queue, not just the current track</li>
+          <li>New Linux graphics auto-config: detects the GPU and recommends safe rendering settings</li>
+          <li>Favorite and add-to-playlist buttons are no longer wrongly disabled on Qobuz tracks</li>
+          <li>Assorted bug fixes, dropdown and menu behavior cleanup, and dependency bumps</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.12" date="2026-05-09">
+      <description>
+        <p>Hotfix: rolls back the broken titlebar-mode-selector that left v1.2.11 with no visible window chrome on Linux. Restores v1.2.10 title bar behavior (System / Custom / Hidden). All other v1.2.11 features remain.</p>
+        <ul>
+          <li>Revert titlebar-mode-selector and PR #406 (Linux titlebar draggable + macOS QBZ strip)</li>
+          <li>macOS QoL (PR #408 by @Vudgekek): native .icns app icon and tray icon variant support with auto dark-mode detection</li>
+          <li>Sticky home tab header animation fix (PR #407 by @afonsojramos) preserved</li>
+          <li>All v1.2.11 features remain: macOS CoreAudio Exclusive Mode, Linux DAC reservation, Discord Rich Presence, Sleep Timer, Offline Cache Manager, Local Library folder-tree and ephemeral playback, metadata-grouped Albums, QConnect startup persistence, album/artist detail polish</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.11" date="2026-05-09">
+      <description>
+        <p>Exclusive Hardening: bit-perfect playback gets reinforced on both ends — macOS gains a real CoreAudio Exclusive Mode (community PR by @Vudgekek) and Linux now reserves the DAC via the standard ReserveDevice1 D-Bus protocol while ALSA Direct is engaged.</p>
+        <ul>
+          <li>macOS Exclusive Mode: bit-perfect playback on Apple hardware (PR #391); CoreAudio device-rate check, exclusive stream recreation, and hardware volume alignment</li>
+          <li>Linux DAC reservation: per-process zbus client acquires org.freedesktop.ReserveDevice1 for the lifetime of an ALSA Direct stream, with a Settings toggle</li>
+          <li>Discord Rich Presence (#336): opt-in track display with a sandbox-aware Flatpak socket bridge — symlinks discord-ipc-{0..9} only after the user enables the toggle</li>
+          <li>Sleep Timer (#402): pause-on-end with a smart-positioned popover, custom values from 1 minute upward</li>
+          <li>Offline Cache Manager: dedicated view replacing the old Settings shortcut, with per-album expand, alpha-index artist rail, live progress rings, and a configurable cache cap (5 GB default)</li>
+          <li>Local Library: new folder-tree mode with two-column layout, recursive multi-select, drag-resizable sidebar, search with path-parents preserved, and network-folder filter</li>
+          <li>Local Library: ephemeral folder playback that doesn't write to the library DB, with CUE support, format whitelist, and gapless prefetch</li>
+          <li>Local Library: metadata-grouped Albums tab (with Plex inclusion) and per-user tab order modal</li>
+          <li>macOS title bar integration (@afonsojramos): qbz custom titlebar mounts on macOS with traffic-light reservation, plus nav/search/hide toggles in Settings</li>
+          <li>Title bar mode selector replaces the hide/system toggles with a system/plasma/stripped dropdown</li>
+          <li>QConnect startup persistence: startup_mode and last_known_state on disk, plus --enable-qconnect / --disable-qconnect CLI flags</li>
+          <li>Album and artist detail polish: palette-derived gradient backdrops, featured artist line, parental warning, click-to-expand description, tracklist toolbar</li>
+          <li>Bug fixes: Plex per-track artwork preserved during scan; macOS output device picker populated; uniform 250ms playback poll cadence; QConnect honors peer-controller seeks; playlist multi-select aligned with TrackRow</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.10" date="2026-04-29">
+      <description>
+        <p>Fix an issue with gapless play introduced by a new feature in 1.2.9.</p>
+      </description>
+    </release>
+    <release version="1.2.9" date="2026-04-29">
+      <description>
+        <p>Quiet Polish: QConnect cleanup, Linux tray for everyone, sticky and sidebar fixes.</p>
+        <ul>
+          <li>QConnect (#316): qconnect_service.rs split into a 12-file module; History duplicates fixed (cursor-align skipped when local is the active renderer); History gaps fixed (set_queue remaps by track id instead of clearing); first-track hiccup, prev/next bouncing, and shuffle drift resolved</li>
+          <li>Linux tray: live tooltip with track title and "by Artist" plus inline hints, middle-click play/pause, vertical scroll adjusts volume in 5 percent steps; new Auto / Light / Dark icon override for GNOME's permanently dark top bar</li>
+          <li>UI polish: sticky headers no longer leave a gap at the titlebar (padding-top moved off the scroll container); Edit folder shortcut in the playlist sidebar context menu and on the Playlist Manager breadcrumb (#364); shift-range and Ctrl/Cmd+A multi-select across the remaining views</li>
+          <li>Streaming and playback: Qobuz subtitle/edition propagated through queue, MPRIS, and Last.fm + ListenBrainz scrobbles (#360); opt-in resume of seek position on session restore (#317); audio device enumeration skips virtual ALSA PCMs and routes libasound's verbose errors to log::debug</li>
+          <li>Build and packaging: x86-64-v3 baseline dropped so pre-Haswell CPUs no longer SIGILL on launch; legacy V2 wrappers removed across library, network, offline_cache, reco, cast/dlna, and api_server playback</li>
+          <li>Stratego theme: imperial crimson and bone white, AAA contrast on every text level</li>
+          <li>Stop-after / remove-after: queue context menu adds a one-shot stop marker and a tail-drop from a pivot</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.8" date="2026-04-21">
+      <description>
+        <p>Mixtapes &amp; Collections: two new first-class container types for curating your listening, independent from Qobuz's own playlists.</p>
+        <ul>
+          <li>Mixtape: private, ordered, cross-source listening session. Add whole albums, single tracks, or nested Qobuz playlists in any order — a Qobuz album next to a local FLAC next to a Plex album. Never leaves the machine, never syncs</li>
+          <li>Collection: private themed album shelf. Album-only, grows as large as you want, supports album-shuffle (random album from the shelf, tracks still play in order)</li>
+          <li>Discography Builder on every artist page: fans out across Qobuz + local library + Plex cache, groups identical titles, lets you override release type, stamps the result as an Artist Collection in one click</li>
+          <li>Add to Mixtape/Collection wired into every context menu (Local Library, Artist, Search, Label, Playlist detail, Album detail, queue rows) with explicit duplicate handling (Add anyway / Skip / Cancel)</li>
+          <li>Plex queue resolver routes plex: album keys to the Plex cache so a Collection starting with a Plex album plays end-to-end, including auto-advance</li>
+          <li>Defaults polish: immersive panels default to 30 FPS; titlebar navs (Discover, Library, Local Library, My QBZ, Search) default ON; offline-cache tracks visible in local library by default — all respecting persisted user preferences</li>
+          <li>Security: rustls-webpki bumped to 0.103.13 for GHSA-965h-392x-2mh5 / GHSA-xgp8-3hg3-c2mh</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.7" date="2026-04-16">
+      <description>
+        <p>Follow-up to 1.2.5 and 1.2.6: a defensive fix and a diagnostics expansion.</p>
+        <ul>
+          <li>Defensive fix for the Discover carousel click-through regression in 1.2.6: mouse-drag scrolling no longer captures the pointer until a real drag is in progress, so clicks on album/artist/playlist cards reach the card's onClick across every WebKitGTK + compositor combo</li>
+          <li>System Diagnostics expansion: one-shot snapshot now reports OS / distro / install method / key library versions (WebKitGTK, GTK, glibc, ALSA, PipeWire, PulseAudio), live playback state, Qobuz Connect role (controller / local renderer / observer), and — opt-out toggle in View Logs — an optional 10s Chromecast + DLNA scan, all bundled into the same paste upload</li>
+          <li>Favorites sidebar backfill: users whose persisted tab order predated the Labels tab were missing the Labels entry; order is now diffed against the canonical default and repaired on load</li>
+          <li>Misc: dependency bumps (svelte 5.55.4, vitest 4.1.4, rand 0.10.1 for GHSA-cq8v-f236-94qc)</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.6" date="2026-04-15">
+      <description>
+        <p>Accessibility, polish, and a couple of regression fixes.</p>
+        <ul>
+          <li>Four new WCAG-compliant themes: WCAG Light, WCAG Dark, High Contrast (pure white on pure black with yellow accent — 21:1 contrast for severely vision-impaired users), and Colorblind (deuteranopia-safe palette)</li>
+          <li>Horizontal album rows on Home, For You, Award and Label views now support mouse drag scrolling — click and drag sideways like on iPad or in a browser</li>
+          <li>Qobuz Connect badge in the player bar is now always visible, even when the queue is empty — connect to a remote renderer without having to start playing something first (#318)</li>
+          <li>Restore Infinite Play: the "∞" toggle in the queue panel now correctly persists across restarts and refills the queue with related tracks (Qobuz /radio/artist) when the queue ends, instead of stopping (#319)</li>
+          <li>App icon: bigger inside the canvas (matches Steam/Chrome/Papirus footprint), with a subtle blue rim and inner highlight so the matte-vinyl disc doesn't disappear on dark backgrounds; new 512x512 PNG export added</li>
+          <li>Gentoo: qbz-bin ebuild now correctly inherits xdg-utils so the hicolor icon cache and the desktop database are refreshed on install/uninstall (was the cause of stale icons after upgrade)</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.5" date="2026-04-15">
+      <description>
+        <p>"Accolade Watch" — a polish release focused on desktop integration, visual identity and small quality-of-life fixes.</p>
+        <ul>
+          <li>New matte-vinyl app icon applied across every size (Tauri, Windows Store, Android, Flatpak, tray) plus a monochrome symbolic variant for system trays</li>
+          <li>Window controls can now auto-detect KDE Plasma / Klassy and mirror the system decoration colors and button shape; new full-height-rounded button style added for Klassy's most common look</li>
+          <li>Opt-in "Match system window chrome": QBZ rounds its own corners to the detected desktop's radius (requires app restart — the window is rebuilt transparent so the corners don't show white)</li>
+          <li>Login screen refresh: larger logo, subtle shadow using the theme's muted color, and QBZ / Qobuz™ Player branding under the mark</li>
+          <li>Editor's Picks tab cleanup: removed redundant "Album of the Week" and "Qobuzissime" ribbons on cards inside their own eponymous sections</li>
+          <li>Playlist context menu in the sidebar now flips above the cursor when it would otherwise fall below the window</li>
+          <li>Sort submenu in the sidebar playlists menu no longer gets clipped by its parent dropdown</li>
+          <li>Genre filter popup uses its CSS max-height for collision detection so it flips above the trigger or clamps to the viewport instead of overflowing the bottom of the window</li>
+          <li>DAC Setup Wizard icon contrast fixed for light accent themes</li>
+          <li>Hardening to audio request signing (internal)</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.4" date="2026-04-07">
+      <description>
+        <p>Quick-fix release: fixes tracks ending ~9 seconds early when streamed via CMAF, and improves credential security with encrypted keyring storage and XDG portal secret integration.</p>
+        <ul>
+          <li>Fixed CMAF segment off-by-one: last audio segment was skipped, cutting ~9 seconds from every track</li>
+          <li>OAuth tokens now encrypted (AES-256-GCM) before storing in system keyring</li>
+          <li>Key derivation uses XDG Desktop Portal secret when available (DE-agnostic, Flatpak-safe)</li>
+          <li>Logout now properly clears stored credentials from keyring and file</li>
+          <li>Reduced log noise: device enumeration, playlist fetches, and zbus internals moved to debug level</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.3" date="2026-04-06">
+      <description>
+        <p>Qobuz has been migrating their audio delivery infrastructure to encrypted segmented streaming. This was silently breaking playback for certain tracks. This release implements the new streaming pipeline end-to-end, making QBZ compatible with Qobuz's current and future audio delivery.</p>
+        <ul>
+          <li>New CMAF streaming pipeline: encrypted segments fetched from Akamai CDN, decrypted on the fly, playback starts in under 1 second</li>
+          <li>Smart quality negotiation: requests the track's actual quality instead of always maximum, eliminating unnecessary API fallback cascades</li>
+          <li>ALSA progressive backoff on device busy: faster track skipping without "device busy" errors</li>
+          <li>Offline playback controls now work without internet connection (#173)</li>
+          <li>OAuth tokens stored in system keyring (GNOME Keyring, KDE Wallet) when available (#215)</li>
+          <li>Ghost track skip prevention: stale auto-advance commands discarded after context switch</li>
+          <li>Logout now stops active playback</li>
+          <li>Vite 8.0.5 security update (3 dev server vulnerabilities)</li>
+          <li>60+ components translated across all 5 locales</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.2" date="2026-04-04">
+      <description>
+        <p>About a month and a half ago, Qobuz began making changes to their authentication system. This was the reason we introduced OAuth login early on — and fortunately, doing so ahead of time meant no one was truly locked out of the app. This release simply removes direct credential login, making OAuth the sole authentication method. There is also some bugfixing for issues reported on GitHub.</p>
+        <p>We are considering requesting official API access again, and looking for ways to coordinate with the community to support this request to Qobuz — so that a more severe change in the future does not leave us out. Thank you all for the continued support for QBZ.</p>
+        <ul>
+          <li>OAuth is now the only login method; username/password authentication has been removed</li>
+          <li>Fixed "Go to Album" and "Go to Artist" navigation failing until starting new playback (#252)</li>
+          <li>Fixed MPRIS metadata not populating on session restore (#240)</li>
+          <li>Fixed incorrect artist birth/formation location display in Artist Network (#235)</li>
+          <li>Added Playlists to the favorites quick access menu and titlebar dropdown (#233)</li>
+          <li>Added bulk "make available offline" action to track selection bar (#231)</li>
+          <li>System sleep is now prevented during active playback via XDG portal (#229)</li>
+          <li>Sensitive IDs and UUIDs are now sanitized from logs (#213)</li>
+          <li>F11 fullscreen toggle and ESC exit now work globally (#202)</li>
+          <li>Added streaming buffer progress indicator to the seekbar (#194)</li>
+          <li>Initial macOS support: CoreAudio device probing, deep links, rich notifications, platform-aware settings</li>
+          <li>Dependency updates: coreaudio-rs, notify-rust, axum, lofty, rand, souvlaki, lucide-svelte, vite</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.2.1" date="2026-03-25">
+      <description>
+        <p>Resilience: exponential backoff retry (1s/2s/4s) with quality fallback when Qobuz servers return 504s. User preference modal for retry behavior (ask/always fallback/always skip), persisted in settings. Degraded service indicator with 5-minute auto-clear. Manual network check button. macOS port foundation (gated backends, native title bar, CI workflow). Offline mode improvements (last known profile restore, dismissible banner, network folders). WebKitGTK 2.50+ image flicker fix. Hybrid Intel+NVIDIA compositing fix. QConnect fixes for queue_version tolerance and ALSA volume control. i18n: hardcoded strings replaced in SearchView and PlaylistDetailView. Security: aws-lc-sys 0.39.0, rustls-webpki 0.103.10.</p>
+      </description>
+    </release>
+    <release version="1.2.0" date="2026-03-19">
+      <description>
+        <p>Qobuz Connect: multi-device playback with renderer and controller mode, server-authoritative queue sync, and bidirectional transport controls. Linebed 3D terrain visualizer with 4096-point FFT. Qobuz playlist follow/unfollow with native API sync. Audio settings sync overhaul fixing exclusive mode with QConnect. Volume lock for ALSA Direct hw:. HiFi Wizard real DAC sample rate detection. MuPDF 0.6 restoring booklet viewer. Offline mode button on network error screen. KWin SSD hack removed. PipeWire rate switch verification with retry. Help tooltips on bit-perfect settings. 185 commits.</p>
+      </description>
+    </release>
+    <release version="1.1.20" date="2026-03-11">
+      <description>
+        <p>Fix startup crash on Debian sid and Fedora (missing libjpeg). Fix partial cover art in AppImage. Fix track number display for compilations and box sets. Fix PipeWire bit-perfect stream match rule in Hi-Fi Wizard. Security update for quinn-proto. Test fixes for cross-distro builds.</p>
+      </description>
+    </release>
+    <release version="1.1.19" date="2026-03-09">
+      <description>
+        <p>Scene Discovery: explore artists from the same city or musical scene. Redesigned Home with 3 Discovery Tabs (Home, Editor's Picks, For You) with personalized radio stations, spotlight artist, and genre filtering. Neon visualizers (Laser, Tunnel, Comet) with album art color extraction. In-app PDF booklet viewer. Audio engine upgrade to rodio 0.22 with ALSA gapless playback. Security hardening and stability fixes.</p>
+      </description>
+    </release>
+    <release version="1.1.18" date="2026-02-26">
+      <description>
+        <p>Miniplayer window with compact and micro surfaces. OAuth browser login for new Qobuz auth flow. Window size persistence, HiDPI scaling fix, and artist image context menus.</p>
+      </description>
+    </release>
+    <release version="1.1.16" date="2026-02-23">
+      <description>
+        <p>OAuth browser authentication, window size persistence, HiDPI scaling fix for all backends, and login flow improvements.</p>
+      </description>
+    </release>
+    <release version="1.1.15" date="2026-02-23">
+      <description>
+        <p>Multi-select tracks across all views with bulk queue and playlist actions. Scroll position now scoped per item and expires after one hour.</p>
+      </description>
+    </release>
+    <release version="1.1.11" date="2026-02-10">
+      <description>
+        <p>Discover browse pages for albums and playlists, localized playlist tags, preserved Qobuz artwork on playlist copy, and UI fixes.</p>
+      </description>
+    </release>
+    <release version="1.1.9" date="2026-02-07">
+      <description>
+        <p>Maintenance release: faster Home view, playback auto-resume after settings change, playlist import improvements, and bug fixes.</p>
+      </description>
+    </release>
+    <release version="1.1.8" date="2026-01-25">
+      <description>
+        <p>Major release: genre filtering, playlist suggestions, immersive player, DAC wizard, key bindings, artist blacklist.</p>
+      </description>
+    </release>
+  </releases>
+</component>

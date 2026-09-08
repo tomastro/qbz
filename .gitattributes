@@ -1,0 +1,16 @@
+# Shaders: the committed .qsb are binary (NUL in the header) but also carry
+# raw CR bytes; a future `* text` would mangle them. Text formats are LF so a
+# Windows checkout with autocrlf cannot turn `2.1.0` into `2.1.0<CR>` in a
+# version grep, or CRLF the GLSL/QML sources.
+*.qsb   binary
+*.frag  text eol=lf
+*.vert  text eol=lf
+*.qml   text eol=lf
+*.toml  text eol=lf
+*.po    text eol=lf
+*.sh    text eol=lf
+*.ico   binary
+# Not in the original plan list, added deliberately: .rs is the largest text
+# set in the tree (639 files) and a CRLF checkout of it is the same class of
+# invisible breakage the .toml line exists to prevent.
+*.rs    text eol=lf

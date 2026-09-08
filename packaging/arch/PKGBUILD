@@ -1,0 +1,56 @@
+# Maintainer: QBZ Team
+
+pkgname=qbz
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Native Qobuz client for Linux with bit-perfect playback"
+arch=(x86_64)
+url="https://github.com/vicrodh/qbz"
+license=(MIT)
+# v2.0+ (Slint/winit binary): no webkit/gtk/appindicator/node.
+depends=(
+  alsa-lib
+  fontconfig
+  freetype2
+  libpng
+  bzip2
+  expat
+  zlib
+  libxkbcommon
+  wayland
+  libglvnd
+  dbus
+)
+makedepends=(
+  rust
+  cargo
+  pkgconf
+  clang
+  nasm
+)
+optdepends=(
+  'alsa-utils: Required for bit-perfect device detection and better ALSA device names'
+  'pipewire-alsa: PipeWire audio support'
+  'pipewire-pulse: PulseAudio compatibility'
+  'vulkan-driver: GPU-accelerated rendering (wgpu)'
+)
+source=("https://github.com/vicrodh/qbz/archive/refs/tags/v${pkgver}.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  cd "${srcdir}/qbz-${pkgver}"
+  # Symbols stripped by the workspace [profile.release]. The qbz_ui rustc
+  # peaks ~30 GB RAM — single job keeps the footprint at its measured MIN.
+  CARGO_BUILD_JOBS=1 cargo build --release --manifest-path crates/Cargo.toml -p qbz
+}
+
+package() {
+  cd "${srcdir}/qbz-${pkgver}"
+  install -Dm755 crates/target/release/qbz "${pkgdir}/usr/bin/qbz"
+  # .desktop basename and Icon MUST be the app-id so GNOME resolves the MPRIS
+  # app icon (MPRIS DesktopEntry = com.blitzfc.qbz → <id>.desktop → Icon=).
+  install -Dm644 packaging/arch/com.blitzfc.qbz.desktop "${pkgdir}/usr/share/applications/com.blitzfc.qbz.desktop"
+  install -Dm644 packaging/icons/128x128.png "${pkgdir}/usr/share/icons/hicolor/128x128/apps/com.blitzfc.qbz.png"
+  install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+  install -Dm644 licenses/* -t "${pkgdir}/usr/share/licenses/${pkgname}/third-party"
+}

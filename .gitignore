@@ -1,0 +1,70 @@
+# Build outputs
+dist/
+/package
+
+# Rust
+target/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log
+snapcraft-*.txt
+
+# Flatpak build artifacts
+flatpak-build/
+flatpak-repo/
+.flatpak-builder/
+packaging/flatpak/build/
+packaging/flatpak/repo/
+packaging/flatpak/.flatpak-builder/
+
+# Release artifacts
+*.AppImage
+*.deb
+*.rpm
+*.flatpak
+*.snap
+/packaging/snap/parts/
+/packaging/snap/prime/
+/packaging/snap/stage/
+*.tar.gz
+*.tar.xz
+
+# Image upscaler outputs
+static/*upscayl*
+
+# Local build temp
+/.tmp/
+/tmp/
+/tools/
+/scratchpad/
+
+# Documentation (kept external)
+qbz-nix-docs/
+
+# AI agent instructions and planning docs (untracked)
+.github/copilot-instructions.md
+docs/superpowers/
+CLAUDE.md
+AGENTS.md
+
+/crates/target/
+# /crates/Cargo.lock  # tracked for reproducible CI builds
+test-results/
+
+
+# Isolated cargo test target dir (scripts / agents)
+/crates/target-test/

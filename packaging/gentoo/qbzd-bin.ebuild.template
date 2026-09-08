@@ -1,0 +1,73 @@
+# Copyright 2024-2026 Gentoo Authors
+# Distributed under the terms of the MIT License
+
+EAPI=8
+
+inherit optfeature
+
+DESCRIPTION="QBZ headless Qobuz daemon for servers and appliances (prebuilt binary)"
+HOMEPAGE="https://qbz.lol https://github.com/vicrodh/qbz"
+
+MY_PV="${PV}"
+SRC_URI="
+	amd64? ( https://github.com/vicrodh/qbz/releases/download/v${MY_PV}/qbzd-${MY_PV}-linux-amd64.tar.gz )
+	arm64? ( https://github.com/vicrodh/qbz/releases/download/v${MY_PV}/qbzd-${MY_PV}-linux-aarch64.tar.gz )
+"
+
+LICENSE="MIT"
+SLOT="0"
+KEYWORDS="~amd64 ~arm64"
+IUSE="jack pipewire pulseaudio"
+RESTRICT="mirror strip"
+
+# Measured NEEDED set: libasound only, plus toolchain libraries. The helper
+# processes used for richer routing remain optional.
+RDEPEND="
+	media-libs/alsa-lib
+	jack? ( virtual/jack )
+	pipewire? ( media-video/pipewire )
+	pulseaudio? ( media-libs/libpulse )
+"
+
+QA_PREBUILT="usr/bin/qbzd"
+S="${WORKDIR}"
+
+src_install() {
+	local dir
+	if use amd64; then
+		dir="qbzd-${MY_PV}-linux-amd64"
+	elif use arm64; then
+		dir="qbzd-${MY_PV}-linux-aarch64"
+	fi
+
+	dobin "${dir}/qbzd"
+	insinto /usr/lib/systemd/user
+	doins "${dir}/qbzd.service"
+	insinto /usr/share/bash-completion/completions
+	newins "${dir}/completions/qbzd.bash" qbzd
+	insinto /usr/share/zsh/site-functions
+	newins "${dir}/completions/qbzd.zsh" _qbzd
+	insinto /usr/share/fish/vendor_completions.d
+	newins "${dir}/completions/qbzd.fish" qbzd.fish
+	dodoc "${dir}/README.md" "${dir}/LICENSE"
+	insinto /usr/share/licenses/${PN}/third-party
+	doins "${dir}"/licenses/*
+}
+
+pkg_postinst() {
+	elog "Run 'qbzd' once for the setup wizard (or 'qbzd tui')."
+	if [[ -d /run/systemd/system ]]; then
+		elog "Optional systemd user service: systemctl --user enable --now qbzd.service"
+		elog "Use loginctl enable-linger USER to keep it running after logout."
+	elif [[ -e /run/openrc ]] || [[ -x /sbin/openrc ]]; then
+		elog "Generate an OpenRC service for the playback user with:"
+		elog "  qbzd service openrc --user USER --bin /usr/bin/qbzd"
+	elif [[ -e /run/runit ]] || [[ -d /etc/sv ]]; then
+		elog "Generate a runit service for the playback user with:"
+		elog "  qbzd service runit --user USER --bin /usr/bin/qbzd"
+	else
+		elog "Generate a definition for the active init with:"
+		elog "  qbzd service --user USER --bin /usr/bin/qbzd"
+	fi
+	optfeature "opening login links in a local browser" x11-misc/xdg-utils
+}

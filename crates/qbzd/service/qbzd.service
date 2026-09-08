@@ -1,0 +1,21 @@
+# qbzd.service — QBZ headless Qobuz playback daemon (user unit).
+#
+# REQUIRED on headless boxes: sudo loginctl enable-linger $USER
+#   Without linger, this unit STOPS when you log out of SSH and the device
+#   vanishes from the Qobuz app. `qbzd status` warns when linger is off.
+#
+# Note: user units cannot order against system targets (network-online.target,
+# sound.target are system-scope). Boot-order resilience is IN the binary:
+# missing network/DAC at start = retry with backoff, never crash-exit.
+[Unit]
+Description=QBZ headless Qobuz playback daemon
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/qbzd run
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

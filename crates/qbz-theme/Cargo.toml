@@ -1,0 +1,23 @@
+[package]
+name = "qbz-theme"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Frontend-agnostic theme/palette registry for QBZ (ADR-006). No Slint, no Tauri, no heavy deps."
+
+[dependencies]
+# Serde — for persisting/parsing the stable theme slug and the auto-theme
+# palette/scheme types. All color + contrast math is hand-rolled so the core
+# stays light and fast.
+serde = { workspace = true }
+# Image decoding for the auto-theme palette extractor (`auto::palette`). Only the
+# formats a wallpaper / user cover realistically uses are enabled, so the codec
+# surface stays small and `cargo check -p qbz-theme` remains fast. Version
+# matches the one already resolved in crates/Cargo.lock (0.25.x).
+image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp", "bmp", "tiff"] }
+
+[dev-dependencies]
+# JSON round-trip test for the custom-theme base (the bin persists it to
+# custom_theme.json via serde_json; the crate itself only needs serde derive).
+serde_json = { workspace = true }

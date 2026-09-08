@@ -1,0 +1,32 @@
+[package]
+name = "qbz-disc"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+log = { workspace = true }
+thiserror = { workspace = true }
+sha1 = "0.10"
+base64 = { workspace = true }
+# The disc MEMORY (src/store.rs). SQLite rather than a JSON file because the
+# app already speaks it everywhere and a row-at-a-time upsert is what the
+# "never overwrite a human" rule needs.
+rusqlite = { version = "0.40", features = ["bundled"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+dirs = "6"
+encoding_rs = "0.8"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2"
+
+# macOS hands the table of contents over as a `.TOC.plist` beside the audio
+# files. It is a BINARY plist in practice, so it is parsed rather than read.
+[target.'cfg(target_os = "macos")'.dependencies]
+plist = "1"
+
+[dev-dependencies]
+reqwest = { workspace = true }
+tokio = { workspace = true }
+serde_json = { workspace = true }
+rustls = { version = "0.23", default-features = false, features = ["aws-lc-rs"] }

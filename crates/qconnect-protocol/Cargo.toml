@@ -1,0 +1,15 @@
+[package]
+name = "qconnect-protocol"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Qobuz Connect protocol contracts for queue commands and events"
+
+[dependencies]
+qconnect-core = { path = "../qconnect-core" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+log = { workspace = true }
+prost = "0.14"
+uuid = { version = "1", features = ["v4"] }

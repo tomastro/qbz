@@ -1,0 +1,272 @@
+[package]
+name = "qbz-qt"
+description = "Qt/QML frontend for QBZ (cxx-qt bridge over the UI-agnostic backend)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+# The shipped executable remains `qbz`; the package name stays `qbz-qt` so
+# package-scoped Cargo commands remain unambiguous.
+name = "qbz"
+path = "src/main.rs"
+
+[dependencies]
+cxx = "1"
+cxx-qt = "0.7"
+cxx-qt-lib = { version = "0.7", features = ["qt_full"] }
+
+tokio = { workspace = true }
+log = { workspace = true }
+# Hard-exit watchdog (main.rs arm_hard_exit_watchdog): `_exit` terminates
+# without running the atexit chain — a hang inside Qt's atexit destructors is
+# one of the wedges the watchdog exists to cut short. Already in the lock as
+# a transitive dep of half the tree; this only makes it direct.
+libc = "0.2"
+qbz-disc = { path = "../qbz-disc" }
+qbz-rip = { path = "../qbz-rip" }
+rand = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+reqwest = { workspace = true }
+urlencoding = "2"
+# Deep links are validated by a real parse before they are acted on: a
+# launcher can split a URL across argv, and a bare scheme is not a URL.
+# Already in the workspace lock via qbz-models.
+url = "2"
+open = "5"
+dirs = "5"
+
+# Share links (src/share_qt.rs).
+# Rust owns the clipboard on this side because the toast does: cxx-qt-lib 0.7
+# ships no QClipboard binding, and QML cannot publish QbzShell.toastJson, so
+# splitting the copy and its confirmation across the boundary would buy
+# nothing.
+#
+# wayland-data-control: Wayland-native clipboard via the data-control
+# protocols (GNOME/KDE/sway/niri/Hyprland), falling back to X11 when Wayland
+# is absent (#514 — without it arboard is X11-only and every copy fails on
+# Wayland-only sessions).
+arboard = { version = "3", features = ["wayland-data-control"] }
+
+qbz-core = { path = "../qbz-core" }
+qbz-app = { path = "../qbz-app" }
+qbz-audio = { path = "../qbz-audio" }
+# The HiFi Wizard's frontend-agnostic core; Qt owns the presentation adapter.
+qbz-dac-wizard-core = { path = "../qbz-dac-wizard-core" }
+qbz-qobuz = { path = "../qbz-qobuz" }
+# Cross-provider "Open Music Link" resolver. The crate is frontend-agnostic;
+# src/link_resolver_qt.rs supplies the live Qobuz search + Qt navigation seams.
+qbz-music-link = { path = "../qbz-music-link" }
+qbz-models = { path = "../qbz-models" }
+qbz-cache = { path = "../qbz-cache" }
+qbz-offline-cache = { path = "../qbz-offline-cache" }
+qbz-library = { path = "../qbz-library" }
+# Derived, rebuildable Local Library read catalog. The Qt app only schedules
+# its background bootstrap here; no Qt type crosses into the catalog crate.
+qbz-local-catalog = { path = "../qbz-local-catalog" }
+# MyQBZ: Mixtapes & Collections backend (schema + migrations, repo, shuffle,
+# enqueue). Headless and frontend-agnostic (ADR-006), with the persistent
+# library.db schema owned outside the Qt presentation layer.
+qbz-mixtape = { path = "../qbz-mixtape" }
+qbz-source = { path = "../qbz-source" }
+# The media-server protocol crates. `qbz-qt` needs them directly for the SYNC
+# (which lives here, where the tokio runtime and the progress UI are) and for
+# `Credentials`, which the settings glue derives.
+qbz-jellyfin = { path = "../qbz-jellyfin" }
+qbz-subsonic = { path = "../qbz-subsonic" }
+qbz-media-cache = { path = "../qbz-media-cache" }
+# Cast: Chromecast + DLNA discovery, the two device families and the local
+# media server (src/cast_qt.rs drives it — nothing is reimplemented).
+qbz-cast = { path = "../qbz-cast" }
+qbz-plex = { path = "../qbz-plex" }
+qbz-lyrics = { path = "../qbz-lyrics" }
+# Playlist Importer: the provider scrapers (Spotify / Apple Music / Tidal /
+# Deezer), the Qobuz matcher and playlist creation. The implementation stays
+# frontend-agnostic (ADR-006); src/playlist_import_qt.rs drives it.
+qbz-playlist-import = { path = "../qbz-playlist-import" }
+qbz-account-migration = { path = "../qbz-account-migration" }
+qbz-text-utils = { path = "../qbz-text-utils" }
+qbz-credentials = { path = "../qbz-credentials" }
+qbz-i18n = { path = "../qbz-i18n" }
+qbz-log = { path = "../qbz-log" }
+qbz-theme = { path = "../qbz-theme" }
+qbz-integrations = { path = "../qbz-integrations" }
+# Last.fm "similar albums" row on the album page (external_reco_qt.rs).
+qbz-external-reco = { path = "../qbz-external-reco" }
+# System media controls — MPRIS on Linux (what makes the KDE Plasma / GNOME
+# now-playing widget and the hardware media keys see QBZ), SMTC/MediaRemote
+# elsewhere. Driven by src/media_controls_qt.rs.
+#
+# Plain, NOT target-gated, and with no features. The crate carries its own cfg
+# arms internally and is already a workspace member.
+#
+# Its Linux backend rides mpris-server -> zbus 4 with its own current-thread
+# tokio runtime, which is a DIFFERENT major from the zbus 5 that ksni / ashpd /
+# rfd use with async-io. That is the only reason the two coexist in one
+# process; the rule in the ksni comment below applies here too — never enable a
+# `tokio` feature on any D-Bus dependency.
+qbz-media-controls = { path = "../qbz-media-controls" }
+# Qobuz Connect: shared session/renderer orchestration and WS transport,
+# consumed without a frontend fork. Driven by src/qconnect_transport_qt.rs,
+# src/qconnect_engine_qt.rs and the facade/event sink.
+qconnect-app = { path = "../qconnect-app" }
+qconnect-lan = { path = "../qconnect-lan" }
+qconnect-protocol = { path = "../qconnect-protocol" }
+qconnect-transport-ws = { path = "../qconnect-transport-ws" }
+# Type-level edge only, sanctioned by contract §1.1: the QConnect renderer
+# engine trait names `qbz_player::PlaybackState`, and the engine's feeder
+# reaches the protected player seams THROUGH `runtime.core().player()` — the
+# shared engine trait. No qbz-player/qbz-audio internals are touched
+# (TRACK-RULES §7).
+qbz-player = { path = "../qbz-player" }
+# QConnect: uuid v4 for controller action ids (the B3 facade / B4 sink);
+# futures-util for the engine's HTTP feeder
+# (StreamExt over the response byte stream).
+uuid = { version = "1", features = ["v4"] }
+futures-util = { workspace = true }
+tempfile = "3"
+async-trait = "0.1"
+zeroize = "1"
+
+rusqlite = { version = "0.40", features = ["bundled"] }
+image = { version = "0.25", default-features = false, features = ["jpeg", "png"] }
+
+# Native file picker, used by exactly two call sites — the MyQBZ collection
+# cover upload (src/myqbz_cover_qt.rs) and the My-QBZ branding icon picker
+# (src/myqbz_prefs_qt.rs).
+#
+# "async-std" is rfd's name for the async-io/ashpd backend. NEVER enable
+# rfd's "tokio" feature: it would switch the shared zbus 5 executor choice.
+# `default-features = false` keeps the GTK3 backend out; the xdg-portal path
+# is the Wayland-correct one and needs no extra system libs.
+rfd = { version = "0.17", default-features = false, features = ["xdg-portal"] }
+
+# Linux system tray via StatusNotifierItem (src/tray_linux.rs). macOS and
+# Windows use their native implementations in src/tray_macos.rs and
+# src/tray_windows.rs.
+#
+# default-features = false: ksni's default is "tokio", which flips the shared
+# zbus 5 executor to tokio graph-wide. We only use the blocking API on
+# worker threads; async-io self-drives the connection from any context.
+# Feature unification is per-crate-graph, not per-target: any dependency that
+# turns on zbus/tokio changes the whole binary.
+[target.'cfg(target_os = "linux")'.dependencies]
+async-io = "2"
+ksni = { version = "0.3", default-features = false, features = ["blocking", "async-io"] }
+# Session-bus single-instance guard. Keep the same async-io executor as ksni;
+# enabling zbus/tokio would poison the graph-wide executor choice.
+zbus = { version = "5", default-features = false, features = ["async-io", "blocking-api"] }
+
+[build-dependencies]
+cxx-qt-build = "0.7"
+# A4 (Line Bed QQuickRhiItem): the crate's first hand-written C++
+# (cxx/linebed_item.cpp). `qt-build-utils` provides moc + the Qt include
+# paths — it is cxx-qt-build's OWN engine, already in the lock at the same
+# version, so this adds no new package. `cc` compiles the static lib
+# (likewise already in the lock).
+qt-build-utils = "0.7"
+cc = "1"
+
+[target.'cfg(windows)'.build-dependencies]
+# Icon + VERSIONINFO + the longPathAware manifest, embedded as PE resources.
+# winresource, not winres: winres has been unmaintained since 2021 and this
+# is its maintained fork.
+winresource = "0.1"
+
+# macOS only: the Dock-icon activation policy behind the "Hide Dock icon when
+# closed to menu bar" setting (Spotify behaviour — close puts the app in the
+# menu bar and drops the Dock icon; minimize still goes to the Dock).
+#
+# objc2 0.5 / objc2-app-kit 0.2 stay on one internally consistent generation;
+# mixing objc2 generations in one binary can register duplicate Objective-C
+# classes. Only the items used by the native tray/Dock integration are enabled.
+#
+# ⚠ NOT COMPILED OR TESTED HERE. This tree builds on Linux; the macOS arm is
+# behind cfg, so `cargo build` cannot see it. First real check is a macOS
+# build — the Mac mini (192.168.0.69) is where that happens.
+[target.'cfg(target_os = "windows")'.dependencies]
+# SetCurrentProcessExplicitAppUserModelID: the identity Windows groups the
+# taskbar button under and matches a toast's app_id against. 0.61 is already
+# in the workspace lock.
+windows-sys = { version = "0.61", features = [
+  "Win32_UI_Shell",
+  # Single instance: CreateMutexW arbitrates, a named pipe carries the
+  # handoff, and both need the error codes to tell "already there" from
+  # "failed".
+  "Win32_Foundation",
+  "Win32_System_Threading",
+  "Win32_System_Pipes",
+  # ProcessIdToSessionId: the pipe name is qualified by session, because
+  # pipe names are machine-global while the mutex is per-session.
+  "Win32_System_RemoteDesktop",
+  "Win32_Storage_FileSystem",
+  # RegGetValueW: is this install's AppUserModelID actually registered?
+  # Without that, Windows silently drops every toast.
+  "Win32_System_Registry",
+] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+# DIRECT objc2, added 2026-08-05 for the menu-bar tray: `declare_class!`,
+# `msg_send_id!`, `sel!`, `ClassType`, `DeclaredClass`, `mutability` and
+# `rc::Retained` all live at the objc2 root. Pinned to the generation targeted
+# by objc2-app-kit 0.2.
+objc2 = "0.5"
+# `MainThreadMarker` — in THIS generation it is exported by objc2-foundation,
+# not by the objc2 root (objc2-foundation-0.2.2/src/lib.rs:152, ungated). The
+# native integration imports it from here.
+objc2-foundation = { version = "0.2", default-features = false, features = [
+    "std",
+    # NSThread gates `MainThreadMarker::new()` itself
+    # (objc2-foundation-0.2.2/src/thread.rs:210-213) — without it the type
+    # exists but only the UNSAFE `new_unchecked` does, which is not what this
+    # wants: the whole point is to ASK whether we are on the AppKit main
+    # thread and no-op if not. Caught by the Mac build; invisible on Linux.
+    "NSThread",
+] }
+objc2-app-kit = { version = "0.2", default-features = false, features = [
+    "std",
+    # NSApplication: the class and `setActivationPolicy`.
+    "NSApplication",
+    # NSResponder: `sharedApplication` is behind `cfg(feature = "NSResponder")`
+    # (objc2-app-kit-0.2.2/src/generated/NSApplication.rs:326-329) — it is
+    # NSApplication's superclass, and the NSApplication feature does NOT pull
+    # it.
+    "NSResponder",
+    # NSRunningApplication: where `NSApplicationActivationPolicy` actually
+    # lives (…/src/generated/NSRunningApplication.rs:33-35), NOT in
+    # NSApplication.rs as the name suggests. Verified by reading the crate
+    # rather than by compiling — this arm cannot be built on Linux, and the
+    # reference's own proven set (crates/qbz/Cargo.toml) lists the same three.
+    "NSRunningApplication",
+    # --- macos_chrome.rs (traffic-light centring) -------------------------
+    # Every one of these was read out of objc2-app-kit-0.2.2's own sources
+    # before being added, because this arm cannot be compiled on Linux:
+    #   NSWindow — `NSApplication::mainWindow` is gated on it
+    #     (generated/NSApplication.rs:355), and it carries `frame` +
+    #     `standardWindowButton`. The style-mask / titlebar setters it also
+    #     carries are NO LONGER USED: expanding the client area is Qt's job
+    #     via the 6.9 window flags (see Main.qml), because QCocoaWindow
+    #     recomputes and reassigns the mask behind us.
+    #   NSButton + NSControl + NSView — `standardWindowButton` is gated on
+    #     ALL THREE at once (generated/NSWindow.rs:1181), not just NSButton;
+    #     NSControl is NSButton's superclass and NSView is NSControl's.
+    #     NSView also provides the geometry the centring measures with
+    #     (bounds / frame / setFrame / superview / isFlipped /
+    #     convertRect_toView).
+    "NSWindow",
+    "NSButton",
+    "NSControl",
+    "NSView",
+    # --- tray_macos.rs (the menu-bar NSStatusItem) ------------------------
+    # Exactly the set the reference proves on a Mac (qbz/Cargo.toml:172-188);
+    # NSStatusBarButton is separate from NSStatusItem, and NSEvent is what
+    # `handle_status_click` reads to tell a right-click from a left-click.
+    "NSStatusBar",
+    "NSStatusItem",
+    "NSStatusBarButton",
+    "NSMenu",
+    "NSMenuItem",
+    "NSImage",
+    "NSEvent",
+] }

@@ -1,0 +1,20 @@
+[General]
+count=1
+rules=qbz-miniplayer-keep-above
+
+[qbz-miniplayer-keep-above]
+Description=QBZ miniplayer — keep above other windows
+# Match the miniplayer by its window title, which is a stable literal the app
+# never translates (qml/miniplayer/MiniWindow.qml: title: "QBZ Mini Player").
+# The main window is titled "QBZ", so a substring match would catch both —
+# this is an EXACT match on purpose.
+title=QBZ Mini Player
+titlematch=1
+# Restrict to QBZ, so a stray window from another app with the same title
+# cannot pick the rule up.
+wmclass=com.blitzfc.qbz
+wmclasscomplete=false
+wmclassmatch=1
+# 2 = Force. The window has no say and cannot toggle it off.
+above=true
+aboverule=2

@@ -1,0 +1,22 @@
+{
+  "album_id": "gvcirtodd95kc",
+  "track_id": 266725027,
+  "translation_langs": ["pt", "de", "fr", "es", "it"],
+  "publishers": [
+    {
+      "copyright": "Kobalt Music Publishing Ltd., Universal Music Publishing Group",
+      "zones": ["WW"]
+    }
+  ],
+  "writers": "Billie EIlish O'Connell, Finneas O'Connell",
+  "translation": {
+    "type": "lsync",
+    "lang": "es",
+    "lines": [
+      { "line": "Oh, mm-mm", "start": 1750, "end": 4770 },
+      { "line": "" },
+      { "line": "Podría comerme a esa chica para el almuerzo", "start": 5320, "end": 6990 },
+      { "line": "Sí, ella baila en mi lengua", "start": 7230, "end": 8840 }
+    ]
+  }
+}

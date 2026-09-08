@@ -1,0 +1,48 @@
+[package]
+name = "qbz-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Core orchestrator for QBZ music player"
+
+[dependencies]
+qbz-models = { path = "../qbz-models" }
+qbz-audio = { path = "../qbz-audio" }
+qbz-player = { path = "../qbz-player" }
+qbz-qobuz = { path = "../qbz-qobuz" }
+qbz-radio = { path = "../qbz-radio" }
+qbz-integrations = { path = "../qbz-integrations" }
+qbz-offline-cache = { path = "../qbz-offline-cache" }
+qbz-reco = { path = "../qbz-reco" }
+
+# Async
+tokio = { workspace = true }
+async-trait = { workspace = true }
+
+# Logging
+log = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[target.'cfg(windows)'.dependencies]
+# W14: GlobalMemoryStatusEx stands in for /proc/meminfo. 0.61 is already in
+# the workspace lock (qbz-local-catalog, qbzd), so this pulls nothing new.
+windows-sys = { version = "0.61", features = [
+  "Win32_System_SystemInformation",
+] }
+
+[features]
+default = []
+# Tier 2 features (to be added later)
+# offline = ["qbz-offlineplayback"]
+# local-library = ["qbz-locallibrary"]
+# cast = ["qbz-cast"]
+# scrobbling = ["qbz-scrobbling"]
+# plex = ["qbz-plex"]
+# full = ["offline", "local-library", "cast", "scrobbling", "plex"]

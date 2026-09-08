@@ -1,0 +1,19 @@
+[package]
+name = "qbz-dac-wizard-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "HiFi/DAC setup wizard — frontend-agnostic core (probes, remediations, config generation)."
+
+[lib]
+name = "qbz_dac_wizard_core"
+path = "src/lib.rs"
+
+# Deliberately NO frontend dependency (no slint, no qbz-ui, no cxx-qt). ADR-006:
+# The core is frontend-agnostic so Qt and future non-GUI consumers can share it.
+# Everything here returns plain data; pushing it into a UI is the frontend's job.
+[dependencies]
+qbz-audio = { path = "../qbz-audio" }
+qbz-models = { path = "../qbz-models" }
+qbz-i18n = { path = "../qbz-i18n" }

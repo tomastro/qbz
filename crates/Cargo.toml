@@ -1,0 +1,136 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "qbz-app",
+    "qbz-theme",
+    "qbz-models",
+    "qbz-audio",
+    "qbz-player",
+    "qbz-qobuz",
+    "qbz-radio",
+    "qbz-core",
+    "qbz-integrations",
+    "qbz-cache",
+    "qbz-library",
+    # Frontend-agnostic, derived Local Library read projection. It owns no
+    # source APIs and no Qt types; source caches project into this boundary.
+    "qbz-local-catalog",
+    "qbz-cast",
+    "qbz-cmaf",
+    "qbz-dsd",
+    # Optical media (CD-DA now; SACD/ISO next). Frontend-agnostic, and NOT a
+    # dependency of qbz-dsd's reverse: qbz-dsd will depend on THIS, never the
+    # other way, or the two close a cycle.
+    "qbz-disc",
+    "qbz-rip",
+    "qbz-secrets",
+    "qbz-offline-cache",
+    "qbz-plex",
+    "qconnect-core",
+    "qconnect-protocol",
+    "qconnect-transport-ws",
+    "qconnect-app",
+    "qconnect-lan",
+    # The HiFi Wizard's frontend-agnostic core (ADR-006), consumed by Qt.
+    "qbz-dac-wizard-core",
+    "qbz-text-utils",
+    "qbz-credentials",
+    "qbz-media-controls",
+    "qbz-mixtape",
+    "qbz-playlist-import",
+    "qbz-account-migration",
+    "qbz-lyrics",
+    "qbz-i18n",
+    "qbz-music-link",
+    "qbz-reco",
+    "qbz-external-reco",
+    "qbz-log",
+    "qbzd",
+    "qbz-qt",
+    # The source-agnostic seam (one trait + one registry over Qobuz / local /
+    # Plex). It deliberately does NOT depend on qbz-audio / qbz-player.
+    "qbz-source",
+    # Media-server protocol crates: siblings of `qbz-plex`, same shape. HTTP +
+    # DTOs only — no cache schema, no settings store, no Qt (ADR-006).
+    "qbz-jellyfin",
+    "qbz-subsonic",
+    # ONE cache for every remote server (see its header for why the Plex one
+    # is not migrated in the same change).
+    "qbz-media-cache",
+]
+
+# The desktop application is Qt/QML. Plain `cargo build`/`cargo check` produces
+# that binary plus its frontend-agnostic dependency closure.
+default-members = ["qbz-qt"]
+
+[workspace.package]
+version = "2.1.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/vicrodh/qbz"
+
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+async-trait = "0.1"
+futures-util = "0.3"
+tokio-stream = { version = "0.1", features = ["sync"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# HTTP
+reqwest = { version = "0.13", default-features = false, features = ["json", "query", "form", "rustls-no-provider", "cookies", "stream"] }
+
+# Logging
+log = "0.4"
+tracing = "0.1"
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+
+# Crypto (Qobuz auth)
+md-5 = "0.10"
+base64 = "0.23"
+
+# Time
+chrono = "0.4"
+
+# Regex
+regex = "1"
+
+# Audio
+symphonia = { version = "0.5", features = ["all"] }
+lofty = "0.25.1"
+
+# Random number generation (shuffle / DJ-mix) — mirrors src-tauri pin
+rand = "0.10"
+
+# Fuzzy string similarity (track-mix dedup) — mirrors src-tauri pin
+strsim = "0.11"
+
+# Note: Linux-specific dependencies (alsa) go in individual crate Cargo.toml files
+# because workspace manifests cannot have [target] sections
+
+# Local patch of rust_cast 0.21.0 (see crates/vendor/rust_cast/QBZ_PATCH.md):
+# its NoCertificateVerification verifier delegates TLS signature checks to
+# rustls helpers that parse the server certificate with webpki, which rejects
+# the X.509 v1 self-signed certificates served by many Cast devices (AV
+# receivers with Chromecast built-in) during the handshake. The vendored copy
+# asserts signature validity instead, matching the verifier's no-validation
+# contract. Drop this patch once a rust_cast release carries the fix upstream.
+[patch.crates-io]
+rust_cast = { path = "vendor/rust_cast" }
+
+[profile.release]
+# Strip symbol tables from release binaries. Measured on 2026-07-02:
+# 400 MB -> 218 MB (-45%). Trade-off: panic backtraces show addresses instead
+# of names; release automation retains an unstripped artifact for offline
+# symbolication.
+# Codegen knobs (opt-level / codegen-units / jobs) intentionally stay in the
+# workflows' env (CARGO_PROFILE_RELEASE_*) — they are CI-memory tuning, not
+# a property of the package.
+strip = "symbols"

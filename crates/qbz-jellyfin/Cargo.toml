@@ -1,0 +1,24 @@
+[package]
+name = "qbz-jellyfin"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Jellyfin integration for QBZ: HTTP client, JSON metadata, bit-perfect stream URLs (frontend-agnostic)"
+
+[dependencies]
+# HTTP client for the Jellyfin server API.
+reqwest = { workspace = true, features = ["json"] }
+
+# Jellyfin speaks JSON end to end (Plex speaks XML — that is the whole
+# difference between this crate's parsing and `qbz-plex`'s).
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }
+# reqwest is built with `rustls-tls-webpki-roots-no-provider`, so a
+# `reqwest::Client` cannot be CONSTRUCTED until a process-level CryptoProvider
+# is installed. The app does that in `qbz_app::install_crypto_provider`; a test
+# binary has no app, so the live harness installs it itself (same shape as
+# `qbz-offline-cache/tests/purchase_download_harness.rs`).
+rustls = { version = "0.23", features = ["aws_lc_rs"] }

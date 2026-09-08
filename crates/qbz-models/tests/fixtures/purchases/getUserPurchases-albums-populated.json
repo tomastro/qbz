@@ -1,0 +1,287 @@
+{
+  "albums": {
+    "items": [
+      {
+        "articles": [],
+        "artist": {
+          "albums_count": 145,
+          "id": 121232,
+          "image": null,
+          "name": "Megadeth",
+          "picture": null,
+          "slug": "megadeth"
+        },
+        "artists": [
+          {
+            "id": 121232,
+            "name": "Megadeth",
+            "roles": [
+              "main-artist"
+            ]
+          }
+        ],
+        "displayable": true,
+        "downloadable": true,
+        "downloadable_format_ids": [
+          55
+        ],
+        "duration": 2439,
+        "genre": {
+          "color": "#0070ef",
+          "id": 116,
+          "name": "Metal",
+          "path": [
+            116
+          ],
+          "slug": "metal"
+        },
+        "hires": false,
+        "hires_purchased": true,
+        "hires_streamable": false,
+        "id": "y5vh6f9umemda",
+        "image": {
+          "back": null,
+          "large": "https://static.qobuz.com/images/covers/da/em/y5vh6f9umemda_600.jpg",
+          "small": "https://static.qobuz.com/images/covers/da/em/y5vh6f9umemda_230.jpg",
+          "thumbnail": "https://static.qobuz.com/images/covers/da/em/y5vh6f9umemda_50.jpg"
+        },
+        "label": {
+          "albums_count": 1427,
+          "id": 247708,
+          "name": "CAPITOL CATALOG MKT (C92)",
+          "slug": "capitol-catalog-mkt-c92",
+          "supplier_id": 1
+        },
+        "maximum_bit_depth": 16,
+        "maximum_channel_count": 2,
+        "maximum_sampling_rate": 44.1,
+        "media_count": 1,
+        "order_id": 0,
+        "order_line_id": 1,
+        "parental_warning": false,
+        "popularity": 0,
+        "previewable": true,
+        "purchasable": true,
+        "purchasable_at": 1783321200,
+        "purchased_at": 1700000000,
+        "qobuz_id": 189898762,
+        "release_date_download": "1990-09-24",
+        "release_date_original": "1990-09-24",
+        "release_date_stream": "1990-09-24",
+        "released_at": 654127200,
+        "sampleable": true,
+        "slug": "rust-in-peace-megadeth",
+        "streamable": true,
+        "streamable_at": 1783321200,
+        "title": "Rust In Peace",
+        "tracks_count": 9,
+        "upc": "0602547899347",
+        "url": "https://www.qobuz.com/fr-fr/album/rust-in-peace-megadeth/y5vh6f9umemda",
+        "version": null
+      },
+      {
+        "articles": [],
+        "artist": {
+          "albums_count": 14,
+          "id": 319678,
+          "image": null,
+          "name": "Rosa Luxemburg",
+          "picture": null,
+          "slug": "rosa-luxemburg"
+        },
+        "artists": [
+          {
+            "id": 319678,
+            "name": "Rosa Luxemburg",
+            "roles": [
+              "main-artist"
+            ]
+          }
+        ],
+        "displayable": true,
+        "downloadable": true,
+        "downloadable_format_ids": [
+          7,
+          6,
+          5
+        ],
+        "duration": 2600,
+        "genre": {
+          "color": "#0070ef",
+          "id": 191,
+          "name": "J-Pop",
+          "path": [
+            94,
+            97,
+            190,
+            191
+          ],
+          "slug": "j-pop"
+        },
+        "hires": true,
+        "hires_purchased": true,
+        "hires_streamable": true,
+        "id": "nyomvn23bkmdc",
+        "image": {
+          "back": null,
+          "large": "https://static.qobuz.com/images/covers/dc/km/nyomvn23bkmdc_600.jpg",
+          "small": "https://static.qobuz.com/images/covers/dc/km/nyomvn23bkmdc_230.jpg",
+          "thumbnail": "https://static.qobuz.com/images/covers/dc/km/nyomvn23bkmdc_50.jpg"
+        },
+        "label": {
+          "albums_count": 31,
+          "id": 7190238,
+          "name": "ミディ",
+          "slug": "-59663",
+          "supplier_id": 194
+        },
+        "maximum_bit_depth": 24,
+        "maximum_channel_count": 2,
+        "maximum_sampling_rate": 96,
+        "media_count": 1,
+        "order_id": 0,
+        "order_line_id": 2,
+        "parental_warning": false,
+        "popularity": 0,
+        "previewable": true,
+        "purchasable": true,
+        "purchasable_at": 1761548400,
+        "purchased_at": 1700000000,
+        "qobuz_id": 293430749,
+        "release_date_download": "2017-08-06",
+        "release_date_original": "2017-08-06",
+        "release_date_stream": "2017-08-06",
+        "released_at": 1501970400,
+        "sampleable": true,
+        "slug": "-",
+        "streamable": true,
+        "streamable_at": 1761548400,
+        "title": "ぷりぷり",
+        "tracks_count": 11,
+        "upc": "4582417941498",
+        "url": "https://www.qobuz.com/fr-fr/album/-/nyomvn23bkmdc",
+        "version": null
+      },
+      {
+        "articles": [],
+        "artist": {
+          "albums_count": 1557890,
+          "id": 145383,
+          "image": null,
+          "name": "Various Artists",
+          "picture": null,
+          "slug": "various-artists"
+        },
+        "artists": [
+          {
+            "id": 31419,
+            "name": "Ben Webster",
+            "roles": [
+              "main-artist"
+            ]
+          },
+          {
+            "id": 65981,
+            "name": "Brian Torff",
+            "roles": [
+              "main-artist"
+            ]
+          },
+          {
+            "id": 56627,
+            "name": "Bucky Pizzarelli",
+            "roles": [
+              "main-artist"
+            ]
+          },
+          {
+            "id": 1492954,
+            "name": "Robert Len",
+            "roles": [
+              "main-artist"
+            ]
+          },
+          {
+            "id": 42234,
+            "name": "Jaco Pastorius",
+            "roles": [
+              "main-artist"
+            ]
+          },
+          {
+            "id": 125808,
+            "name": "Frédéric Alarie",
+            "roles": [
+              "main-artist"
+            ]
+          }
+        ],
+        "displayable": true,
+        "downloadable": true,
+        "downloadable_format_ids": [
+          56
+        ],
+        "duration": 3283,
+        "genre": {
+          "color": "#0070ef",
+          "id": 10,
+          "name": "Classical",
+          "path": [
+            10
+          ],
+          "slug": "classique"
+        },
+        "hires": true,
+        "hires_purchased": true,
+        "hires_streamable": true,
+        "id": "gbud7rotdkdqa",
+        "image": {
+          "back": null,
+          "large": "https://static.qobuz.com/images/covers/qa/kd/gbud7rotdkdqa_600.jpg",
+          "small": "https://static.qobuz.com/images/covers/qa/kd/gbud7rotdkdqa_230.jpg",
+          "thumbnail": "https://static.qobuz.com/images/covers/qa/kd/gbud7rotdkdqa_50.jpg"
+        },
+        "label": {
+          "albums_count": 74,
+          "id": 7507664,
+          "name": "2xHD",
+          "slug": "2xhd-1",
+          "supplier_id": 41
+        },
+        "maximum_bit_depth": 24,
+        "maximum_channel_count": 2,
+        "maximum_sampling_rate": 352.8,
+        "media_count": 1,
+        "order_id": 0,
+        "order_line_id": 3,
+        "parental_warning": false,
+        "popularity": 0,
+        "previewable": true,
+        "purchasable": true,
+        "purchasable_at": 1783062000,
+        "purchased_at": 1700000000,
+        "qobuz_id": 313319237,
+        "release_date_download": "2024-01-05",
+        "release_date_original": "2024-01-05",
+        "release_date_stream": "2024-01-05",
+        "released_at": 1704409200,
+        "sampleable": true,
+        "slug": "audiophile-analog-collection-vol3-various-artists-ben-webster-brian-torff-bucky-pizzarelli-robert-len-jaco-pastorius-and-frederic-alarie",
+        "streamable": true,
+        "streamable_at": null,
+        "title": "Audiophile Analog Collection Vol.3",
+        "tracks_count": 14,
+        "upc": "0762765868942",
+        "url": "https://www.qobuz.com/fr-fr/album/audiophile-analog-collection-vol3-various-artists-ben-webster-brian-torff-bucky-pizzarelli-robert-len-jaco-pastorius-and-frederic-alarie/gbud7rotdkdqa",
+        "version": null
+      }
+    ],
+    "limit": 500,
+    "offset": 0,
+    "total": 3
+  },
+  "user": {
+    "id": 0,
+    "login": "redacted@example.invalid"
+  }
+}

@@ -1,0 +1,79 @@
+[package]
+name = "qbz-audio"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Audio backend system for QBZ - bit-perfect playback"
+
+[dependencies]
+qbz-models = { path = "../qbz-models" }
+
+# Async
+tokio = { workspace = true }
+async-trait = { workspace = true }
+
+# Logging
+log = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+# Audio playback (f32 pipeline is now upstream in rodio 0.22)
+rodio = { version = "0.22", features = ["symphonia-all"] }
+
+# Audio analysis
+symphonia = { workspace = true }
+ebur128 = "0.1"
+rustfft = "6.4"
+# FFT spectrum helpers for the frontend-agnostic visualizer producer
+# (Hann window, log-bar mapping). Kept in lockstep with the src-tauri dep.
+spectrum-analyzer = "1.5"
+
+# Database for loudness cache
+rusqlite = { version = "0.40", features = ["bundled"] }
+
+# System directories
+dirs = "6"
+
+# Lock-free SPSC ring buffer (f32-native) for the JACK feeder -> RT callback
+# handoff (#263 Tier 3). f32 elements avoid any byte/alignment handling.
+ringbuf = "0.4"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+# ALSA for direct hardware access (bit-perfect)
+alsa = "0.11"
+# alsa-sys: direct FFI for snd_lib_error_set_handler (custom error routing).
+# Kept in lockstep with alsa (0.11 -> alsa-sys 0.4); a single alsa-sys is
+# required because of the `links = "alsa"` constraint shared with cpal.
+alsa-sys = "0.4"
+libc = "0.2"
+# zbus for org.freedesktop.ReserveDevice1 D-Bus client (device reservation).
+# Pinned to v4 to share the transitive copy already pulled in by
+# secret-service/souvlaki and avoid duplicate zbus compiles.
+zbus = { version = "4", default-features = false, features = ["tokio"] }
+# JACK native backend (#263 Tier 3): QBZ as a first-class JACK client with stable
+# ports. Links libjack (provided by pipewire-jack on the rig). TODO(distribution):
+# feature-gate for Flatpak/distro builds that may not ship libjack — not blocking
+# while Tauri isn't being released.
+jack = "0.13"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+# CoreAudio for device probing, sample rate switching, and (future) hog mode / exclusive mode
+coreaudio-rs = "0.14.1"
+objc2-core-audio = "0.3.2"
+
+[target.'cfg(windows)'.dependencies]
+# WASAPI exclusive mode (phase B). HEnquist's crate, the one CamillaDSP
+# uses. `windows` is pinned to the 0.62 line cpal already resolves, so
+# this adds no second windows tree to the graph.
+wasapi = "0.24"
+windows = { version = "0.62", features = [
+  "Win32_Foundation",
+  "Win32_Media_Audio",
+  "Win32_System_Com",
+  "Win32_System_Threading",
+] }

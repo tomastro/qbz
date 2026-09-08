@@ -1,0 +1,54 @@
+[package]
+name = "qbz-source"
+description = "The source-agnostic seam: one trait + one registry over Qobuz, local files, Plex, Jellyfin and Subsonic"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+# QueueTrack, mixtape::*, plex_thumb_url. No internal deps of its own.
+qbz-models = { path = "../qbz-models" }
+# QobuzClient (Clone) — the catalog arm.
+qbz-qobuz = { path = "../qbz-qobuz" }
+# LibraryDatabase / LocalTrack / thumbnails — the local arm.
+qbz-library = { path = "../qbz-library" }
+qbz-disc = { path = "../qbz-disc" }
+# Plex cache reads + plex_resolve_part_url — the Plex arm.
+qbz-plex = { path = "../qbz-plex" }
+# The two media-server protocol crates: URL builders and DTOs only. Their HTTP
+# clients are never constructed here — this crate hands out URLs and lets the
+# frontend's feeder follow them.
+qbz-jellyfin = { path = "../qbz-jellyfin" }
+qbz-subsonic = { path = "../qbz-subsonic" }
+# The shared remote cache. Jellyfin and Subsonic answer every UI read from it.
+qbz-media-cache = { path = "../qbz-media-cache" }
+# Only to hold the cache's `Connection`. This crate never writes SQL of its own
+# — every statement lives in `qbz-media-cache` or `qbz-library`.
+rusqlite = { version = "0.40", features = ["bundled"] }
+# `ItemResolver` — this crate IMPLEMENTS it (mixtape_adapter.rs). qbz-mixtape is
+# provider-agnostic and the dependency remains one-directional, so the Qt
+# application can consume the adapter without coupling qbz-mixtape to sources.
+qbz-mixtape = { path = "../qbz-mixtape" }
+
+async-trait = { workspace = true }
+log = { workspace = true }
+thiserror = { workspace = true }
+
+# ABSENT ON PURPOSE (design §8): qbz-audio, qbz-player (the PROTECTED backend is
+# not linked, so it cannot be reached even by accident), qbz-core, qbz-app,
+# tokio (this crate never spawns), reqwest, qbz-i18n, qbz-cache.
+#
+# `rusqlite` IS here now, and only to own a `Connection` for the shared remote
+# cache — the SQL itself lives in `qbz-media-cache`. That is the same shape
+# `qbz-library` already has with this crate: a handle here, the statements
+# there.
+
+[dev-dependencies]
+# `#[tokio::test]` only — the crate itself never spawns (see the note above).
+tokio = { workspace = true }
+# The END-TO-END live tests (tests/live_remote.rs): a temp user dir to bind the
+# sources to, an HTTP client to actually follow the playback url the ticket
+# hands out, and the rustls provider that client needs.
+tempfile = "3"
+reqwest = { workspace = true }
+rustls = { version = "0.23", features = ["aws_lc_rs"] }

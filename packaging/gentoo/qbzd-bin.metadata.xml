@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>blitzkriegfc@gmail.com</email>
+		<name>blitzkriegfc</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">vicrodh/qbz</remote-id>
+		<bugs-to>https://github.com/vicrodh/qbz/issues</bugs-to>
+	</upstream>
+	<use>
+		<flag name="jack">Install the JACK runtime backend</flag>
+		<flag name="pipewire">Install PipeWire discovery and routing helpers</flag>
+		<flag name="pulseaudio">Install PulseAudio discovery and routing helpers</flag>
+	</use>
+	<longdescription lang="en">
+		qbzd is the standalone QBZ daemon for servers and appliances. It
+		provides Qobuz playback, local and offline libraries, QConnect and a
+		terminal setup interface without the Qt desktop application.
+	</longdescription>
+</pkgmetadata>

@@ -1,0 +1,80 @@
+# Flatpak manifest — GitHub Releases bundle.
+#
+# Rewritten 2026-08-25 for the Slint -> Qt frontend switch. This is a REPACK
+# of the bare binary built by build-qt-linux.yml (release-flatpak.yml drops it
+# at packaging/flatpak/payload/ before flatpak-builder runs): no cargo, no
+# rust SDK extension, no memory-tier env. Qt comes from the KDE runtime
+# (org.kde.Platform 6.9 >= the 6.8 floor; a binary built against 6.8 loads on
+# 6.9 — Qt keeps forward ABI compatibility within a major).
+#
+# The FLATHUB manifest (flathub/com.blitzfc.qbz repo) is the sibling of this
+# file consuming the published release tarball with x-checker-data; keep
+# runtime and finish-args in sync. Hashes there are computed from the
+# published asset at its final URL, never from a local file.
+
+app-id: com.blitzfc.qbz
+runtime: org.kde.Platform
+runtime-version: '6.9'
+sdk: org.kde.Sdk
+command: qbz
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+
+  # Direct sound-device access (/dev/snd) for bit-perfect / exclusive
+  # ALSA output, matching native installs. Flatpak has no granular
+  # --device=snd; /dev/snd is only exposed via --device=all (same as
+  # Strawberry, mpv, and other bit-perfect audio apps). --device=all
+  # includes --device=dri (GPU), so the separate dri entry is dropped.
+  - --device=all
+
+  # org.freedesktop.ReserveDevice1 device-reservation names: lets QBZ ask
+  # WirePlumber/PipeWire to release the sound card cleanly before opening
+  # it exclusively (freedesktop audio-device reservation protocol). Owning
+  # a name implies talking to its current holder (same well-known name). #508
+  - --own-name=org.freedesktop.ReserveDevice1.*
+
+  # Native PipeWire access
+  - --filesystem=xdg-run/pipewire-0:ro
+
+  # Discord IPC socket for Rich Presence (#336).
+  # - The static path covers Discord installed natively (deb / rpm / AUR
+  #   builds), which write the socket directly under $XDG_RUNTIME_DIR.
+  # - The :create permission on the Discord-Flatpak app dir lets us read
+  #   the socket created by Discord-via-Flathub AND lay down our own
+  #   $XDG_RUNTIME_DIR/discord-ipc-{0..9} symlinks pointing at it.
+  - --filesystem=xdg-run/discord-ipc-0
+  - --filesystem=xdg-run/app/com.discordapp.Discord:create
+
+  # User music library
+  - --filesystem=xdg-music
+
+  # Notifications and tray (ksni StatusNotifierItem)
+  - --talk-name=org.freedesktop.Notifications
+  - --talk-name=org.kde.StatusNotifierWatcher
+
+  # MPRIS media controls publish this exact session-bus name.
+  - --own-name=org.mpris.MediaPlayer2.com.blitzfc.qbz
+
+  # Hold a logind sleep/idle inhibitor while playback is active.
+  - --system-talk-name=org.freedesktop.login1
+
+modules:
+  - name: qbz
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 payload/qbz /app/bin/qbz
+      - install -Dm755 payload/qbzd /app/bin/qbzd
+      - install -Dm644 payload/qbz.desktop /app/share/applications/com.blitzfc.qbz.desktop
+      - install -Dm644 payload/com.blitzfc.qbz.metainfo.xml /app/share/metainfo/com.blitzfc.qbz.metainfo.xml
+      - install -Dm644 payload/LICENSE /app/share/licenses/com.blitzfc.qbz/LICENSE
+      - cp -r payload/licenses /app/share/licenses/com.blitzfc.qbz/third-party
+      - for size in 32 48 64 128 256 512; do install -Dm644 "payload/icons/${size}x${size}.png"
+        "/app/share/icons/hicolor/${size}x${size}/apps/com.blitzfc.qbz.png"; done
+    sources:
+      - type: dir
+        path: payload
+        dest: payload

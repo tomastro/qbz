@@ -1,0 +1,14 @@
+[package]
+name = "qbz-rip"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+log = { workspace = true }
+thiserror = { workspace = true }
+qbz-disc = { path = "../qbz-disc" }
+# Pure Rust, so it works on macOS with no native dependency and nothing extra
+# to bundle into Flatpak, Snap or AppImage.
+flacenc = "0.5"
+# Already in the tree; writes FLAC Vorbis comments.
+lofty.workspace = true

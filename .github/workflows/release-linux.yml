@@ -1,0 +1,363 @@
+# Linux x86_64 release — Qt frontend (crates/ workspace, package `qbz-qt`,
+# binary `qbz`).
+#
+# Rewritten 2026-08-25 for the Slint -> Qt frontend switch. Pattern is still
+# build once, package many — but the build is the shared build-qt-linux.yml
+# (workflow_call) and it yields TWO payloads:
+#   * the bare binary  -> qbz_${VERSION}_amd64.tar.gz (AUR / Gentoo / Flathub
+#     repack: ecosystems that provide Qt >= 6.8 themselves)
+#   * the AppDir (Qt bundled, self-contained) -> deb / rpm / AppImage, so
+#     distros without a usable Qt (Ubuntu 24.04 = Qt 6.4) keep working.
+#
+# CONTRACT (do not break): the release must keep publishing
+#   qbz_${VERSION}_amd64.tar.gz   (dir qbz_${VERSION}_amd64/{qbz, qbzd, LICENSE, licenses/, qbz.desktop,
+#                                  com.blitzfc.qbz.metainfo.xml, qbzd.service,
+#                                  completions/, icons/hicolor/...})
+#   QBZ_${VERSION}_amd64.deb / QBZ-${VERSION}-1.x86_64.rpm / QBZ_${VERSION}_amd64.AppImage
+#   qbzd_${VERSION}_amd64.deb / qbzd-${VERSION}-1.x86_64.rpm / qbzd-${VERSION}-linux-amd64.tar.gz
+#   qbz-${VERSION}-cargo-vendor.tar.xz (architecture-neutral, x86_64 workflow only)
+# — release-aur.yml, release-gentoo.yml, qbz-apt, qbz-rpm, the updater
+# manifest and the website consume these names.
+#
+# release-linux-aarch64.yml is this file with the four ARCH_* values changed,
+# except that x86_64 publishes the architecture-neutral Cargo vendor asset.
+#
+# Triggers: version tags (cut from main — enforced by the ancestry guard)
+# + manual dispatch (guard skipped, for testing on any branch).
+
+name: release-linux
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Optional release tag to build (e.g. v2.1.0). Empty = build HEAD with the Cargo.toml version, no Release publish."
+        required: false
+        type: string
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: release-linux-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  ARCH: x86_64          # build-qt-linux input + artifact suffix
+  DEB_ARCH: amd64       # QBZ_${V}_amd64.deb, qbz_${V}_amd64.tar.gz
+  RPM_ARCH: x86_64      # QBZ-${V}-1.x86_64.rpm
+  APPIMAGE_ARCH: amd64  # QBZ_${V}_amd64.AppImage
+
+jobs:
+  # Release bookkeeping first so a bad tag fails in seconds, not after a build.
+  version:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+      prerelease: ${{ steps.release.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - name: Resolve release version
+        id: release
+        run: |
+          VERSION=""
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          elif [[ -n "${{ inputs.tag }}" ]]; then
+            VERSION="${{ inputs.tag }}"
+            VERSION="${VERSION#v}"
+          else
+            # Manual dispatch without a tag: test build at the Cargo.toml version.
+            VERSION="$(grep -m1 '^version = ' crates/Cargo.toml | sed 's/version = \"\(.*\)\"/\1/')"
+          fi
+          PRERELEASE=false
+          if [[ "$VERSION" =~ -(rc|beta|alpha|pre) ]]; then
+            PRERELEASE=true
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
+          echo "Building version $VERSION (prerelease=$PRERELEASE)"
+
+      # Release tags must be cut from main. A tag on any other commit fires
+      # this workflow too (tags are not branch-scoped in Actions), so verify
+      # ancestry instead of trusting convention. Manual dispatch skips this.
+      - name: Verify tag is on main
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          git fetch origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::Tag ${GITHUB_REF#refs/tags/} points to a commit that is NOT on main. Releases are cut from main only."
+            exit 1
+          fi
+
+      # The binary embeds the workspace version (About, diagnostics); a
+      # mismatched tag would ship a binary that reports the wrong version.
+      - name: Assert Cargo.toml version matches tag
+        if: startsWith(github.ref, 'refs/tags/') || inputs.tag != ''
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          CARGO_VERSION="$(grep -m1 '^version = ' crates/Cargo.toml | sed 's/version = \"\(.*\)\"/\1/')"
+          if [[ "$CARGO_VERSION" != "$VERSION" ]]; then
+            echo "::error::crates/Cargo.toml workspace version ($CARGO_VERSION) != tag version ($VERSION). Bump it before tagging (see RELEASE_CHECKLIST)."
+            exit 1
+          fi
+
+      # The media-widget icon invariant (DesktopEntry == installed .desktop
+      # basename, Icon= installed) — regressed more than once, so it is a
+      # gate at the recipe level here and on the built packages below.
+      - name: Gate — desktop entry / icon invariant (recipes)
+        run: scripts/packaging/desktop_entry_check.sh
+
+      # No workflow may build the frozen Slint binary: same bin name, same
+      # target dir, last build wins the file — a smoke against "the wrong
+      # qbz" is silent.
+      - name: Gate — no workflow builds `-p qbz`
+        run: |
+          set -euo pipefail
+          hits=$(grep -rnE 'cargo (build|check|test|run|install).* -p qbz([^-a-z]|$)' .github/workflows/ || true)
+          [ -z "$hits" ] || { echo "::error::a workflow still builds the Slint crate:"; echo "$hits"; exit 1; }
+
+  build:
+    needs: version
+    uses: ./.github/workflows/build-qt-linux.yml
+    with:
+      arch: x86_64
+      source_ref: ${{ inputs.tag || github.ref }}
+
+  # qbzd is minutes-class and Slint-free. Runs on ubuntu-22.04 so the shipped
+  # binary's glibc floor stays <= Pi OS bookworm's 2.36 (the honest-Pi-story
+  # gate); the objdump step verifies that empirically.
+  build-qbzd:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crates -> target
+          shared-key: qbzd-linux-x86_64
+          cache-on-failure: true
+          save-if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/pre-release' }}
+      - name: system deps
+        run: sudo apt-get update && sudo apt-get install -y libasound2-dev libjack-jackd2-dev libdbus-1-dev libssl-dev
+      - name: slint-free dep-graph gate
+        run: |
+          set -euo pipefail
+          hits=$(cargo tree --manifest-path crates/Cargo.toml -p qbzd -e normal \
+                 | grep -E '\b(slint|qbz-ui|qbz-slint-common|qbz-dac-wizard) v' || true)
+          [ -z "$hits" ] || { echo "::error::qbzd graph resolves Slint:"; echo "$hits"; exit 1; }
+      - name: build
+        run: cargo build --release --manifest-path crates/Cargo.toml -p qbzd
+      - name: glibc floor gate (objdump — the empirical-verification rule)
+        run: |
+          set -euo pipefail
+          floor=$(objdump -T crates/target/release/qbzd \
+                  | grep -oE 'GLIBC_[0-9]+\.[0-9]+' | sort -Vu | tail -1)
+          echo "glibc floor: $floor"
+          highest=$(printf '%s\n' "$floor" "GLIBC_2.35" | sort -V | tail -1)
+          [ "$highest" = "GLIBC_2.35" ] || { echo "::error::floor $floor exceeds 2.35"; exit 1; }
+      - uses: actions/upload-artifact@v7
+        with:
+          name: qbzd-linux-x86_64
+          path: crates/target/release/qbzd
+          retention-days: 7
+
+  package:
+    needs: [version, build, build-qbzd]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Install Rust toolchain for source-package vendor archive
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Download bare binary
+        uses: actions/download-artifact@v8
+        with:
+          name: qbz-linux-${{ env.ARCH }}
+
+      - name: Download AppDir
+        uses: actions/download-artifact@v8
+        with:
+          name: qbz-appdir-${{ env.ARCH }}
+
+      - name: Download qbzd binary
+        uses: actions/download-artifact@v8
+        with:
+          name: qbzd-linux-${{ env.ARCH }}
+
+      - name: Unpack AppDir
+        run: |
+          tar -xf appdir.tar
+          chmod +x qbz qbzd
+          ls AppDir; ls AppDir/usr/plugins/platforms
+
+      - name: Install nfpm
+        run: |
+          echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | \
+            sudo tee /etc/apt/sources.list.d/goreleaser.list
+          sudo apt-get update
+          sudo apt-get install -y nfpm
+          nfpm --version
+
+      # deb/rpm carry the AppDir tree under /opt/qbz (bin, lib, plugins, qml,
+      # qt.conf) and a /usr/bin/qbz symlink. RPATH ($ORIGIN/../lib, patched by
+      # linuxdeploy) resolves through /proc/self/exe, so the symlink needs no
+      # wrapper — and a wrapper exporting LD_LIBRARY_PATH would leak our Qt
+      # into every process qbz spawns (the login browser, xdg-open).
+      - name: Build deb + rpm (nfpm)
+        env:
+          QBZ_VERSION: ${{ env.VERSION }}
+          QBZ_ARCH: ${{ env.DEB_ARCH }}
+        run: |
+          mkdir -p dist
+          ./qbzd completions bash > qbzd.bash
+          ./qbzd completions zsh > qbzd.zsh
+          ./qbzd completions fish > qbzd.fish
+          nfpm package -f packaging/nfpm/nfpm.yaml -p deb \
+            -t "dist/QBZ_${VERSION}_${DEB_ARCH}.deb"
+          nfpm package -f packaging/nfpm/nfpm.yaml -p rpm \
+            -t "dist/QBZ-${VERSION}-1.${RPM_ARCH}.rpm"
+          # Standalone qbzd packages (daemon-only), same staged ./qbzd.
+          nfpm package -f packaging/nfpm/nfpm-qbzd.yaml -p deb \
+            -t "dist/qbzd_${VERSION}_${DEB_ARCH}.deb"
+          nfpm package -f packaging/nfpm/nfpm-qbzd.yaml -p rpm \
+            -t "dist/qbzd-${VERSION}-1.${RPM_ARCH}.rpm"
+          ls -la dist
+
+      # The same invariant on the ARTIFACTS: the deb/rpm must install
+      # /usr/share/applications/<DesktopEntry>.desktop and its Icon=.
+      - name: Gate — desktop entry / icon invariant (packages)
+        run: |
+          sudo apt-get install -y --no-install-recommends rpm
+          scripts/packaging/desktop_entry_check.sh \
+            --deb "dist/QBZ_${VERSION}_${DEB_ARCH}.deb" \
+            --rpm "dist/QBZ-${VERSION}-1.${RPM_ARCH}.rpm" \
+            --appdir AppDir
+
+      - name: Build AppImage
+        run: |
+          curl -fsSL -o appimagetool \
+            "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${ARCH}.AppImage"
+          chmod +x appimagetool
+          ARCH="${ARCH}" ./appimagetool --appimage-extract-and-run AppDir \
+            "dist/QBZ_${VERSION}_${APPIMAGE_ARCH}.AppImage"
+          ls -la dist
+
+      # Tauri-updater bridge: v1.2.x AppImage installs poll latest.json and
+      # verify artifacts with the Tauri minisign pubkey baked into the old
+      # binaries. Signing with the SAME private key lets them auto-update
+      # straight into this AppImage. release-updater-manifest.yml collects
+      # the .sig. The app itself has no auto-updater.
+      - name: Sign AppImage (Tauri-updater bridge)
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: |
+          npx --yes @tauri-apps/cli@^2 signer sign \
+            --private-key "$TAURI_SIGNING_PRIVATE_KEY" \
+            --password "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" \
+            "dist/QBZ_${VERSION}_${APPIMAGE_ARCH}.AppImage"
+          ls -la dist
+
+      # The BARE binary. Its consumers (AUR, Gentoo, Flathub) provide Qt.
+      - name: Build AUR/Gentoo tarball
+        run: |
+          # CONTRACT: release-aur.yml, the Gentoo binary ebuild, qbz-apt and
+          # the website hard-code this name and internal layout.
+          TARBALL_DIR="qbz_${VERSION}_${DEB_ARCH}"
+          mkdir -p "tarball-staging/${TARBALL_DIR}/icons/hicolor"/{32x32,48x48,64x64,128x128,256x256,512x512}/apps
+          cp qbz "tarball-staging/${TARBALL_DIR}/qbz"
+          chmod +x "tarball-staging/${TARBALL_DIR}/qbz"
+          cp packaging/icons/32x32.png   "tarball-staging/${TARBALL_DIR}/icons/hicolor/32x32/apps/qbz.png"
+          cp packaging/icons/48x48.png   "tarball-staging/${TARBALL_DIR}/icons/hicolor/48x48/apps/qbz.png"
+          cp packaging/icons/64x64.png   "tarball-staging/${TARBALL_DIR}/icons/hicolor/64x64/apps/qbz.png"
+          cp packaging/icons/128x128.png "tarball-staging/${TARBALL_DIR}/icons/hicolor/128x128/apps/qbz.png"
+          cp packaging/icons/256x256.png "tarball-staging/${TARBALL_DIR}/icons/hicolor/256x256/apps/qbz.png"
+          cp packaging/icons/512x512.png "tarball-staging/${TARBALL_DIR}/icons/hicolor/512x512/apps/qbz.png"
+          cp packaging/linux/qbz.desktop "tarball-staging/${TARBALL_DIR}/qbz.desktop"
+          cp packaging/flatpak/com.blitzfc.qbz.metainfo.xml "tarball-staging/${TARBALL_DIR}/com.blitzfc.qbz.metainfo.xml"
+          cp LICENSE "tarball-staging/${TARBALL_DIR}/LICENSE"
+          cp -r licenses "tarball-staging/${TARBALL_DIR}/licenses"
+          cp qbzd "tarball-staging/${TARBALL_DIR}/qbzd"
+          chmod +x "tarball-staging/${TARBALL_DIR}/qbzd"
+          cp crates/qbzd/service/qbzd.service "tarball-staging/${TARBALL_DIR}/qbzd.service"
+          mkdir -p "tarball-staging/${TARBALL_DIR}/completions"
+          cp qbzd.bash "tarball-staging/${TARBALL_DIR}/completions/qbzd.bash"
+          cp qbzd.zsh  "tarball-staging/${TARBALL_DIR}/completions/qbzd.zsh"
+          cp qbzd.fish "tarball-staging/${TARBALL_DIR}/completions/qbzd.fish"
+          tar -czvf "dist/qbz_${VERSION}_${DEB_ARCH}.tar.gz" -C tarball-staging "${TARBALL_DIR}"
+          ls -la dist
+
+      - name: qbzd-tarball
+        run: |
+          QBZD_DIR="qbzd-${VERSION}-linux-${DEB_ARCH}"
+          mkdir -p "qbzd-tarball-staging/${QBZD_DIR}/completions"
+          cp qbzd "qbzd-tarball-staging/${QBZD_DIR}/qbzd"
+          chmod +x "qbzd-tarball-staging/${QBZD_DIR}/qbzd"
+          cp crates/qbzd/service/qbzd.service "qbzd-tarball-staging/${QBZD_DIR}/qbzd.service"
+          cp qbzd.bash "qbzd-tarball-staging/${QBZD_DIR}/completions/qbzd.bash"
+          cp qbzd.zsh  "qbzd-tarball-staging/${QBZD_DIR}/completions/qbzd.zsh"
+          cp qbzd.fish "qbzd-tarball-staging/${QBZD_DIR}/completions/qbzd.fish"
+          cp packaging/linux/qbzd-standalone-README.md "qbzd-tarball-staging/${QBZD_DIR}/README.md"
+          cp LICENSE "qbzd-tarball-staging/${QBZD_DIR}/LICENSE"
+          cp -r licenses "qbzd-tarball-staging/${QBZD_DIR}/licenses"
+          tar -czvf "dist/qbzd-${VERSION}-linux-${DEB_ARCH}.tar.gz" -C qbzd-tarball-staging "${QBZD_DIR}"
+          ls -la dist
+
+      # One architecture-neutral, locked dependency archive serves the qbz
+      # and qbzd source packages in AUR and Gentoo. It is generated only here,
+      # never duplicated by the arm64 release workflow.
+      - name: Build Cargo vendor archive for source packages
+        run: scripts/packaging/cargo_vendor_release.sh "$VERSION" dist
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: qbz-linux-packages-${{ env.ARCH }}
+          path: dist/*
+          retention-days: ${{ startsWith(github.ref, 'refs/tags/v') && 90 || 7 }}
+
+      - name: Publish GitHub Release Assets
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v3
+        with:
+          files: dist/*
+          prerelease: ${{ needs.version.outputs.prerelease }}
+          make_latest: ${{ needs.version.outputs.prerelease == 'true' && 'false' || 'true' }}
+
+      - name: Trigger APT repo update
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ secrets.APT_REPO_TOKEN }}
+          repository: vicrodh/qbz-apt
+          event-type: new-release
+          client-payload: '{"tag": "${{ github.ref_name }}"}'
+
+      # Our own signed RPM repo. This is intentionally required: a bad token
+      # must not leave the stable RPM channel stale without failing release CI.
+      - name: Trigger RPM repo update
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ secrets.APT_REPO_TOKEN }}
+          repository: vicrodh/qbz-rpm
+          event-type: new-release
+          client-payload: '{"tag": "${{ github.ref_name }}"}'

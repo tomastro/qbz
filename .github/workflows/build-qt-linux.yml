@@ -1,0 +1,283 @@
+# Linux build of the Qt frontend — ONE recipe, reused by every Linux release
+# workflow (release-linux, release-linux-aarch64, release-snap, release-flatpak)
+# via `workflow_call`, and dispatchable on its own as the pre-flight ("does the
+# release recipe still build; publish nothing") — the job build-slint.yml used
+# to do. The 2026-07-04 lesson was two copies of the same recipe drifting apart;
+# this file exists so there is exactly one.
+#
+# WHAT CHANGED VS THE SLINT ERA (all measured 2026-08-25, see
+# qbz-nix-docs/cicd/2026-08-25-qt-workflows-contracts/):
+#   * No memory wall. `-p qbz-qt` never pulls the 30 GB `qbz-ui` unit: no swap
+#     ceremony, no CARGO_BUILD_JOBS=1 / codegen-units=256 / opt-level 2 (those
+#     were memory tiers and cost runtime performance for nothing now), no
+#     nightly, no mold, no RUSTFLAGS (any of them re-keys the whole cache).
+#   * Qt comes from aqt (official binaries), NOT from apt: ubuntu-24.04 ships
+#     Qt 6.4.2 and has no QtQuick.Effects module at all; the tree needs 6.8.
+#   * The runner is ubuntu-22.04 (glibc 2.35 floor, asserted below), which is
+#     also the platform the official Qt binaries are built for.
+#   * Two outputs per arch: the BARE binary (AUR / Gentoo / Flathub — ecosystems
+#     with their own Qt >= 6.8) and an AppDir with Qt bundled (deb / rpm /
+#     AppImage / snap — so Ubuntu 24.04 keeps working). The AppDir is built by
+#     linuxdeploy + linuxdeploy-plugin-qt and is self-contained (proven by
+#     running it offscreen with the Qt install removed).
+#   * The smoke gate runs against THE ARTIFACT THAT SHIPS (the AppDir), not the
+#     build tree: offscreen boot, zero QML complaints, core initialized. A
+#     `cargo check` sees nothing of the QML — a missing bridge member compiles
+#     clean and throws when the user opens the view.
+#
+# CONTRACT: artifact names are consumed downstream by name. Do not rename.
+#   qbz-linux-<arch>            bare binary (stripped by the workspace profile)
+#   qbz-linux-<arch>-unstripped symbolication copy (CARGO_PROFILE_RELEASE_STRIP=none)
+#   qbz-appdir-<arch>           tar of the self-contained AppDir
+# <arch> is x86_64 | aarch64.
+
+name: build-qt-linux
+
+on:
+  workflow_call:
+    inputs:
+      arch:
+        description: "x86_64 | aarch64"
+        required: true
+        type: string
+      source_ref:
+        description: "Optional branch, tag or SHA to build"
+        required: false
+        default: ""
+        type: string
+    outputs:
+      version:
+        description: "Workspace version from crates/Cargo.toml"
+        value: ${{ jobs.build.outputs.version }}
+  workflow_dispatch:
+    inputs:
+      arch:
+        description: "Architecture to pre-flight"
+        required: true
+        default: x86_64
+        type: choice
+        options: [x86_64, aarch64]
+      source_ref:
+        description: "Optional branch, tag or SHA to build. Empty = dispatched ref."
+        required: false
+        type: string
+
+# The Qt pin. Repository variables win (set QT_VERSION_LINUX in Settings →
+# Variables to bump without a commit); the literal is the measured floor.
+# 6.8 is the LTS line and the floor the tree needs once the six macOS-only
+# SafeArea/padding lines are guarded (contracts §1 / §4 #0). Keep in sync
+# with the same pin in test-crates.yml.
+jobs:
+  build:
+    name: build (${{ inputs.arch }})
+    # aarch64 on 24.04-arm: aqt's arm64 Qt host tools (6.8.3 AND 6.9.3 qmake)
+    # SIGSEGV on ubuntu-22.04-arm with a clean ldd (2026-08-29, two runs).
+    # Accepted 2026-08-29: the arm64 DESKTOP floor is glibc 2.39; qbzd keeps
+    # 2.35 (Pi OS bookworm) — see the floor gate below.
+    runs-on: ${{ inputs.arch == 'aarch64' && 'ubuntu-24.04-arm' || 'ubuntu-22.04' }}
+    timeout-minutes: 120
+    env:
+      # x86_64 keeps the 6.8 LTS floor. aarch64 pins its own: aqt's 6.8.3
+      # linux_gcc_arm64 qmake SEGFAULTS on ubuntu-22.04-arm (2026-08-29 run,
+      # exit 139 on `qmake -query`), so the arm line takes 6.9.3 until an
+      # arm64 6.8.x that runs there exists. `vars.QT_VERSION_LINUX_ARM64`
+      # overrides without a commit.
+      QT_VERSION: ${{ inputs.arch == 'aarch64' && (vars.QT_VERSION_LINUX_ARM64 || '6.9.3') || (vars.QT_VERSION_LINUX || '6.8.3') }}
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_ref || github.ref }}
+
+      - name: Workspace version
+        id: version
+        run: |
+          V="$(grep -m1 '^version = ' crates/Cargo.toml | sed 's/version = \"\(.*\)\"/\1/')"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "workspace version: $V"
+
+      # Build-time deps only. fontconfig / freetype / wayland / xcb / mesa dev
+      # headers were Slint's direct needs; Qt links its own. The xcb/wayland
+      # RUNTIME libs are for linuxdeploy-plugin-qt: it resolves libqxcb.so's
+      # dependencies on the runner and dies on a missing libxkbcommon-x11.so.0
+      # (measured). patchelf + file are linuxdeploy's own tools.
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential pkg-config cmake clang libclang-dev nasm \
+            libasound2-dev libjack-jackd2-dev libdbus-1-dev libssl-dev \
+            libgl1-mesa-dev libegl1-mesa-dev libxkbcommon-dev libwayland-dev \
+            libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 \
+            libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libxcb-xkb1 \
+            libxcb-shape0 libxcb-randr0 libxcb-sync1 libxcb-xfixes0 libxcb-glx0 \
+            libwayland-client0 libwayland-egl1 libwayland-cursor0 libegl1 libgl1 \
+            patchelf file binutils dbus-daemon
+
+      # Official Qt binaries — WITHOUT qtshadertools: with qsb on PATH build.rs
+      # re-bakes shaders by mtime and a fresh checkout is nondeterministic.
+      # The build ships the committed .qsb (build.rs warns and keeps them);
+      # shader health is judged by test-crates.yml's shader-gate. The arm64
+      # host exists in aqt from 6.7 — the first aarch64 dispatch is the proof.
+      - name: Install Qt ${{ env.QT_VERSION }}
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: ${{ inputs.arch == 'aarch64' && 'linux_arm64' || 'linux' }}
+          target: desktop
+          arch: ${{ inputs.arch == 'aarch64' && 'linux_gcc_arm64' || 'linux_gcc_64' }}
+          cache: true
+
+      - name: Setup Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+
+      # Cache key split by toolchain/profile and NEVER shared with the old
+      # `slint-*` keys. Trusted manual preflights on pre-release may seed it,
+      # so release-linux -> Flatpak/Snap and ARM -> Snap do not rebuild the
+      # identical graph from zero. PR/fork refs remain read-only.
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crates -> target
+          shared-key: qt-linux-${{ inputs.arch }}-${{ env.QT_VERSION }}
+          cache-on-failure: true
+          save-if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/pre-release' }}
+
+      # NEVER `-p qbz`: crates/qbz (the frozen Slint binary) declares the same
+      # bin name in the same target dir and would silently win the file.
+      - name: Build (release)
+        env:
+          CARGO_INCREMENTAL: "0"
+          # Keep symbols in this build: the unstripped copy is archived for
+          # crash symbolication, then stripped for every shipped artifact.
+          CARGO_PROFILE_RELEASE_STRIP: "none"
+          # EXPLICIT qmake, as the macOS/Windows recipes do. On the arm64
+          # runner cxx-qt-build failed with "Could not find Qt installation:
+          # QtMissing" although QT_ROOT_DIR was correct (2026-08-29 run) —
+          # the PATH lookup is not something to rely on across hosts.
+          QMAKE: ${{ env.QT_ROOT_DIR }}/bin/qmake
+          CMAKE_PREFIX_PATH: ${{ env.QT_ROOT_DIR }}
+        run: |
+          # Diagnostics first: a qmake that cannot run here is the arm64
+          # failure mode (segfault), and cxx-qt-build only says "QtMissing".
+          uname -a; getconf PAGESIZE; ldd --version | head -1
+          file "$QMAKE" || true
+          ldd "$QMAKE" | grep -E 'not found' || true
+          "$QT_ROOT_DIR/libexec/moc" --version || true
+          "$QT_ROOT_DIR/libexec/qmlcachegen" --version || true
+          "$QMAKE" -query QT_VERSION
+          python3 scripts/qt-cargo.py build --release --manifest-path crates/Cargo.toml -p qbz-qt
+          cp crates/target/release/qbz qbz-unstripped
+          strip -o qbz crates/target/release/qbz
+          ls -la qbz qbz-unstripped
+
+      - name: Slint-free dep-graph gate (qbz-qt)
+        run: |
+          set -euo pipefail
+          hits=$(cargo tree --manifest-path crates/Cargo.toml -p qbz-qt -e normal \
+                 | grep -E '\b(slint|qbz-ui|qbz-slint-common|qbz-dac-wizard) v' || true)
+          [ -z "$hits" ] || { echo "::error::qbz-qt graph resolves Slint crates:"; echo "$hits"; exit 1; }
+
+      # The empirical-verification rule: the README/website say what objdump
+      # says, not what the runner image advertises. Two floors, decided
+      # 2026-08-29: x86_64 2.35 (ubuntu-22.04 runner); aarch64 2.39 — the
+      # arm64 Qt host tools only run on ubuntu-24.04-arm — while qbzd stays at
+      # 2.35 on both (its own job, 22.04-arm) for the 1 GB Pi OS boards.
+      # README "Requires glibc" + the website glibcNote must match these.
+      - name: glibc floor gate (x86_64 <= 2.35, aarch64 <= 2.39)
+        run: |
+          set -euo pipefail
+          floor=$(objdump -T qbz | grep -oE 'GLIBC_[0-9]+\.[0-9]+' | sort -Vu | tail -1)
+          limit=$([ "${{ inputs.arch }}" = aarch64 ] && echo GLIBC_2.39 || echo GLIBC_2.35)
+          echo "glibc floor: $floor (limit $limit)"
+          highest=$(printf '%s\n' "$floor" "$limit" | sort -V | tail -1)
+          [ "$highest" = "$limit" ] || { echo "::error::glibc floor $floor exceeds $limit"; exit 1; }
+
+      # Self-contained AppDir. The plugin scans QML_SOURCES_PATHS for imports
+      # and copies exactly the Qt QML modules the app uses (Effects, labs,
+      # Controls, ...) plus the platform plugins — but xcb ONLY unless told
+      # otherwise: Wayland needs both EXTRA_PLATFORM_PLUGINS and
+      # EXTRA_QT_MODULES=waylandcompositor (libQt6WaylandClient + the
+      # wayland-* plugin dirs). offscreen is what the smoke below runs on.
+      # It writes usr/bin/qt.conf and patches RPATH to $ORIGIN/../lib, which
+      # is why the tree works from any install prefix with no env at all.
+      - name: Build AppDir (linuxdeploy + Qt plugin)
+        env:
+          QMAKE: ${{ env.QT_ROOT_DIR }}/bin/qmake
+          QML_SOURCES_PATHS: ${{ github.workspace }}/crates/qbz-qt/qml
+          EXTRA_PLATFORM_PLUGINS: "libqoffscreen.so;libqwayland-generic.so;libqwayland-egl.so"
+          EXTRA_QT_MODULES: waylandcompositor
+          LD_LIBRARY_PATH: ${{ env.QT_ROOT_DIR }}/lib
+          ARCH_TAG: ${{ inputs.arch }}
+        run: |
+          set -euo pipefail
+          curl -fsSL -o linuxdeploy \
+            "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-${ARCH_TAG}.AppImage"
+          curl -fsSL -o linuxdeploy-plugin-qt \
+            "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-${ARCH_TAG}.AppImage"
+          chmod +x linuxdeploy linuxdeploy-plugin-qt
+          # The desktop file goes in under the MPRIS DesktopEntry basename
+          # (com.blitzfc.qbz.desktop), so an integrated AppImage resolves the
+          # media-widget icon like the deb/rpm do. Icon=qbz -> qbz.png.
+          cp packaging/linux/qbz.desktop com.blitzfc.qbz.desktop
+          cp packaging/icons/256x256.png qbz.png
+          ./linuxdeploy --appimage-extract-and-run --appdir AppDir \
+            -e qbz -d com.blitzfc.qbz.desktop -i qbz.png --plugin qt
+          scripts/packaging/desktop_entry_check.sh --appdir AppDir
+          # Nothing in the app uses Qt SQL / network-information plugins.
+          rm -rf AppDir/usr/plugins/sqldrivers AppDir/usr/plugins/networkinformation
+          mkdir -p AppDir/usr/share/licenses/qbz
+          cp LICENSE AppDir/usr/share/licenses/qbz/LICENSE
+          cp -r licenses AppDir/usr/share/licenses/qbz/third-party
+          echo "platforms: $(find AppDir/usr/plugins/platforms -maxdepth 1 -type f -printf '%f ')"
+          test -f AppDir/usr/plugins/platforms/libqwayland-generic.so
+          test -f AppDir/usr/plugins/platforms/libqoffscreen.so
+          test -f AppDir/usr/qml/QtQuick/Effects/libeffectsplugin.so
+          test -f AppDir/usr/bin/qt.conf
+          test -f AppDir/usr/share/licenses/qbz/third-party/Apache-2.0-dst-decoder.txt
+          du -sh AppDir
+
+      # The shipped AppDir must initialize AND survive the observation window.
+      # Hide the SDK and use a fresh profile/private bus; early exit (even 0)
+      # fails. The helper reaps the launcher and its private process group.
+      - name: Offscreen smoke (the AppDir that ships)
+        run: |
+          python3 scripts/packaging/smoke_release.py ./AppDir/AppRun \
+            --hide-qt "$QT_ROOT_DIR" --seconds 60 --log smoke.log
+
+      - name: Upload deployed startup evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: qbz-appdir-smoke-${{ inputs.arch }}
+          path: smoke.log*
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload bare binary
+        uses: actions/upload-artifact@v7
+        with:
+          name: qbz-linux-${{ inputs.arch }}
+          path: qbz
+          if-no-files-found: error
+          retention-days: ${{ startsWith(github.ref, 'refs/tags/v') && 90 || 7 }}
+
+      - name: Upload unstripped binary (symbolication)
+        uses: actions/upload-artifact@v7
+        with:
+          name: qbz-linux-${{ inputs.arch }}-unstripped
+          path: qbz-unstripped
+          retention-days: ${{ startsWith(github.ref, 'refs/tags/v') && 90 || 7 }}
+
+      # tar keeps the symlinks (AppRun, .DirIcon) and the exec bits that
+      # upload-artifact's zip would drop.
+      - name: Upload AppDir
+        run: tar -cf appdir.tar AppDir
+      - uses: actions/upload-artifact@v7
+        with:
+          name: qbz-appdir-${{ inputs.arch }}
+          path: appdir.tar
+          if-no-files-found: error
+          retention-days: ${{ startsWith(github.ref, 'refs/tags/v') && 90 || 7 }}

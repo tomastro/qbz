@@ -1,0 +1,23 @@
+[package]
+name = "qbz-plex"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Plex LAN-only integration for QBZ: HTTP client, XML metadata parsing, and SQLite cache (frontend-agnostic)"
+
+[dependencies]
+# SQLite cache (match the workspace's bundled SQLite usage)
+rusqlite = { version = "0.40", features = ["bundled"] }
+
+# HTTP client for the Plex Media Server LAN API
+reqwest = { workspace = true }
+
+# DTO serialization (camelCase envelopes shared with the frontend)
+serde = { workspace = true }
+serde_json.workspace = true
+
+# Platform data dir (plex_cache.db location)
+dirs = "6"
+
+# Open the system browser for the Plex PIN auth URL
+open = "5"

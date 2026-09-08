@@ -1,0 +1,15 @@
+[package]
+name = "qbz-reco"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Frontend-agnostic artist-vector recommendation engine for QBZ (ported from the Tauri artist_vectors)"
+
+[dependencies]
+serde = { workspace = true }
+rusqlite = { version = "0.40", features = ["bundled"] }
+log = { workspace = true }
+tokio = { workspace = true }
+qbz-models = { path = "../qbz-models" }
+qbz-qobuz = { path = "../qbz-qobuz" }
+qbz-integrations = { path = "../qbz-integrations" }

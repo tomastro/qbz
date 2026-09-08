@@ -1,0 +1,240 @@
+name: release-snap
+
+# All-hosted Snap pipeline — BOTH arches. Each track = build (the shared
+# build-qt-linux.yml, which yields the self-contained AppDir) -> dump-pack ->
+# publish. No compilation in snapcraft; the pack runs in seconds on a runner
+# with snapd. This CI upload is the SOLE publish path: the Launchpad /
+# "Build from GitHub" source recipe (root snapcraft.yaml) is DELETED — core24
+# has Qt 6.4.2 and the tree needs 6.8, so a source build there cannot even
+# resolve its dependencies (it OOM'd on their amd64 fleet in the Slint era
+# anyway).
+#
+# Rewritten 2026-08-25 for the Slint -> Qt frontend switch.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to package (e.g. v2.1.0). Defaults to the pushed tag."
+        required: false
+        type: string
+      channel:
+        description: "Snap Store channel"
+        required: false
+        default: edge
+        type: choice
+        options: [edge, beta, candidate, stable]
+      publish:
+        description: "Publish to the selected Snap Store channel"
+        required: false
+        default: false
+        type: boolean
+  push:
+    tags:
+      - "v*"
+
+# A tag never builds twice; distinct tags never cancel each other. Never abort a
+# half-published release.
+concurrency:
+  group: release-snap-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # snapcore/action-{build,publish}@v1 still declares node20. Hosted runners
+  # already execute them successfully on Node 24; make that migration explicit
+  # before the Node 20 runtime is removed on 2026-09-16.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
+jobs:
+  version:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - name: Resolve and validate package version
+        id: release
+        env:
+          DISPATCH_TAG: ${{ inputs.tag }}
+          DISPATCH_PUBLISH: ${{ inputs.publish }}
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          elif [[ -n "${{ inputs.tag }}" ]]; then
+            VERSION="${{ inputs.tag }}"
+            VERSION="${VERSION#v}"
+          else
+            VERSION="$(grep -m1 '^version = ' crates/Cargo.toml | sed 's/version = "\(.*\)"/\1/')"
+          fi
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Invalid Snap version: $VERSION"
+            exit 1
+          fi
+          CARGO_VERSION="$(grep -m1 '^version = ' crates/Cargo.toml | sed 's/version = "\(.*\)"/\1/')"
+          if [[ "$CARGO_VERSION" != "$VERSION" ]]; then
+            echo "::error::crates/Cargo.toml workspace version ($CARGO_VERSION) != requested version ($VERSION)."
+            exit 1
+          fi
+          if [[ "$GITHUB_EVENT_NAME" == workflow_dispatch && "$DISPATCH_PUBLISH" == true && -z "$DISPATCH_TAG" ]]; then
+            echo "::error::Manual publishing requires an explicit release tag"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Verify tag is on main
+        if: startsWith(github.ref, 'refs/tags/') || inputs.publish
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          tag="v${VERSION}"
+          git fetch origin main --tags
+          if ! git show-ref --verify --quiet "refs/tags/${tag}"; then
+            echo "::error::Release tag ${tag} does not exist."
+            exit 1
+          fi
+          tag_sha="$(git rev-parse "refs/tags/${tag}^{commit}")"
+          checkout_sha="$(git rev-parse HEAD)"
+          if [[ "$tag_sha" != "$checkout_sha" ]]; then
+            echo "::error::Checked-out commit does not match ${tag}."
+            exit 1
+          fi
+          if ! git merge-base --is-ancestor "$tag_sha" origin/main; then
+            echo "::error::Tag ${tag} is not on main. Releases are cut from main only."
+            exit 1
+          fi
+
+  build-amd64:
+    needs: version
+    uses: ./.github/workflows/build-qt-linux.yml
+    with:
+      arch: x86_64
+      source_ref: ${{ inputs.tag || github.ref }}
+
+  build-arm64:
+    needs: version
+    uses: ./.github/workflows/build-qt-linux.yml
+    with:
+      arch: aarch64
+      source_ref: ${{ inputs.tag || github.ref }}
+
+  snap:
+    needs: [version, build-amd64]
+    runs-on: ubuntu-24.04
+    # No compilation here; the headroom is for snapcraft's LXD bootstrap,
+    # which is highly variable on hosted runners (a 30 min cap got the
+    # v2.0.0 run axed mid-pack).
+    timeout-minutes: 90
+    # Credentials at job level so the publish step can gate on them: an empty /
+    # unset secret SKIPS publish instead of failing the whole run.
+    env:
+      SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Download AppDir
+        uses: actions/download-artifact@v8
+        with:
+          name: qbz-appdir-x86_64
+
+      - name: Stage snap payload (AppDir tree + desktop + icon) and recipe
+        run: |
+          set -eux
+          VER="$VERSION"
+          tar -xf appdir.tar
+          mkdir -p snap-payload
+          cp -a AppDir/usr/bin AppDir/usr/lib AppDir/usr/plugins AppDir/usr/qml snap-payload/
+          cp packaging/snap/snap/gui/qbz.desktop snap-payload/qbz.desktop
+          cp packaging/snap/snap/gui/qbz.png     snap-payload/qbz.png
+          cp LICENSE snap-payload/LICENSE
+          cp -r licenses snap-payload/licenses
+          test -f snap-payload/licenses/Apache-2.0-dst-decoder.txt
+          mkdir -p snap
+          cp packaging/snap-qt/snapcraft.yaml snap/snapcraft.yaml
+          sed -i "s/^version:.*/version: '${VER}'/" snap/snapcraft.yaml
+          # Belt and braces: no root recipe may shadow snap/snapcraft.yaml.
+          rm -f snapcraft.yaml .snapcraft.yaml
+          echo "Built snap version: ${VER}"
+          head -20 snap/snapcraft.yaml
+
+      - name: Build the snap (dump of the prebuilt AppDir)
+        id: build
+        uses: snapcore/action-build@v1
+
+      - name: Upload .snap artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: qbz-snap-amd64
+          path: ${{ steps.build.outputs.snap }}
+          if-no-files-found: error
+          retention-days: ${{ startsWith(github.ref, 'refs/tags/v') && 90 || 7 }}
+
+      - name: Publish to the Snap Store (skipped when no store credentials)
+        if: ${{ env.SNAPCRAFT_STORE_CREDENTIALS != '' && (startsWith(github.ref, 'refs/tags/') || inputs.publish) }}
+        uses: snapcore/action-publish@v1
+        with:
+          snap: ${{ steps.build.outputs.snap }}
+          release: ${{ github.event.inputs.channel || 'edge' }}
+
+  snap-arm64:
+    needs: [version, build-arm64]
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 90
+    env:
+      SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Download AppDir
+        uses: actions/download-artifact@v8
+        with:
+          name: qbz-appdir-aarch64
+
+      - name: Stage snap payload (AppDir tree + desktop + icon) and recipe
+        run: |
+          set -eux
+          VER="$VERSION"
+          tar -xf appdir.tar
+          mkdir -p snap-payload
+          cp -a AppDir/usr/bin AppDir/usr/lib AppDir/usr/plugins AppDir/usr/qml snap-payload/
+          cp packaging/snap/snap/gui/qbz.desktop snap-payload/qbz.desktop
+          cp packaging/snap/snap/gui/qbz.png     snap-payload/qbz.png
+          cp LICENSE snap-payload/LICENSE
+          cp -r licenses snap-payload/licenses
+          test -f snap-payload/licenses/Apache-2.0-dst-decoder.txt
+          mkdir -p snap
+          cp packaging/snap-qt/snapcraft-arm64.yaml snap/snapcraft.yaml
+          sed -i "s/^version:.*/version: '${VER}'/" snap/snapcraft.yaml
+          rm -f snapcraft.yaml .snapcraft.yaml
+          echo "Built snap version: ${VER} (arm64)"
+          head -20 snap/snapcraft.yaml
+
+      - name: Build the snap (dump of the prebuilt AppDir)
+        id: build
+        uses: snapcore/action-build@v1
+
+      - name: Upload .snap artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: qbz-snap-arm64
+          path: ${{ steps.build.outputs.snap }}
+          if-no-files-found: error
+          retention-days: ${{ startsWith(github.ref, 'refs/tags/v') && 90 || 7 }}
+
+      - name: Publish to the Snap Store (skipped when no store credentials)
+        if: ${{ env.SNAPCRAFT_STORE_CREDENTIALS != '' && (startsWith(github.ref, 'refs/tags/') || inputs.publish) }}
+        uses: snapcore/action-publish@v1
+        with:
+          snap: ${{ steps.build.outputs.snap }}
+          release: ${{ github.event.inputs.channel || 'edge' }}

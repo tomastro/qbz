@@ -1,0 +1,23 @@
+{
+  "album_id": "def456",
+  "track_id": 222222222,
+  "translation_langs": ["de"],
+  "publishers": [],
+  "writers": null,
+  "original": {
+    "type": "plain",
+    "lang": "en",
+    "lines": [
+      {"line": "Plain original one"},
+      {"line": "Plain original two"}
+    ]
+  },
+  "translation": {
+    "type": "plain",
+    "lang": "de",
+    "lines": [
+      {"line": "Einfache Uebersetzung eins"},
+      {"line": "Einfache Uebersetzung zwei"}
+    ]
+  }
+}

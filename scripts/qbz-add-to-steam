@@ -1,0 +1,546 @@
+#!/usr/bin/env python3
+"""qbz-add-to-steam — register QBZ as a non-Steam shortcut (Steam Deck / Game Mode).
+
+Adds (or updates, idempotently) a "QBZ" entry in the user's shortcuts.vdf,
+copies QBZ grid artwork, and seeds a pure-gamepad Steam Input controller
+layout for the built-in Deck controller (neptune).
+
+Stdlib only. Must run while Steam is CLOSED. See
+qbz-nix-docs/steam-deck/STEAM_DECK_GAME_MODE_PLAN.md (PR 5).
+"""
+
+import argparse
+import os
+import re
+import shutil
+import struct
+import sys
+import time
+import zlib
+from pathlib import Path
+
+APP_NAME = "QBZ"
+DEFAULT_EXE = "/usr/bin/qbz"
+ICON_PATH = "/usr/share/icons/hicolor/512x512/apps/com.blitzfc.qbz.png"
+LAYOUT_NAME = "qbz_controller_neptune.vdf"
+
+GAMESCOPE_OPTS = "env -u WAYLAND_DISPLAY WINIT_X11_SCALE_FACTOR=1"
+KIOSK_OPTS = "QBZ_PROFILE=kiosk QBZ_KIOSK_FULLSCREEN=1"
+
+ARTWORK = [  # (source name in assets/steam, grid name suffix)
+    ("portrait.png",  "p.png"),    # 600x900  -> <appid>p.png
+    ("landscape.png", ".png"),     # 920x430  -> <appid>.png
+    ("hero.png",      "_hero.png"),  # 1920x620 -> <appid>_hero.png
+    ("logo.png",      "_logo.png"),  # square   -> <appid>_logo.png
+]
+
+# --------------------------------------------------------------------------
+# Binary VDF (shortcuts.vdf) round-trip parser/serializer.
+# Field types: 0x00 nested map, 0x01 string, 0x02 little-endian u32, 0x08 end.
+# Keys and values are kept as raw bytes so unknown fields round-trip
+# byte-identically.
+# --------------------------------------------------------------------------
+
+T_MAP, T_STR, T_U32, T_END = 0x00, 0x01, 0x02, 0x08
+
+
+def _read_cstr(data, pos):
+    end = data.index(b"\x00", pos)
+    return data[pos:end], end + 1
+
+
+def _parse_fields(data, pos, is_root=False):
+    fields = []
+    while pos < len(data):
+        ftype = data[pos]
+        if ftype == T_END:
+            return fields, pos + 1, True
+        key, pos = _read_cstr(data, pos + 1)
+        if ftype == T_MAP:
+            value, pos, _ = _parse_fields(data, pos)
+        elif ftype == T_STR:
+            value, pos = _read_cstr(data, pos)
+        elif ftype == T_U32:
+            if pos + 4 > len(data):
+                raise ValueError("truncated u32 field %r" % key)
+            value = data[pos:pos + 4]
+            pos += 4
+        else:
+            raise ValueError("unknown VDF field type 0x%02x at %d" % (ftype, pos))
+        fields.append((ftype, key, value))
+    if not is_root:
+        raise ValueError("unterminated map in VDF")
+    return fields, pos, False
+
+
+def parse_vdf(data):
+    """Parse a binary VDF document -> (fields, root_end_marker)."""
+    fields, _, ended = _parse_fields(data, 0, is_root=True)
+    return fields, ended
+
+
+def _serialize_fields(fields, out):
+    for ftype, key, value in fields:
+        out.append(bytes([ftype]) + key + b"\x00")
+        if ftype == T_MAP:
+            _serialize_fields(value, out)
+            out.append(b"\x08")
+        elif ftype == T_STR:
+            out.append(value + b"\x00")
+        else:
+            out.append(value)
+
+
+def serialize_vdf(fields, root_end_marker=True):
+    out = []
+    _serialize_fields(fields, out)
+    if root_end_marker:
+        out.append(b"\x08")
+    return b"".join(out)
+
+
+def fld_str(key, value):
+    return (T_STR, key.encode("utf-8"), value.encode("utf-8"))
+
+
+def fld_u32(key, value):
+    return (T_U32, key.encode("utf-8"), struct.pack("<I", value & 0xFFFFFFFF))
+
+
+def fld_map(key, children):
+    return (T_MAP, key.encode("utf-8"), children)
+
+
+def field_get(fields, name):
+    """First field whose key matches `name` (case-insensitive), or None."""
+    want = name.lower().encode("utf-8")
+    for f in fields:
+        if f[1].lower() == want:
+            return f
+    return None
+
+
+def shortcut_appid(exe, name=APP_NAME):
+    """Classic non-Steam shortcut appid: crc32('"'+exe+'"'+name) | 0x80000000."""
+    key = ('"' + exe + '"' + name).encode("utf-8")
+    return (zlib.crc32(key) | 0x80000000) & 0xFFFFFFFF
+
+
+def launch_url(appid):
+    return "steam://rungameid/%d" % ((appid << 32) | 0x02000000)
+
+
+def build_entry(exe, launch_options, appid):
+    """Shortcut fields in the order a current Steam client writes them."""
+    return [
+        fld_u32("appid", appid),
+        fld_str("appname", APP_NAME),
+        fld_str("Exe", '"%s"' % exe),
+        fld_str("StartDir", '"%s/"' % os.path.dirname(exe)),
+        fld_str("icon", ICON_PATH),
+        fld_str("ShortcutPath", ""),
+        fld_str("LaunchOptions", launch_options),
+        fld_u32("IsHidden", 0),
+        fld_u32("AllowDesktopConfig", 1),
+        fld_u32("AllowOverlay", 1),
+        fld_u32("OpenVR", 0),
+        fld_u32("Devkit", 0),
+        fld_str("DevkitGameID", ""),
+        fld_u32("DevkitOverrideAppID", 0),
+        fld_u32("LastPlayTime", 0),
+        fld_str("FlatpakAppID", ""),
+        fld_map("tags", []),
+    ]
+
+
+def _entry_matches(entry_fields, exe, name=APP_NAME):
+    exe_f = field_get(entry_fields, "Exe")
+    name_f = field_get(entry_fields, "appname")
+    return (exe_f and name_f and exe_f[2] == ('"%s"' % exe).encode("utf-8")
+            and name_f[2] == name.encode("utf-8"))
+
+
+def upsert_entry(shortcut_fields, exe, launch_options, appid):
+    """Insert or replace the QBZ entry (dedupe by Exe+appname). Returns action."""
+    entry = build_entry(exe, launch_options, appid)
+    top = field_get(shortcut_fields, "shortcuts")
+    if top is None or top[0] != T_MAP:
+        shortcut_fields = [fld_map("shortcuts", [])]
+        top = shortcut_fields[0]
+    entries = top[2]
+    for i, (ftype, key, value) in enumerate(entries):
+        if ftype == T_MAP and _entry_matches(value, exe):
+            entries[i] = (ftype, key, entry)
+            return shortcut_fields, "updated"
+    indices = [int(k) for t, k, v in entries
+               if t == T_MAP and k.decode("utf-8", "replace").isdigit()]
+    entries.append(fld_map(str(max(indices) + 1 if indices else 0), entry))
+    return shortcut_fields, "added"
+
+
+def remove_entry(shortcut_fields, exe):
+    """Remove the QBZ entry. Returns True if an entry was removed."""
+    top = field_get(shortcut_fields, "shortcuts")
+    if top is None or top[0] != T_MAP:
+        return False
+    before = len(top[2])
+    top[2][:] = [e for e in top[2]
+                 if not (e[0] == T_MAP and _entry_matches(e[2], exe))]
+    return len(top[2]) != before
+
+
+# --------------------------------------------------------------------------
+# Steam environment
+# --------------------------------------------------------------------------
+
+def find_steam_root(home):
+    for cand in (home / ".steam/steam", home / ".local/share/Steam"):
+        if cand.is_dir():
+            return cand
+    return None
+
+
+def is_flatpak_steam(root, home):
+    fp = home / ".var/app/com.valvesoftware.Steam"
+    try:
+        return str(root.resolve()).startswith(str(fp))
+    except OSError:
+        return False
+
+
+def steam_pid(home, root):
+    for pidfile in (home / ".steam/steam.pid", root / "steam.pid"):
+        try:
+            pid = int(pidfile.read_text().strip())
+            os.kill(pid, 0)
+            return pid
+        except (ValueError, OSError):
+            continue
+    return None
+
+
+def shutdown_steam(pid):
+    print("Steam is running (pid %d); asking it to shut down..." % pid)
+    if os.system("steam -shutdown >/dev/null 2>&1") != 0:
+        print("warning: 'steam -shutdown' failed; waiting for exit anyway")
+    for _ in range(60):
+        try:
+            os.kill(pid, 0)
+        except OSError:
+            print("Steam exited.")
+            return True
+        time.sleep(1)
+    return False
+
+
+def pick_account(root, user_override):
+    loginusers = root / "userdata/config/loginusers.vdf"
+    if not loginusers.is_file():
+        raise RuntimeError("not found: %s" % loginusers)
+    text = loginusers.read_text(encoding="utf-8", errors="replace")
+    accounts = []
+    for m in re.finditer(r'"(\d{15,20})"\s*\{([^{}]*)\}', text, re.S):
+        sid, body = m.group(1), m.group(2)
+
+        def val(key):
+            fm = re.search(r'"%s"\s+"([^"]*)"' % key, body)
+            return fm.group(1) if fm else ""
+
+        accounts.append({
+            "steamid64": sid,
+            "accountid": str(int(sid) & 0xFFFFFFFF),
+            "name": val("AccountName"),
+            "recent": val("MostRecent") == "1",
+        })
+    if not accounts:
+        raise RuntimeError("no accounts in %s" % loginusers)
+    if user_override:
+        for a in accounts:
+            if user_override.lower() in (a["accountid"].lower(),
+                                         a["steamid64"].lower(),
+                                         a["name"].lower()):
+                return a
+        raise RuntimeError("no account matching --user %r (have: %s)"
+                           % (user_override,
+                              ", ".join(a["name"] or a["accountid"]
+                                        for a in accounts)))
+    for a in accounts:
+        if a["recent"]:
+            return a
+    return accounts[0]
+
+
+def deck_serial(root):
+    cfg = root / "config/config.vdf"
+    if cfg.is_file():
+        m = re.search(r'"SteamDeckRegisteredSerialNumber"\s+"([^"]+)"',
+                      cfg.read_text(encoding="utf-8", errors="replace"))
+        if m:
+            return m.group(1)
+    return None
+
+
+def find_assets_dir():
+    here = Path(__file__).resolve().parent
+    for cand in (here.parent / "assets/steam",
+                 Path("/usr/share/qbz/steam"),
+                 Path("/usr/local/share/qbz/steam")):
+        if cand.is_dir():
+            return cand
+    return here.parent / "assets/steam"  # default for error messages
+
+
+# --------------------------------------------------------------------------
+# File operations (all honour dry-run; all mutations make timestamped backups)
+# --------------------------------------------------------------------------
+
+def _backup(path):
+    if path.exists():
+        bak = path.with_name(path.name + time.strftime(".bak-%Y%m%d-%H%M%S"))
+        print("  backup %s -> %s" % (path, bak))
+        shutil.copy2(path, bak)
+
+
+def write_atomic(path, data):
+    """Write bytes to `path` atomically, keeping a timestamped .bak."""
+    _backup(path)
+    tmp = path.with_name("%s.tmp-%d" % (path.name, os.getpid()))
+    with open(tmp, "wb") as f:
+        f.write(data)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp, path)
+    print("  wrote %s (%d bytes)" % (path, len(data)))
+
+
+def copy_file(src, dst, dry_run):
+    print("  %scopy %s -> %s" % ("[dry-run] would " if dry_run else "", src, dst))
+    if not dry_run:
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dst)
+
+
+def update_shortcuts(path, exe, launch_options, appid, remove, dry_run):
+    if path.is_file():
+        fields, ended = parse_vdf(path.read_bytes())
+    else:
+        fields, ended = [], True
+    if remove:
+        changed = remove_entry(fields, exe)
+        action = "removed" if changed else "not present"
+    else:
+        fields, action = upsert_entry(fields, exe, launch_options, appid)
+    print("shortcut entry: %s in %s" % (action, path))
+    if action == "not present":
+        return
+    if dry_run:
+        print("  [dry-run] would write %s (backup first)" % path)
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    write_atomic(path, serialize_vdf(fields, ended))
+
+
+def install_artwork(grid_dir, assets, appid, remove, dry_run):
+    for src_name, suffix in ARTWORK:
+        dst = grid_dir / ("%d%s" % (appid, suffix))
+        if remove:
+            if dst.exists():
+                print("  %sremove %s" % ("[dry-run] would " if dry_run else "", dst))
+                if not dry_run:
+                    _backup(dst)
+                    dst.unlink()
+            continue
+        src = assets / src_name
+        if not src.is_file():
+            print("  warning: artwork source missing, skipping: %s" % src)
+            continue
+        copy_file(src, dst, dry_run)
+
+
+CONFIGSET_HEADER = '"controller_config"\n{\n'
+
+
+def _configset_entry(appid):
+    return ('\t"%d"\n\t{\n\t\t"template"\t\t"%s"\n\t}\n'
+            % (appid, LAYOUT_NAME))
+
+
+def _patch_configset_text(content, appid, remove):
+    """Return patched configset text, or None if the format is unrecognized."""
+    text = content.lstrip("\ufeff")
+    if not text.lstrip().startswith('"controller_config"'):
+        return None
+    if text.count("{") != text.count("}"):
+        return None
+    pattern = re.compile(r'"%d"\s*\{[^{}]*\}\n?' % appid)
+    if remove:
+        return pattern.sub("", text)
+    entry = _configset_entry(appid)
+    if pattern.search(text):
+        return pattern.sub(entry, text)
+    stripped = text.rstrip()
+    if not stripped.endswith("}"):
+        return None
+    return stripped[:-1].rstrip() + "\n" + entry + "}\n"
+
+
+def patch_configset(path, appid, remove, dry_run):
+    if path.exists():
+        new_text = _patch_configset_text(
+            path.read_text(encoding="utf-8", errors="replace"), appid, remove)
+        if new_text is None:
+            print("  warning: unrecognized format, leaving untouched: %s" % path)
+            return
+        print("  %spatch %s (%s)" % ("[dry-run] would " if dry_run else "",
+                                     path, "remove entry" if remove else
+                                     "set template " + LAYOUT_NAME))
+        if not dry_run:
+            _backup(path)
+            path.write_text(new_text, encoding="utf-8")
+    elif not remove:
+        print("  %screate %s" % ("[dry-run] would " if dry_run else "", path))
+        if not dry_run:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(CONFIGSET_HEADER + _configset_entry(appid) + "}\n",
+                            encoding="utf-8")
+
+
+def controller_config_roots(root, accountid):
+    """Directories that hold per-controller configsets + <appid>/ layout dirs.
+
+    Canonical location (DeckOps prior art, verified on a live install):
+    steamapps/common/Steam Controller Configs/<accountid>/config.
+    Some clients keep a userdata mirror; patch it too if it already exists.
+    """
+    roots = [root / "steamapps/common/Steam Controller Configs"
+             / accountid / "config"]
+    legacy = (root / "userdata" / accountid / "config"
+              / "Steam Controller Configs" / accountid / "config")
+    if legacy.is_dir() and legacy not in roots:
+        roots.append(legacy)
+    return roots
+
+
+def install_layout(root, assets, accountid, appid, remove, dry_run):
+    src = assets / LAYOUT_NAME
+    serial = deck_serial(root)
+    if not serial:
+        print("  note: no SteamDeckRegisteredSerialNumber in config.vdf; "
+              "only configset_controller_neptune.vdf will be patched")
+    for cfg_root in controller_config_roots(root, accountid):
+        app_dir = cfg_root / str(appid)
+        if remove:
+            if app_dir.is_dir():
+                print("  %sremove seeded layout %s"
+                      % ("[dry-run] would " if dry_run else "", app_dir))
+                if not dry_run:
+                    bak = app_dir.with_name(
+                        app_dir.name + time.strftime(".bak-%Y%m%d-%H%M%S"))
+                    shutil.copytree(app_dir, bak)
+                    shutil.rmtree(app_dir)
+        else:
+            if not src.is_file():
+                print("  warning: layout source missing, skipping: %s" % src)
+                return
+            copy_file(src, app_dir / LAYOUT_NAME, dry_run)
+        patch_configset(cfg_root / "configset_controller_neptune.vdf",
+                        appid, remove, dry_run)
+        if serial:
+            patch_configset(cfg_root / ("configset_%s.vdf" % serial),
+                            appid, remove, dry_run)
+
+
+# --------------------------------------------------------------------------
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(
+        description="Register QBZ as a non-Steam shortcut (artwork, launch "
+                    "options, seeded controller layout). Steam must be closed.")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="print every action without writing anything")
+    ap.add_argument("--remove", action="store_true",
+                    help="remove the QBZ shortcut, artwork and seeded layout")
+    ap.add_argument("--exe", default=DEFAULT_EXE, metavar="PATH",
+                    help="path to the qbz binary (default %(default)s)")
+    ap.add_argument("--user", metavar="ACCOUNT",
+                    help="Steam account: accountid, steamid64 or account name "
+                         "(default: MostRecent in loginusers.vdf)")
+    ap.add_argument("--no-kiosk", action="store_true",
+                    help="omit the kiosk-profile env vars from LaunchOptions")
+    ap.add_argument("--shutdown-steam", action="store_true",
+                    help="run 'steam -shutdown' and wait instead of refusing "
+                         "when Steam is running")
+    args = ap.parse_args(argv)
+
+    exe = os.path.abspath(args.exe)
+    appid = shortcut_appid(exe)
+    launch_options = GAMESCOPE_OPTS + " %command%"
+    if not args.no_kiosk:
+        launch_options = GAMESCOPE_OPTS + " " + KIOSK_OPTS + " %command%"
+
+    print("QBZ add-to-Steam%s" % (" (DRY RUN)" if args.dry_run else ""))
+    print("  exe=%s appid=%d" % (exe, appid))
+
+    home = Path.home()
+    root = find_steam_root(home)
+    if root is None:
+        print("error: no Steam installation found (~/.steam/steam or "
+              "~/.local/share/Steam)", file=sys.stderr)
+        return 1
+    print("  steam root: %s" % root)
+
+    if is_flatpak_steam(root, home):
+        print("warning: Flatpak Steam detected (%s). A host-path Exe is "
+              "broken inside the sandbox; not writing anything."
+              % root.resolve(), file=sys.stderr)
+        return 1
+
+    pid = steam_pid(home, root)
+    if pid is not None:
+        if not args.shutdown_steam:
+            print("error: Steam is running (pid %d). Close it first, or "
+                  "re-run with --shutdown-steam." % pid, file=sys.stderr)
+            return 1
+        if args.dry_run:
+            print("  [dry-run] would run 'steam -shutdown' and wait")
+        elif not shutdown_steam(pid):
+            print("error: Steam did not exit within 60s", file=sys.stderr)
+            return 1
+
+    try:
+        account = pick_account(root, args.user)
+    except RuntimeError as e:
+        print("error: %s" % e, file=sys.stderr)
+        return 1
+    accountid = account["accountid"]
+    print("  account: %s (accountid %s)" % (account["name"] or "?", accountid))
+
+    user_cfg = root / "userdata" / accountid / "config"
+    assets = find_assets_dir()
+    if not assets.is_dir():
+        print("  warning: assets dir not found: %s "
+              "(artwork/layout will be skipped)" % assets)
+
+    try:
+        update_shortcuts(user_cfg / "shortcuts.vdf", exe, launch_options,
+                         appid, args.remove, args.dry_run)
+    except ValueError as e:
+        print("error: cannot parse %s: %s — leaving it untouched"
+              % (user_cfg / "shortcuts.vdf", e), file=sys.stderr)
+        return 1
+
+    install_artwork(user_cfg / "grid", assets, appid, args.remove, args.dry_run)
+    install_layout(root, assets, accountid, appid, args.remove, args.dry_run)
+
+    if args.remove:
+        print("Done. QBZ was removed from Steam.")
+    else:
+        print("Done. Start Steam, then launch QBZ from the library or with:")
+        print("  %s" % launch_url(appid))
+        print("Tip: log in to QBZ once in Desktop Mode first (login needs a "
+              "browser); Game Mode will then open the kiosk directly.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

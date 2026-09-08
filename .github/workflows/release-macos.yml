@@ -1,0 +1,341 @@
+# macOS release — Qt frontend (crates/ workspace, package `qbz-qt`, binary `qbz`).
+#
+# Rewritten 2026-08-25 for the Slint -> Qt frontend switch. Recipe measured on
+# the Mac mini M2 (qbz-nix-docs/cicd/2026-08-25-qt-workflows-contracts/ V5b):
+#   * Qt from aqt (official, UNIVERSAL frameworks, min macOS 12) — NOT Homebrew:
+#     Homebrew splits Qt across formulae and macdeployqt cannot resolve
+#     @rpath/QtQml.framework in that layout (600 rpath errors, the .app dies
+#     with "no Qt platform plugin"). Homebrew bottles also target the runner's
+#     own macOS and would silently raise LSMinimumSystemVersion.
+#   * `macdeployqt -qmldir` is MANDATORY: a Qt binary is not self-contained.
+#     The Slint workflow copied the bare Mach-O into Contents/MacOS; a Qt
+#     .app assembled that way dies on launch on every machine that is not
+#     the build box.
+#   * CXXFLAGS=-include arm_acle.h (arm64 only): Qt 6.9.x's qyieldcpu.h calls
+#     __yield() without <arm_acle.h>; Apple clang 21 makes it a hard error.
+#     Harmless where the compiler does not care. Drop when the pin has the fix.
+#   * MACOSX_DEPLOYMENT_TARGET=12.0 -> `minos 12.0` in the Mach-O (rustc's
+#     default is 11.0, cc-rs otherwise picks the host SDK).
+#   * The smoke gate runs the BUNDLE offscreen with the Qt install removed.
+#
+# macOS pins 6.9 (not the Linux 6.8 LTS): the traffic-lights fix uses
+# Window paddings + SafeArea (Qt 6.9), and Qt is always bundled here so a
+# higher floor costs no reach. `vars.QT_VERSION_MACOS` overrides.
+
+name: release-macos
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Optional release tag to build (e.g. v2.1.0). Empty = build HEAD with the Cargo.toml version, no Release publish."
+        required: false
+        type: string
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: release-macos-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  QT_VERSION: ${{ vars.QT_VERSION_MACOS || '6.9.3' }}
+
+jobs:
+  build-macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+            runner: macos-latest
+            artifact: qbz-macos-aarch64
+            arch: aarch64
+            # See header: Qt 6.9 header bug on Apple clang 21 (arm64 code path).
+            cxxflags: "-include arm_acle.h"
+          - target: x86_64-apple-darwin
+            # macos-latest is arm64; Intel needs an Intel runner (arm_acle.h
+            # is ARM-only, so no CXXFLAGS here). macos-26-intel so both legs
+            # carry Xcode 26's actool for the Icon Composer app icon.
+            runner: macos-26-intel
+            artifact: qbz-macos-x86_64
+            # Historical dmg naming: intel assets ship as "x64".
+            arch: x64
+            cxxflags: ""
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 120
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - name: Resolve release version
+        id: release
+        run: |
+          VERSION=""
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          elif [[ -n "${{ inputs.tag }}" ]]; then
+            VERSION="${{ inputs.tag }}"
+            VERSION="${VERSION#v}"
+          else
+            VERSION="$(grep -m1 '^version = ' crates/Cargo.toml | sed 's/version = \"\(.*\)\"/\1/')"
+          fi
+          PRERELEASE=false
+          if [[ "$VERSION" =~ -(rc|beta|alpha|pre) ]]; then
+            PRERELEASE=true
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
+
+      - name: Verify tag is on main
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          git fetch origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::Tag ${GITHUB_REF#refs/tags/} is not on main. Releases are cut from main only."
+            exit 1
+          fi
+
+      - name: Assert Cargo.toml version matches tag
+        if: startsWith(github.ref, 'refs/tags/') || inputs.tag != ''
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          CARGO_VERSION="$(grep -m1 '^version = ' crates/Cargo.toml | sed 's/version = \"\(.*\)\"/\1/')"
+          if [[ "$CARGO_VERSION" != "$VERSION" ]]; then
+            echo "::error::crates/Cargo.toml workspace version ($CARGO_VERSION) != tag version ($VERSION)."
+            exit 1
+          fi
+
+      # Without qtshadertools: the committed .qsb ship (see build-qt-linux.yml).
+      - name: Install Qt ${{ env.QT_VERSION }} (universal)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: mac
+          target: desktop
+          arch: clang_64
+          cache: true
+
+      - name: Setup Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crates -> target
+          shared-key: qt-macos-${{ matrix.target }}-${{ env.QT_VERSION }}
+          cache-on-failure: true
+          save-if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/pre-release' }}
+
+      # NEVER `-p qbz` (the frozen Slint binary shares the bin name).
+      - name: Build (release)
+        env:
+          CARGO_INCREMENTAL: "0"
+          CMAKE_PREFIX_PATH: ${{ env.QT_ROOT_DIR }}
+          QMAKE: ${{ env.QT_ROOT_DIR }}/bin/qmake
+          CXXFLAGS: ${{ matrix.cxxflags }}
+          MACOSX_DEPLOYMENT_TARGET: "12.0"
+        run: |
+          python3 scripts/qt-cargo.py build --release --manifest-path crates/Cargo.toml \
+            -p qbz-qt --target ${{ matrix.target }}
+          otool -l "crates/target/${{ matrix.target }}/release/qbz" | grep -A4 LC_BUILD_VERSION | grep minos
+
+      - name: Slint-free dep-graph gate (qbz-qt)
+        run: |
+          set -euo pipefail
+          hits=$(cargo tree --manifest-path crates/Cargo.toml -p qbz-qt -e normal \
+                 | grep -E '\b(slint|qbz-ui|qbz-slint-common|qbz-dac-wizard) v' || true)
+          [ -z "$hits" ] || { echo "::error::qbz-qt graph resolves Slint crates:"; echo "$hits"; exit 1; }
+
+      - name: Assemble QBZ.app
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          APP="dist/QBZ.app"
+          mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+          cp "crates/target/${{ matrix.target }}/release/qbz" "$APP/Contents/MacOS/qbz"
+          chmod +x "$APP/Contents/MacOS/qbz"
+          cp packaging/icons/icon.icns "$APP/Contents/Resources/icon.icns"
+          cp LICENSE "$APP/Contents/Resources/LICENSE.txt"
+          cp -r licenses "$APP/Contents/Resources/licenses"
+          # The Liquid Glass app icon (packaging/icons/QBZ.icon, Icon Composer
+          # source, issue #712): compiled by Xcode 26's actool into
+          # Assets.car + CFBundleIconName=QBZ. macOS 26 renders the layered
+          # icon; older macOS and a runner without Xcode 26 fall back to
+          # icon.icns via CFBundleIconFile, which is always written.
+          ICON_NAME_KEY=""
+          if xcrun --find actool >/dev/null 2>&1 \
+             && [[ "$(xcodebuild -version | head -1 | grep -oE '[0-9]+' | head -1)" -ge 26 ]]; then
+            xcrun actool packaging/icons/QBZ.icon \
+              --compile "$APP/Contents/Resources" \
+              --app-icon QBZ \
+              --platform macosx --minimum-deployment-target 12.0 \
+              --include-all-app-icons \
+              --output-partial-info-plist icon-partial.plist \
+              --errors --warnings --notices 2>&1 | tee actool.log
+            test -f "$APP/Contents/Resources/Assets.car" \
+              || { echo "::error::actool produced no Assets.car"; exit 1; }
+            /usr/libexec/PlistBuddy -c 'Print :CFBundleIconName' icon-partial.plist \
+              || { echo "::error::actool partial plist has no CFBundleIconName"; exit 1; }
+            ICON_NAME_KEY='<key>CFBundleIconName</key><string>QBZ</string>'
+            echo "app icon: Icon Composer source compiled (Assets.car)"
+          else
+            echo "::warning::Xcode 26 actool not available — shipping icon.icns only"
+          fi
+          cat > "$APP/Contents/Info.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundlePackageType</key><string>APPL</string>
+            <key>CFBundleIdentifier</key><string>com.blitzfc.qbz</string>
+            <key>CFBundleName</key><string>QBZ</string>
+            <key>CFBundleDisplayName</key><string>QBZ</string>
+            <key>CFBundleExecutable</key><string>qbz</string>
+            <key>CFBundleIconFile</key><string>icon</string>
+            ${ICON_NAME_KEY}
+            <key>CFBundleShortVersionString</key><string>${VERSION}</string>
+            <key>CFBundleVersion</key><string>${VERSION}</string>
+            <key>LSMinimumSystemVersion</key><string>12.0</string>
+            <key>NSHighResolutionCapable</key><true/>
+            <key>LSApplicationCategoryType</key><string>public.app-category.music</string>
+            <key>NSSupportsAutomaticGraphicsSwitching</key><true/>
+            <key>CFBundleURLTypes</key>
+            <array>
+              <dict>
+                <key>CFBundleURLName</key><string>com.blitzfc.qbz</string>
+                <key>CFBundleURLSchemes</key>
+                <array><string>qbz</string><string>qobuzapp</string></array>
+              </dict>
+            </array>
+          </dict>
+          </plist>
+          PLIST
+
+      # Bundle the Qt frameworks, the cocoa platform plugin and the QML
+      # modules the app imports (Effects, labs.qmlmodels, Controls, ...).
+      # Measured: 21 s, ~225 MB. The optional sqldrivers plugins (iodbc,
+      # mimer, libpq) are the only deploy "errors" and nothing uses Qt SQL.
+      - name: macdeployqt
+        run: |
+          set -euo pipefail
+          APP="dist/QBZ.app"
+          # Preserve the deployer's exit status. The old `... | grep ERROR ||
+          # true` made every macdeployqt failure look successful because the
+          # final `true` swallowed the whole pipeline's status.
+          set +e
+          "$QT_ROOT_DIR/bin/macdeployqt" "$APP" -qmldir=crates/qbz-qt/qml -verbose=1 2>&1 | tee macdeploy.log
+          deploy_status=${PIPESTATUS[0]}
+          set -e
+          grep -E 'ERROR' macdeploy.log || true
+          if (( deploy_status != 0 )); then
+            echo "::error::macdeployqt failed with exit code $deploy_status"
+            exit "$deploy_status"
+          fi
+          rm -rf "$APP/Contents/PlugIns/sqldrivers"
+          test -f "$APP/Contents/PlugIns/platforms/libqcocoa.dylib"
+          test -d "$APP/Contents/Resources/qml/QtQuick/Effects"
+          test -f "$APP/Contents/Resources/qt.conf"
+          # Every Qt reference must now be bundle-relative. Qt 6.9's
+          # macdeployqt leaves the install names as @rpath/Qt*.framework and
+          # resolves them through an LC_RPATH of @executable_path/../Frameworks
+          # (measured 2026-08-29, macos-26 runner) — so the assert is: no
+          # ABSOLUTE Qt path survives, and that rpath is present. The offscreen
+          # smoke below (Qt install hidden) is the end-to-end proof.
+          if otool -L "$APP/Contents/MacOS/qbz" | grep -E 'Qt.*\.framework' | grep -Eq '^\s*/'; then
+            otool -L "$APP/Contents/MacOS/qbz"; echo "::error::binary still links Qt by absolute path outside the bundle"; exit 1
+          fi
+          if ! otool -l "$APP/Contents/MacOS/qbz" | grep -A2 LC_RPATH | grep -Eq '@(executable|loader)_path/\.\./Frameworks'; then
+            otool -l "$APP/Contents/MacOS/qbz" | grep -A2 LC_RPATH; echo "::error::no bundle-relative LC_RPATH for the Qt frameworks"; exit 1
+          fi
+          # offscreen platform plugin: only for the smoke below (macdeployqt
+          # deploys cocoa alone). Removed again before signing/packing.
+          cp "$QT_ROOT_DIR/plugins/platforms/libqoffscreen.dylib" "$APP/Contents/PlugIns/platforms/"
+          du -sh "$APP"
+
+      # The bundle must initialize AND survive without the Qt SDK. The helper
+      # uses a private native macOS home (XDG alone is ineffective), restores
+      # the SDK on failure/cancellation and reaps the observed process group.
+      - name: Offscreen smoke (the bundle that ships)
+        run: |
+          set -euo pipefail
+          APP="dist/QBZ.app"
+          python3 scripts/packaging/smoke_release.py "$APP/Contents/MacOS/qbz" \
+            --hide-qt "$QT_ROOT_DIR" --seconds 45 --log smoke.log
+          rm -f "$APP/Contents/PlugIns/platforms/libqoffscreen.dylib"
+
+      - name: Upload deployed startup evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: qbz-macos-smoke-${{ matrix.arch }}
+          path: smoke.log*
+          if-no-files-found: ignore
+          retention-days: 14
+
+      # Ad-hoc signature: required for arm64 Macs to launch at all. AFTER
+      # macdeployqt (it rewrites install names) and after the smoke plugin
+      # is gone, so the seal matches what ships.
+      - name: Sign
+        run: |
+          codesign --force --deep -s - "dist/QBZ.app"
+          codesign --verify --verbose "dist/QBZ.app"
+
+      - name: Build dmg
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+          ARCH: ${{ matrix.arch }}
+        run: |
+          hdiutil create -volname "QBZ" -srcfolder dist/QBZ.app -ov \
+            -format UDZO "dist/QBZ_${VERSION}_${ARCH}.dmg"
+          ls -la dist
+
+      # Tauri-updater bridge: v1.2.x installs poll latest.json and verify
+      # with the Tauri minisign pubkey baked into the old binaries. Keep
+      # producing QBZ_${ARCH}.app.tar.gz signed with the SAME key so old
+      # installs update straight into this .app.
+      - name: Package .app.tar.gz + sign (Tauri-updater bridge)
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          ARCH: ${{ matrix.arch }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: |
+          tar -czf "dist/QBZ_${ARCH}.app.tar.gz" -C dist QBZ.app
+          npx --yes @tauri-apps/cli@^2 signer sign \
+            --private-key "$TAURI_SIGNING_PRIVATE_KEY" \
+            --password "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" \
+            "dist/QBZ_${ARCH}.app.tar.gz"
+          ls -la dist
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.artifact }}
+          retention-days: ${{ startsWith(github.ref, 'refs/tags/v') && 90 || 7 }}
+          path: |
+            dist/*.dmg
+            dist/*.app.tar.gz
+            dist/*.app.tar.gz.sig
+
+      # Attaches to the Release created by release-linux.yml.
+      - name: Publish GitHub Release Assets
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v3
+        with:
+          files: |
+            dist/*.dmg
+            dist/*.app.tar.gz
+            dist/*.app.tar.gz.sig
+          prerelease: ${{ steps.release.outputs.prerelease }}
+          make_latest: ${{ steps.release.outputs.prerelease == 'true' && 'false' || 'true' }}

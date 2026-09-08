@@ -1,0 +1,23 @@
+pkgbase = qbz
+	pkgdesc = Native Qobuz client for Linux with bit-perfect playback
+	pkgver = 0.1.0
+	pkgrel = 1
+	url = https://github.com/vicrodh/qbz
+	arch = x86_64
+	license = MIT
+	depends = alsa-lib
+	depends = gtk3
+	depends = libappindicator-gtk3
+	depends = libxkbcommon
+	depends = openssl
+	depends = webkit2gtk
+	makedepends = nodejs
+	makedepends = npm
+	makedepends = rust
+	makedepends = cargo
+	makedepends = pkgconf
+	makedepends = clang
+	source = https://github.com/vicrodh/qbz/archive/refs/tags/v0.1.0.tar.gz
+	sha256sums = SKIP
+
+pkgname = qbz

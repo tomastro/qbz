@@ -1,0 +1,6826 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: qbz-slint\n"
+"PO-Revision-Date: 2026-09-05 19:52-0600\n"
+"Last-Translator: QBZ contributors\n"
+"Language-Team: QBZ ja translators\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "System Colors"
+msgstr "システムカラー"
+
+msgid "Wallpaper Sync"
+msgstr "壁紙と同期"
+
+msgid "Custom Image"
+msgstr "カスタム画像"
+
+msgid "Auto"
+msgstr "自動"
+
+msgid "Disabled"
+msgstr "無効"
+
+msgid "Replace current queue"
+msgstr "現在のキューを置き換え"
+
+msgid "Play next"
+msgstr "次に再生"
+
+msgid "Add to queue"
+msgstr "キューに追加"
+
+msgid "Remember last"
+msgstr "前回を記憶"
+
+msgid "Album Reactive"
+msgstr "アルバム連動"
+
+msgid "Static"
+msgstr "静止"
+
+msgid "Coverflow"
+msgstr "カバーフロー"
+
+msgid "Spectrum"
+msgstr "スペクトラム"
+
+msgid "Lyrics"
+msgstr "歌詞"
+
+msgid "Queue"
+msgstr "キュー"
+
+msgid "Auto (opposite to window controls)"
+msgstr "自動(ウィンドウコントロールの反対側)"
+
+msgid "Left"
+msgstr "左"
+
+msgid "Right"
+msgstr "右"
+
+msgid "Rectangular"
+msgstr "長方形"
+
+msgid "Full-height rounded"
+msgstr "全高・角丸"
+
+msgid "Circular"
+msgstr "円形"
+
+msgid "Square"
+msgstr "正方形"
+
+msgid "Small"
+msgstr "小"
+
+msgid "Normal"
+msgstr "標準"
+
+msgid "Large"
+msgstr "大"
+
+msgid "Default"
+msgstr "デフォルト"
+
+msgid "Monochrome"
+msgstr "モノクロ"
+
+msgid "Custom"
+msgstr "カスタム"
+
+msgid "Remember last used"
+msgstr "前回の使用を記憶"
+
+msgid "Micro"
+msgstr "マイクロ"
+
+msgid "Compact"
+msgstr "コンパクト"
+
+msgid "Artwork"
+msgstr "アートワーク"
+
+msgid "Home"
+msgstr "ホーム"
+
+msgid "Where you left off"
+msgstr "続きから"
+
+msgid "Mono light"
+msgstr "モノ・ライト"
+
+msgid "Mono dark"
+msgstr "モノ・ダーク"
+
+msgid "Color"
+msgstr "カラー"
+
+msgid "Vinyl"
+msgstr "レコード"
+
+msgid "Visualizer"
+msgstr "ビジュアライザー"
+
+msgid "Neon Flow"
+msgstr "ネオンフロー"
+
+msgid "Tunnel"
+msgstr "トンネル"
+
+msgid "Comet"
+msgstr "コメット"
+
+msgid "Split: Lyrics"
+msgstr "分割:歌詞"
+
+msgid "Split: Track Info"
+msgstr "分割:トラック情報"
+
+msgid "Split: Suggestions"
+msgstr "分割:おすすめ"
+
+msgid "Split: Queue"
+msgstr "分割:キュー"
+
+msgid "Full"
+msgstr "フル"
+
+msgid "Lite"
+msgstr "ライト"
+
+msgid "Off"
+msgstr "オフ"
+
+msgid "versions"
+msgstr "バージョン"
+
+msgid "Search tracks..."
+msgstr "トラックを検索..."
+
+msgid "Title"
+msgstr "タイトル"
+
+msgid "Quality"
+msgstr "音質"
+
+msgid "Disc"
+msgstr "ディスク"
+
+msgid "Loading…"
+msgstr "読み込み中…"
+
+msgid "Failed to load booklet"
+msgstr "ブックレットを読み込めませんでした"
+
+msgid "Add cover"
+msgstr "カバーを追加"
+
+msgid "Change cover"
+msgstr "カバーを変更"
+
+msgid "Remove cover"
+msgstr "カバーを削除"
+
+msgid "Open in browser"
+msgstr "ブラウザで開く"
+
+msgid "Save as…"
+msgstr "名前を付けて保存…"
+
+msgid "Read more"
+msgstr "続きを読む"
+
+msgid "Loading album…"
+msgstr "アルバムを読み込み中…"
+
+msgid "Select all"
+msgstr "すべて選択"
+
+msgid "Add to playlist"
+msgstr "プレイリストに追加"
+
+msgid "Add to Library"
+msgstr "ライブラリに追加"
+
+msgid "Make available offline"
+msgstr "オフラインで利用可能にする"
+
+msgid "Clear"
+msgstr "クリア"
+
+msgid "LABEL"
+msgstr "レーベル"
+
+msgid "AWARDS"
+msgstr "アワード"
+
+msgid "EXTERNAL LINKS"
+msgstr "外部リンク"
+
+msgid "About this album"
+msgstr "このアルバムについて"
+
+msgid "Released by"
+msgstr "リリース元"
+
+msgid "on"
+msgstr "リリース日"
+
+msgid "Credits"
+msgstr "クレジット"
+
+msgid "Review"
+msgstr "レビュー"
+
+msgid "Failed to load album credits"
+msgstr "アルバムのクレジットを読み込めませんでした"
+
+msgid "Loading credits..."
+msgstr "クレジットを読み込み中..."
+
+msgid "Loading track info..."
+msgstr "トラック情報を読み込み中..."
+
+msgid "Failed to load track info"
+msgstr "トラック情報を読み込めませんでした"
+
+msgid "Label"
+msgstr "レーベル"
+
+msgid "Newest"
+msgstr "新しい順"
+
+msgid "Oldest"
+msgstr "古い順"
+
+msgid "A–Z"
+msgstr "A–Z"
+
+msgid "Z–A"
+msgstr "Z–A"
+
+msgid "Failed to load Library"
+msgstr "ライブラリを読み込めませんでした"
+
+msgid "Retry"
+msgstr "再試行"
+
+msgid "No releases found."
+msgstr "リリースが見つかりません。"
+
+msgid "See discography"
+msgstr "ディスコグラフィを見る"
+
+msgid "Load more"
+msgstr "さらに読み込む"
+
+msgid "Add image"
+msgstr "画像を追加"
+
+msgid "Change image"
+msgstr "画像を変更"
+
+msgid "Remove image"
+msgstr "画像を削除"
+
+msgid "Create Artist Collection"
+msgstr "アーティストコレクションを作成"
+
+msgid "Artist Scene"
+msgstr "アーティストシーン"
+
+msgid "Share"
+msgstr "共有"
+
+msgid "Show artist"
+msgstr "アーティストを表示"
+
+msgid "Blacklist artist"
+msgstr "アーティストをブラックリストに追加"
+
+msgid "This artist is hidden from discovery"
+msgstr "このアーティストは「見つける」に表示されません"
+
+msgid "Loading artist…"
+msgstr "アーティストを読み込み中…"
+
+msgid "Popular Tracks"
+msgstr "人気のトラック"
+
+msgid "Play all next"
+msgstr "すべて次に再生"
+
+msgid "Play all later"
+msgstr "すべて後で再生"
+
+msgid "Add all to queue"
+msgstr "すべてキューに追加"
+
+msgid "Shuffle all"
+msgstr "すべてシャッフル"
+
+msgid "Add all to playlist"
+msgstr "すべてプレイリストに追加"
+
+msgid "View less"
+msgstr "表示を減らす"
+
+msgid "Latest release"
+msgstr "最新リリース"
+
+msgid "Appears On"
+msgstr "参加作品"
+
+msgid "Hide"
+msgstr "非表示"
+
+msgid "Show"
+msgstr "表示"
+
+msgid "Network"
+msgstr "ネットワーク"
+
+msgid "Magazine"
+msgstr "マガジン"
+
+msgid "Loading origin…"
+msgstr "出身情報を読み込み中…"
+
+msgid "BORN"
+msgstr "生年月日"
+
+msgid "FOUNDED"
+msgstr "結成"
+
+msgid "BORN IN"
+msgstr "出身地"
+
+msgid "FOUNDED IN"
+msgstr "結成地"
+
+msgid "DIED"
+msgstr "没年"
+
+msgid "DISBANDED"
+msgstr "解散"
+
+msgid "LABELS"
+msgstr "レーベル"
+
+msgid "No label info"
+msgstr "レーベル情報なし"
+
+msgid "SIMILAR ARTISTS"
+msgstr "類似アーティスト"
+
+msgid "RELATIONSHIPS"
+msgstr "関係"
+
+msgid "Members & Former"
+msgstr "メンバー・元メンバー"
+
+msgid "Member Of"
+msgstr "所属"
+
+msgid "Collaborators"
+msgstr "共演者"
+
+msgid "YOU MAY ALSO LIKE"
+msgstr "こちらもおすすめ"
+
+msgid "No stories for this artist"
+msgstr "このアーティストのストーリーはありません"
+
+msgid "About this artist"
+msgstr "このアーティストについて"
+
+msgid "Source"
+msgstr "出典"
+
+msgid "Following"
+msgstr "フォロー中"
+
+msgid "Follow"
+msgstr "フォロー"
+
+msgid "View all"
+msgstr "すべて表示"
+
+msgid "View all →"
+msgstr "すべて表示 →"
+
+msgid "Filter by genre"
+msgstr "ジャンルで絞り込む"
+
+msgid "Remember selection"
+msgstr "選択を記憶"
+
+msgid "Advanced view"
+msgstr "詳細表示"
+
+msgid "Search genres…"
+msgstr "ジャンルを検索…"
+
+msgid "Clear filter"
+msgstr "フィルターをクリア"
+
+msgid "Qobuz Mixes"
+msgstr "Qobuzミックス"
+
+msgid "Elevate your day with a customized selection of music."
+msgstr "カスタマイズされた選曲で一日を彩りましょう。"
+
+msgid "Take a weekly journey with a fresh mix every Friday."
+msgstr "毎週金曜日の新しいミックスで週ごとの旅へ。"
+
+msgid "A fresh shuffle from your personal library."
+msgstr "あなたのライブラリからの新しいシャッフル。"
+
+msgid "Discover new music from your most-played playlists."
+msgstr "よく再生するプレイリストから新しい音楽を見つけましょう。"
+
+msgid "Open album"
+msgstr "アルバムを開く"
+
+msgid "Open containing album"
+msgstr "収録アルバムを開く"
+
+msgid "Play"
+msgstr "再生"
+
+msgid "Search…"
+msgstr "検索…"
+
+msgid "1 genre"
+msgstr "1ジャンル"
+
+msgid "{} genres"
+msgstr "{}ジャンル"
+
+msgid "No results found."
+msgstr "結果が見つかりません。"
+
+msgid "Editor's Picks"
+msgstr "エディターズピック"
+
+msgid "For You"
+msgstr "あなたへのおすすめ"
+
+msgid "Qobuz Playlists"
+msgstr "Qobuzプレイリスト"
+
+msgid "No playlists match the selected categories."
+msgstr "選択したカテゴリに一致するプレイリストはありません。"
+
+msgid "Recently Played Albums"
+msgstr "最近再生したアルバム"
+
+msgid "Albums you play will appear here."
+msgstr "再生したアルバムがここに表示されます。"
+
+msgid "Recently Played Tracks"
+msgstr "最近再生したトラック"
+
+msgid "Tracks you play will appear here."
+msgstr "再生したトラックがここに表示されます。"
+
+msgid "Popular albums"
+msgstr "人気のアルバム"
+
+msgid "{} selected"
+msgstr "{}選択中"
+
+msgid "Filter by category"
+msgstr "カテゴリで絞り込む"
+
+msgid "All categories"
+msgstr "すべてのカテゴリ"
+
+msgid "Customize"
+msgstr "カスタマイズ"
+
+msgid "Enabling more sections increases load time."
+msgstr "セクションを増やすと読み込み時間が長くなります。"
+
+msgid "{} of {} enabled"
+msgstr "{}/{}有効"
+
+msgid "Reset to defaults"
+msgstr "デフォルトに戻す"
+
+msgid "Radio Stations"
+msgstr "ラジオステーション"
+
+msgid "RADIO"
+msgstr "ラジオ"
+
+msgid "Your Top Artists"
+msgstr "よく聴くアーティスト"
+
+msgid "Artists to Follow"
+msgstr "フォローするアーティスト"
+
+msgid "Pinned"
+msgstr "ピン留め"
+
+msgid "Pin"
+msgstr "ピン留め"
+
+msgid "Unpin"
+msgstr "ピン留めを解除"
+
+msgid "Showing {} of {} track."
+msgid_plural "Showing {} of {} tracks."
+msgstr[0] "{} / {} トラックを表示中"
+
+msgid "Spotlight"
+msgstr "スポットライト"
+
+msgid "Shine a light on one of your favourite artists."
+msgstr "お気に入りのアーティストにスポットライトを当てましょう。"
+
+msgid "ARTIST"
+msgstr "アーティスト"
+
+msgid "Top tracks"
+msgstr "トップトラック"
+
+msgid "By {}"
+msgstr "{}による"
+
+msgid "TOP TRACKS"
+msgstr "トップトラック"
+
+msgid "Qobuz Radio Station"
+msgstr "Qobuzラジオステーション"
+
+msgid "Available offline"
+msgstr "オフラインで利用可能"
+
+msgid "Tracks"
+msgstr "トラック"
+
+msgid "Albums"
+msgstr "アルバム"
+
+msgid "Artists"
+msgstr "アーティスト"
+
+msgid "Playlists"
+msgstr "プレイリスト"
+
+msgid "Labels"
+msgstr "レーベル"
+
+msgid "Favorite"
+msgstr "お気に入り"
+
+msgid "Library"
+msgstr "ライブラリ"
+
+msgid "Search"
+msgstr "検索"
+
+msgid "Group: Off"
+msgstr "グループ:オフ"
+
+msgid "Group: Album"
+msgstr "グループ:アルバム"
+
+msgid "Group: Artist"
+msgstr "グループ:アーティスト"
+
+msgid "Group: Name"
+msgstr "グループ:名前"
+
+msgid "Group: A-Z"
+msgstr "グループ:A-Z"
+
+msgid "Title A-Z"
+msgstr "タイトルA-Z"
+
+msgid "Title Z-A"
+msgstr "タイトルZ-A"
+
+msgid "Artist A-Z"
+msgstr "アーティストA-Z"
+
+msgid "Couldn't load your Library."
+msgstr "ライブラリを読み込めませんでした。"
+
+msgid "Remove from Library"
+msgstr "ライブラリから削除"
+
+msgid "No tracks in your Library yet."
+msgstr "ライブラリにはまだトラックがありません。"
+
+msgid "No tracks match your search."
+msgstr "検索に一致するトラックはありません。"
+
+msgid "No albums in your Library yet."
+msgstr "ライブラリにはまだアルバムがありません。"
+
+msgid "No albums match your search."
+msgstr "検索に一致するアルバムはありません。"
+
+msgid "No artists in your Library yet."
+msgstr "ライブラリにはまだアーティストがありません。"
+
+msgid "No artists match your search."
+msgstr "検索に一致するアーティストはありません。"
+
+msgid "No playlists match your search."
+msgstr "検索に一致するプレイリストはありません。"
+
+msgid "No followed playlists yet."
+msgstr "フォロー中のプレイリストはまだありません。"
+
+msgid "No playlists in your Library yet."
+msgstr "ライブラリにはまだプレイリストがありません。"
+
+msgid "No labels in your Library yet."
+msgstr "ライブラリにはまだレーベルがありません。"
+
+msgid "No labels match your search."
+msgstr "検索に一致するレーベルはありません。"
+
+msgid "Select an artist to see their albums."
+msgstr "アーティストを選択してアルバムを表示します。"
+
+msgid "Couldn't load albums."
+msgstr "アルバムを読み込めませんでした。"
+
+msgid "No albums found."
+msgstr "アルバムが見つかりません。"
+
+msgid "Go to artist page"
+msgstr "アーティストページへ移動"
+
+msgid "albums"
+msgstr "アルバム"
+
+msgid "Releases"
+msgstr "リリース"
+
+msgid "Search this label…"
+msgstr "このレーベルを検索…"
+
+msgid "No results"
+msgstr "結果なし"
+
+msgid "More labels"
+msgstr "その他のレーベル"
+
+msgid "About"
+msgstr "概要"
+
+msgid "Folders"
+msgstr "フォルダ"
+
+msgid "tracks"
+msgstr "トラック"
+
+msgid "Play all"
+msgstr "すべて再生"
+
+msgid "Clear session"
+msgstr "セッションをクリア"
+
+msgid "No playable tracks in this folder."
+msgstr "このフォルダに再生可能なトラックはありません。"
+
+msgid "Play this album"
+msgstr "このアルバムを再生"
+
+msgid "Local Library"
+msgstr "ローカルライブラリ"
+
+msgid "Artist Z-A"
+msgstr "アーティストZ-A"
+
+msgid "Year (newest)"
+msgstr "年(新しい順)"
+
+msgid "Year (oldest)"
+msgstr "年(古い順)"
+
+msgid "No grouping"
+msgstr "グループ化なし"
+
+msgid "Group by letter"
+msgstr "文字でグループ化"
+
+msgid "Group by artist"
+msgstr "アーティストでグループ化"
+
+msgid "By album"
+msgstr "アルバム別"
+
+msgid "By artist"
+msgstr "アーティスト別"
+
+msgid "By name"
+msgstr "名前別"
+
+msgid "Search artists"
+msgstr "アーティストを検索"
+
+msgid "Couldn't load your local albums."
+msgstr "ローカルアルバムを読み込めませんでした。"
+
+msgid "No albums in your local library yet."
+msgstr "ローカルライブラリにアルバムはまだありません。"
+
+msgid "Couldn't load your local tracks."
+msgstr "ローカルトラックを読み込めませんでした。"
+
+msgid "No tracks in your local library yet."
+msgstr "ローカルライブラリにトラックはまだありません。"
+
+msgid "Add to Mixtape/Collection"
+msgstr "ミックステープ/コレクションに追加"
+
+msgid "No folders in your local library yet."
+msgstr "ローカルライブラリにフォルダはまだありません。"
+
+msgid "No folders match your search."
+msgstr "検索に一致するフォルダはありません。"
+
+msgid "Search folders"
+msgstr "フォルダを検索"
+
+msgid "sel"
+msgstr "選択"
+
+msgid "Check all"
+msgstr "すべてチェック"
+
+msgid "Select a folder to see its contents."
+msgstr "フォルダを選択して内容を表示します。"
+
+msgid "Search albums..."
+msgstr "アルバムを検索..."
+
+msgid "This folder has no tracks."
+msgstr "このフォルダにトラックはありません。"
+
+msgid "No artists in your local library yet."
+msgstr "ローカルライブラリにアーティストはまだありません。"
+
+msgid "artists"
+msgstr "アーティスト"
+
+msgid "Select an artist to view their albums"
+msgstr "アーティストを選択してアルバムを表示"
+
+msgid "No albums found"
+msgstr "アルバムが見つかりません"
+
+msgid "Local Library port in progress"
+msgstr "ローカルライブラリの移植が進行中です"
+
+msgid "This tab is coming next."
+msgstr "このタブは近日公開予定です。"
+
+msgid "Filter"
+msgstr "フィルター"
+
+msgid "Hi-Res"
+msgstr "ハイレゾ"
+
+msgid "CD"
+msgstr "CD"
+
+msgid "Lossy"
+msgstr "ロッシー"
+
+msgid "Format"
+msgstr "フォーマット"
+
+msgid "Other"
+msgstr "その他"
+
+msgid "Local"
+msgstr "ローカル"
+
+msgid "Offline cache"
+msgstr "オフラインキャッシュ"
+
+msgid "Scene"
+msgstr "シーン"
+
+msgid "No artists found for this scene."
+msgstr "このシーンのアーティストが見つかりません。"
+
+msgid "QBZ"
+msgstr "QBZ"
+
+msgid "QOBUZ™ PLAYER"
+msgstr "QOBUZ™ PLAYER"
+
+msgid "I have read the"
+msgstr "以下を読みました"
+
+msgid "Qobuz™ Terms of Service"
+msgstr "Qobuz™利用規約"
+
+msgid "Sign in via Browser"
+msgstr "ブラウザでログイン"
+
+msgid "Use your system browser instead"
+msgstr "代わりにシステムのブラウザを使う"
+
+msgid "A network sign-in page may be blocking the connection"
+msgstr "ネットワークのサインインページが接続をブロックしている可能性があります"
+
+msgid "Could not restore your session"
+msgstr "セッションを復元できませんでした"
+
+msgid "Start offline (no access to Qobuz™ services)"
+msgstr "オフラインで開始（Qobuz™サービスは利用不可）"
+
+msgid "This application uses the Qobuz API but is not certified by Qobuz."
+msgstr "このアプリケーションはQobuz APIを使用していますが、Qobuzの認定は受けていません。"
+
+msgid "No tracks for this mix."
+msgstr "このミックスにトラックがありません。"
+
+msgid "Album"
+msgstr "アルバム"
+
+msgid "Bands & Projects"
+msgstr "バンド＆プロジェクト"
+
+msgid "No album appearances found."
+msgstr "アルバムへの参加が見つかりません。"
+
+msgid "You're offline"
+msgstr "オフラインです"
+
+msgid "Offline mode is enabled. Disable it in Settings to use Qobuz."
+msgstr "オフラインモードが有効です。Qobuzを使用するには設定で無効にしてください。"
+
+msgid "No internet connection. Your local library and downloads keep working."
+msgstr "インターネット接続がありません。ローカルライブラリとダウンロードは引き続き利用できます。"
+
+msgid "Open Settings"
+msgstr "設定を開く"
+
+msgid "Offline Cache"
+msgstr "オフラインキャッシュ"
+
+msgid "{} track"
+msgid_plural "{} tracks"
+msgstr[0] "{}トラック"
+
+msgid "Sort: A-Z"
+msgstr "並べ替え：A-Z"
+
+msgid "Sort: Recent"
+msgstr "並べ替え：最近"
+
+msgid "Sort: Largest"
+msgstr "並べ替え：サイズ大"
+
+msgid "Sort: Smallest"
+msgstr "並べ替え：サイズ小"
+
+msgid "Failed only"
+msgstr "失敗のみ"
+
+msgid " selected"
+msgstr "選択中"
+
+msgid "Re-download"
+msgstr "再ダウンロード"
+
+msgid "Remove"
+msgstr "削除"
+
+msgid "All artists"
+msgstr "すべてのアーティスト"
+
+msgid "No offline tracks yet"
+msgstr "オフライントラックはまだありません"
+
+msgid "Search playlists…"
+msgstr "プレイリストを検索…"
+
+msgid "1 playlist"
+msgstr "1プレイリスト"
+
+msgid "{} playlists"
+msgstr "{}プレイリスト"
+
+msgid "Move to folder"
+msgstr "フォルダに移動"
+
+msgid "No folder"
+msgstr "フォルダなし"
+
+msgid "Playlist manager"
+msgstr "プレイリストマネージャー"
+
+msgid "Visible"
+msgstr "表示"
+
+msgid "Hidden"
+msgstr "非表示"
+
+msgid "All"
+msgstr "すべて"
+
+msgid "Recent"
+msgstr "最近"
+
+msgid "Play Count"
+msgstr "再生回数"
+
+msgid "Track Count"
+msgstr "トラック数"
+
+msgid "Name A-Z"
+msgstr "名前A-Z"
+
+msgid "New folder"
+msgstr "新規フォルダ"
+
+msgid "{} folders, {} playlists"
+msgstr "{}フォルダ、{}プレイリスト"
+
+msgid "Use the arrows to reorder playlists"
+msgstr "矢印でプレイリストを並び替え"
+
+msgid "Folders ({})"
+msgstr "フォルダ（{}）"
+
+msgid "Playlists ({})"
+msgstr "プレイリスト（{}）"
+
+msgid "No playlists found."
+msgstr "プレイリストが見つかりません。"
+
+msgid "Artist"
+msgstr "アーティスト"
+
+msgid "Playlist"
+msgstr "プレイリスト"
+
+msgid "Search tracks"
+msgstr "トラックを検索"
+
+msgid "Sort"
+msgstr "並べ替え"
+
+msgid "This playlist is empty."
+msgstr "このプレイリストは空です。"
+
+msgid "Upload to Qobuz?"
+msgstr "Qobuzにアップロードしますか？"
+
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgid "Upload"
+msgstr "アップロード"
+
+msgid "About this playlist"
+msgstr "このプレイリストについて"
+
+msgid "ITEM"
+msgstr "項目"
+
+msgid "TYPE"
+msgstr "タイプ"
+
+msgid "SOURCE"
+msgstr "ソース"
+
+msgid "QUALITY"
+msgstr "音質"
+
+msgid "TRACKS"
+msgstr "トラック"
+
+msgid "YEAR"
+msgstr "年"
+
+msgid "Folder name"
+msgstr "フォルダ名"
+
+msgid "Creating..."
+msgstr "作成中..."
+
+msgid "Create"
+msgstr "作成"
+
+msgid "Edit folder"
+msgstr "フォルダを編集"
+
+msgid "Enter folder name"
+msgstr "フォルダ名を入力"
+
+msgid "Icon"
+msgstr "アイコン"
+
+msgid "Hide from sidebar"
+msgstr "サイドバーから非表示"
+
+msgid "Delete"
+msgstr "削除"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "JUMP TO"
+msgstr "ジャンプ"
+
+msgid "Search this page…"
+msgstr "このページを検索…"
+
+msgid "Something is already playing"
+msgstr "すでに再生中です"
+
+msgid "Clear queue and play"
+msgstr "キューをクリアして再生"
+
+msgid "Edit metadata"
+msgstr "メタデータを編集"
+
+msgid "Album title"
+msgstr "アルバムタイトル"
+
+msgid "Album artist"
+msgstr "アルバムアーティスト"
+
+msgid "Year"
+msgstr "年"
+
+msgid "Genre"
+msgstr "ジャンル"
+
+msgid "Catalog number"
+msgstr "カタログ番号"
+
+msgid "Total discs"
+msgstr "ディスク総数"
+
+msgid "Searching…"
+msgstr "検索中…"
+
+msgid "No results, try a different search"
+msgstr "結果がありません。別のキーワードで検索してください"
+
+msgid "Apply"
+msgstr "適用"
+
+msgid "Album folder"
+msgstr "アルバムフォルダ"
+
+msgid "Sidecar file (recommended)"
+msgstr "サイドカーファイル（推奨）"
+
+msgid "Write to audio files"
+msgstr "オーディオファイルに書き込む"
+
+msgid "This writes tags directly into your audio files."
+msgstr "タグをオーディオファイルに直接書き込みます。"
+
+msgid "Direct write is unavailable for CUE-based albums."
+msgstr "CUEベースのアルバムでは直接書き込みは利用できません。"
+
+msgid "Writing"
+msgstr "書き込み中"
+
+msgid "Saving…"
+msgstr "保存中…"
+
+msgid "Edit playlist"
+msgstr "プレイリストを編集"
+
+msgid "Playlist name"
+msgstr "プレイリスト名"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "Offline-only playlist"
+msgstr "オフライン専用プレイリスト"
+
+msgid "New playlist"
+msgstr "新規プレイリスト"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "My Playlist"
+msgstr "マイプレイリスト"
+
+msgid "Description (optional)"
+msgstr "説明（任意）"
+
+msgid "Folder"
+msgstr "フォルダ"
+
+msgid "Make playlist public"
+msgstr "プレイリストを公開する"
+
+msgid "Created locally — you're offline"
+msgstr "ローカルで作成されました — オフラインです"
+
+msgid "Add to mixtape"
+msgstr "ミックステープに追加"
+
+msgid "Share Qobuz link"
+msgstr "Qobuzリンクを共有"
+
+msgid "Share Album.link"
+msgstr "Album.linkを共有"
+
+msgid "Refresh offline copy"
+msgstr "オフラインコピーを更新"
+
+msgid "Some of these tracks were already added"
+msgstr "これらのトラックの一部はすでに追加されています"
+
+msgid "Adding..."
+msgstr "追加中..."
+
+msgid "Add all tracks"
+msgstr "すべてのトラックを追加"
+
+msgid "Add only new tracks"
+msgstr "新しいトラックのみ追加"
+
+msgid "Add to Playlist"
+msgstr "プレイリストに追加"
+
+msgid "Choose playlist"
+msgstr "プレイリストを選択"
+
+msgid "Adding {} local track(s)"
+msgstr "{}個のローカルトラックを追加中"
+
+msgid "Adding {} track(s)"
+msgstr "{}個のトラックを追加中"
+
+msgid "+ Create new playlist"
+msgstr "＋新規プレイリストを作成"
+
+msgid "Search playlists..."
+msgstr "プレイリストを検索..."
+
+msgid "Playlist Name"
+msgstr "プレイリスト名"
+
+msgid "Saving..."
+msgstr "保存中..."
+
+msgid "Create & Add"
+msgstr "作成して追加"
+
+msgid "Add"
+msgstr "追加"
+
+msgid "No playlists found"
+msgstr "プレイリストが見つかりません"
+
+msgid "{} more playlist(s)..."
+msgstr "他{}プレイリスト..."
+
+msgid "Import Playlist"
+msgstr "プレイリストをインポート"
+
+msgid "This feature requires internet connection"
+msgstr "この機能にはインターネット接続が必要です"
+
+msgid "Playlist URL"
+msgstr "プレイリストURL"
+
+msgid "ALLOWED SOURCES"
+msgstr "許可されたソース"
+
+msgid "Conversion progress"
+msgstr "変換の進行状況"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "Close"
+msgstr "閉じる"
+
+msgid "Importing..."
+msgstr "インポート中..."
+
+msgid "Import"
+msgstr "インポート"
+
+msgid "Fetching..."
+msgstr "取得中..."
+
+msgid "Fetch playlist"
+msgstr "プレイリストを取得"
+
+msgid "Shuffle"
+msgstr "シャッフル"
+
+msgid "16-bit / 44.1 kHz — George Harrison · My Sweet Lord"
+msgstr "16-bit / 44.1 kHz — George Harrison · My Sweet Lord"
+
+msgid "24-bit / 44.1 kHz — Billie Eilish · LUNCH"
+msgstr "24-bit / 44.1 kHz — Billie Eilish · LUNCH"
+
+msgid "24-bit / 96 kHz — Iron Maiden · Stratego"
+msgstr "24-bit / 96 kHz — Iron Maiden · Stratego"
+
+msgid "24-bit / 192 kHz — Toto · Africa"
+msgstr "24-bit / 192 kHz — Toto · Africa"
+
+msgid "Welcome"
+msgstr "ようこそ"
+
+msgid "Check"
+msgstr "チェック"
+
+msgid "DACs"
+msgstr "DAC"
+
+msgid "Configure"
+msgstr "設定"
+
+msgid "Test"
+msgstr "テスト"
+
+msgid "Done"
+msgstr "完了"
+
+msgid "HiFi Wizard — DAC Setup"
+msgstr "HiFiウィザード — DACセットアップ"
+
+msgid "Guided DAC Setup"
+msgstr "ガイド付きDACセットアップ"
+
+msgid "What to test with"
+msgstr "テストに使用する音源"
+
+msgid "I understand and accept these terms"
+msgstr "これらの規約を理解し、同意します"
+
+msgid "Check Audio Stack"
+msgstr "オーディオスタックをチェック"
+
+msgid "Sandboxed — host check unavailable"
+msgstr "サンドボックス環境 — ホストのチェックは利用できません"
+
+msgid "Audio stack ready"
+msgstr "オーディオスタックの準備完了"
+
+msgid "Some packages are missing"
+msgstr "一部のパッケージがありません"
+
+msgid "Your distribution"
+msgstr "お使いのディストリビューション"
+
+msgid "Init system (service commands)"
+msgstr "Initシステム（サービスコマンド）"
+
+msgid "Which DACs do you want to configure?"
+msgstr "設定するDACを選択してください"
+
+msgid "Detecting your DACs…"
+msgstr "DACを検出中…"
+
+msgid "default"
+msgstr "デフォルト"
+
+msgid "Hide manual entry"
+msgstr "手動入力を非表示"
+
+msgid "Can't see your DAC?"
+msgstr "DACが見つかりませんか？"
+
+msgid "Find your DAC's PipeWire node name and paste it here:"
+msgstr "DACのPipeWireノード名を見つけてここに貼り付けてください："
+
+msgid "1. Find your DAC under 'Audio > Sinks' and note its number"
+msgstr "1. 'Audio > Sinks'でDACを見つけて番号をメモします"
+
+msgid "2. Run with that number to read the node.name"
+msgstr "2. その番号で実行してnode.nameを読み取ります"
+
+msgid "Valid node name"
+msgstr "有効なノード名"
+
+msgid "Invalid — should contain alsa_output or alsa_input"
+msgstr "無効 — alsa_outputまたはalsa_inputを含む必要があります"
+
+msgid "Review & Apply"
+msgstr "確認して適用"
+
+msgid "QBZ never writes these files"
+msgstr "QBZはこれらのファイルを書き込みません"
+
+msgid "1. Back up your current PipeWire/WirePlumber config"
+msgstr "1. 現在のPipeWire/WirePlumber設定をバックアップします"
+
+msgid "I created a backup"
+msgstr "バックアップを作成しました"
+
+msgid "Sample-rate switching (PipeWire)"
+msgstr "サンプルレート切り替え（PipeWire）"
+
+msgid "Per-app bit-perfect (PipeWire client)"
+msgstr "アプリごとのビットパーフェクト（PipeWireクライアント）"
+
+msgid "Pin the DAC + rates (WirePlumber)"
+msgstr "DACとレートを固定（WirePlumber）"
+
+msgid "I created the configuration files"
+msgstr "設定ファイルを作成しました"
+
+msgid "3. Restart the audio services to load the config"
+msgstr "3. オーディオサービスを再起動して設定を読み込みます"
+
+msgid "I restarted the audio services"
+msgstr "オーディオサービスを再起動しました"
+
+msgid "Test Playback"
+msgstr "再生をテスト"
+
+msgid "Stop"
+msgstr "停止"
+
+msgid "Play test"
+msgstr "テストを再生"
+
+msgid "Use my current queue"
+msgstr "現在のキューを使用"
+
+msgid "All set"
+msgstr "準備完了"
+
+msgid "Config files you can create:"
+msgstr "作成できる設定ファイル："
+
+msgid "Back"
+msgstr "戻る"
+
+msgid "Start"
+msgstr "開始"
+
+msgid "Finish"
+msgstr "完了"
+
+msgid "Next"
+msgstr "次へ"
+
+msgid "Play now"
+msgstr "今すぐ再生"
+
+msgid "Start playing now?"
+msgstr "今すぐ再生を開始しますか？"
+
+msgid "Not now"
+msgstr "今はしない"
+
+msgid "Show location"
+msgstr "場所を表示"
+
+msgid "Remove from Local Library"
+msgstr "ローカルライブラリから削除"
+
+msgid "Forget download record"
+msgstr "ダウンロード記録を消去"
+
+msgid "Could not open that folder."
+msgstr "このフォルダーを開けませんでした。"
+
+msgid "Could not remove that library folder."
+msgstr "このフォルダーをライブラリから削除できませんでした。"
+
+msgid "Could not forget that download."
+msgstr "このダウンロード記録を消去できませんでした。"
+
+msgid "Create radio"
+msgstr "ラジオを作成"
+
+msgid "Add to library"
+msgstr "ライブラリに追加"
+
+msgid "Remove from playlist"
+msgstr "プレイリストから削除"
+
+msgid "Share Song.link"
+msgstr "Song.linkを共有"
+
+msgid "Remove offline copy"
+msgstr "オフラインコピーを削除"
+
+msgid "Go to album"
+msgstr "アルバムへ移動"
+
+msgid "Go to artist"
+msgstr "アーティストへ移動"
+
+msgid "Track info"
+msgstr "トラック情報"
+
+msgid "selected"
+msgstr "選択中"
+
+msgid "Artist is blacklisted"
+msgstr "アーティストはブラックリストに登録されています"
+
+msgid "Main Artist"
+msgstr "メインアーティスト"
+
+msgid "Performer"
+msgstr "演奏者"
+
+msgid "Composer"
+msgstr "作曲者"
+
+msgid "Release Name"
+msgstr "リリース名"
+
+msgid "Most popular"
+msgstr "人気順"
+
+msgid "No results."
+msgstr "結果がありません。"
+
+msgid "No results for"
+msgstr "次の結果がありません"
+
+msgid "Top result"
+msgstr "トップ結果"
+
+msgid "View more"
+msgstr "もっと見る"
+
+msgid "QOBUZ CONNECT"
+msgstr "QOBUZ CONNECT"
+
+msgid "Connect diagnostics"
+msgstr "Connect診断"
+
+msgid "Open diagnostics"
+msgstr "診断を開く"
+
+msgid "PLAYBACK"
+msgstr "再生"
+
+msgid "Continue playback after track ends"
+msgstr "トラック終了後も再生を続ける"
+
+msgid "Keep playing the rest of the album or playlist instead of stopping."
+msgstr "停止せずにアルバムまたはプレイリストの残りを再生し続けます。"
+
+msgid "Show track playing context"
+msgstr "トラックの再生コンテキストを表示"
+
+msgid "Display the context-stack icon in the player."
+msgstr "プレーヤーにコンテキストスタックアイコンを表示します。"
+
+msgid "Gapless playback"
+msgstr "ギャップレス再生"
+
+msgid "Play consecutive same-format tracks without a gap."
+msgstr "同じフォーマットの連続するトラックをギャップなしで再生します。"
+
+msgid "SESSION"
+msgstr "セッション"
+
+msgid "Restore session on startup"
+msgstr "起動時にセッションを復元"
+
+msgid "Restore the queue and current track on the next launch."
+msgstr "次回起動時にキューと現在のトラックを復元します。"
+
+msgid "Resume playback position"
+msgstr "再生位置を復元"
+
+msgid "Also seek back to where the saved track left off."
+msgstr "保存されたトラックの中断位置にも戻ります。"
+
+msgid "STREAMING"
+msgstr "ストリーミング"
+
+msgid "Stream uncached tracks"
+msgstr "キャッシュされていないトラックをストリーミング"
+
+msgid "Initial buffer size"
+msgstr "初期バッファサイズ"
+
+msgid "Seconds of audio buffered before streaming playback starts."
+msgstr "ストリーミング再生開始前にバッファするオーディオの秒数。"
+
+msgid "s"
+msgstr "秒"
+
+msgid "Streaming only"
+msgstr "ストリーミングのみ"
+
+msgid "Skip writing tracks to the local cache while streaming."
+msgstr "ストリーミング中はトラックをローカルキャッシュに書き込みません。"
+
+msgid "When quality retries fail"
+msgstr "音質の再試行が失敗したとき"
+
+msgid "What to do when every quality tier for a track is unavailable."
+msgstr "トラックのすべての音質ティアが利用できないときの動作。"
+
+msgid "Folder settings"
+msgstr "フォルダ設定"
+
+msgid "Folder settings saved"
+msgstr "フォルダー設定を保存しました"
+
+msgid "Could not save the folder settings."
+msgstr "フォルダー設定を保存できませんでした。"
+
+msgid "Folder location"
+msgstr "フォルダの場所"
+
+msgid "Change"
+msgstr "変更"
+
+msgid "Checking..."
+msgstr "確認中..."
+
+msgid "Folder is accessible"
+msgstr "フォルダにアクセスできます"
+
+msgid "Folder is not accessible"
+msgstr "フォルダにアクセスできません"
+
+msgid "Display name"
+msgstr "表示名"
+
+msgid "Optional friendly name"
+msgstr "任意の表示名"
+
+msgid "Shown instead of the full path in the folder list."
+msgstr "フォルダリストでフルパスの代わりに表示されます。"
+
+msgid "Enabled"
+msgstr "有効"
+
+msgid "Disabled folders are skipped during scans."
+msgstr "無効なフォルダはスキャン中にスキップされます。"
+
+msgid "Network folder"
+msgstr "ネットワークフォルダ"
+
+msgid "Mark this folder as a network share (excluded when offline)."
+msgstr "このフォルダをネットワーク共有としてマーク（オフライン時は除外）。"
+
+msgid "Network filesystem type"
+msgstr "ネットワークファイルシステムの種類"
+
+msgid "Auto-detect"
+msgstr "自動検出"
+
+msgid "Last scanned"
+msgstr "最終スキャン"
+
+msgid "Scan this folder"
+msgstr "このフォルダをスキャン"
+
+msgid "FOLDER"
+msgstr "フォルダ"
+
+msgid "LAST SCAN"
+msgstr "最終スキャン"
+
+msgid "STATUS"
+msgstr "ステータス"
+
+msgid "Unavailable"
+msgstr "利用不可"
+
+msgid "Active"
+msgstr "有効"
+
+msgid "LIBRARY FOLDERS"
+msgstr "ライブラリフォルダ"
+
+msgid "Browse..."
+msgstr "参照..."
+
+msgid "Choose a music folder"
+msgstr "音楽フォルダーを選択"
+
+msgid "Browse for a music folder, or type the full path."
+msgstr "音楽フォルダーを参照するか、フルパスを入力してください。"
+
+msgid "Filter folders..."
+msgstr "フォルダを絞り込み..."
+
+msgid "No folders yet. Add a folder to build your local library."
+msgstr "フォルダがまだありません。フォルダを追加してローカルライブラリを作成しましょう。"
+
+msgid "No folders match your filter."
+msgstr "条件に一致するフォルダがありません。"
+
+msgid "Scanning"
+msgstr "スキャン中"
+
+msgid "MAINTENANCE"
+msgstr "メンテナンス"
+
+msgid "Cleanup missing files"
+msgstr "見つからないファイルを整理"
+
+msgid "Remove tracks whose files no longer exist on disk."
+msgstr "ディスク上にファイルが存在しないトラックを削除します。"
+
+msgid "Cleaning up..."
+msgstr "整理中..."
+
+msgid "Cleanup"
+msgstr "整理"
+
+msgid "DANGER ZONE"
+msgstr "危険な操作"
+
+msgid "Clear library database"
+msgstr "ライブラリデータベースを消去"
+
+msgid "Remove all indexed tracks. Your audio files are not deleted."
+msgstr "インデックス済みのトラックをすべて削除します。オーディオファイルは削除されません。"
+
+msgid "Clearing..."
+msgstr "消去中..."
+
+msgid "Clear all"
+msgstr "すべて消去"
+
+msgid "PLEX"
+msgstr "Plex"
+
+msgid "Connect a Plex Media Server on your local network."
+msgstr "ローカルネットワーク上のPlex Media Serverに接続します。"
+
+msgid "Server address"
+msgstr "サーバーアドレス"
+
+msgid "Only local network servers are supported."
+msgstr "ローカルネットワークのサーバーのみ対応しています。"
+
+msgid "Enter a valid server address."
+msgstr "有効なサーバーアドレスを入力してください。"
+
+msgid "http://127.0.0.1:32400"
+msgstr "http://127.0.0.1:32400"
+
+msgid "Authorize"
+msgstr "認証"
+
+msgid "Generate a code and sign in to Plex in your browser."
+msgstr "コードを生成し、ブラウザでPlexにログインします。"
+
+msgid "Working..."
+msgstr "処理中..."
+
+msgid "Generate code"
+msgstr "コードを生成"
+
+msgid "Link code"
+msgstr "リンクコード"
+
+msgid "Enter this code at the Plex sign-in page."
+msgstr "このコードをPlexのログインページで入力してください。"
+
+msgid "Copy code"
+msgstr "コードをコピー"
+
+msgid "Open Plex sign-in"
+msgstr "Plexのログインを開く"
+
+msgid "Connected to Plex"
+msgstr "Plex に接続しました"
+
+msgid "The code expired. Generate a new one."
+msgstr "コードの有効期限が切れました。新しいコードを生成してください。"
+
+msgid "Ping the saved server and report what answers."
+msgstr "保存済みのサーバーに ping を送り、応答を表示します。"
+
+msgid "Connected to {}"
+msgstr "{} に接続しました"
+
+msgid "Could not reach the Plex server."
+msgstr "Plex サーバーに接続できませんでした。"
+
+msgid "Plex is not configured."
+msgstr "Plex が設定されていません。"
+
+msgid "Enter token manually"
+msgstr "トークンを手動で入力"
+
+msgid "Use an existing X-Plex-Token instead of the PIN flow."
+msgstr "PINフローの代わりに既存のX-Plex-Tokenを使用します。"
+
+msgid "Token"
+msgstr "トークン"
+
+msgid "X-Plex-Token"
+msgstr "X-Plex-Token"
+
+msgid "Check connection"
+msgstr "接続を確認"
+
+msgid "Verify the server is reachable."
+msgstr "サーバーに到達できるか確認します。"
+
+msgid "Libraries"
+msgstr "ライブラリ"
+
+msgid "Fetch your Plex music libraries."
+msgstr "Plexの音楽ライブラリを取得します。"
+
+msgid "Get libraries"
+msgstr "ライブラリを取得"
+
+msgid "MUSIC LIBRARIES"
+msgstr "音楽ライブラリ"
+
+msgid "({} tracks)"
+msgstr "({}トラック)"
+
+msgid "Write metadata to Plex (experimental)"
+msgstr "Plexにメタデータを書き込む(実験的)"
+
+msgid "Allow QBZ to write track metadata back to your Plex server."
+msgstr "QBZがトラックのメタデータをPlexサーバーに書き戻すことを許可します。"
+
+msgid "PLEX DANGER ZONE"
+msgstr "Plexの危険な操作"
+
+msgid "Disconnect"
+msgstr "接続を解除"
+
+msgid "Sign out of Plex and clear the local cache."
+msgstr "Plexからログアウトし、ローカルキャッシュを消去します。"
+
+msgid "Clear cache"
+msgstr "キャッシュを消去"
+
+msgid "Remove cached Plex libraries and tracks. Your sign-in is kept."
+msgstr "キャッシュされたPlexのライブラリとトラックを削除します。ログイン状態は保持されます。"
+
+msgid "OFFLINE MODE"
+msgstr "オフラインモード"
+
+msgid "Status"
+msgstr "ステータス"
+
+msgid "Captive portal detected — sign in to the network to get online."
+msgstr "キャプティブポータルを検出しました — ネットワークにログインしてオンラインにしてください。"
+
+msgid "Offline mode enabled"
+msgstr "オフラインモードが有効です"
+
+msgid "No connection"
+msgstr "接続なし"
+
+msgid "Online"
+msgstr "オンライン"
+
+msgid "Check now"
+msgstr "今すぐ確認"
+
+msgid "Enable Offline Mode"
+msgstr "オフラインモードを有効にする"
+
+msgid "Test the connection now instead of waiting for the next automatic check."
+msgstr "次の自動確認を待たずに、今すぐ接続をテストします。"
+
+msgid "Include sign-in credentials"
+msgstr "サインイン資格情報を含める"
+
+msgid "The bundle will contain your tokens. Anyone who opens the file can sign in as you."
+msgstr "バンドルにトークンが含まれます。ファイルを開いた人は誰でもあなたとしてサインインできます。"
+
+msgid "Manually switch to offline mode even with internet."
+msgstr "インターネット接続があっても手動でオフラインモードに切り替えます。"
+
+msgid "OFFLINE CACHE"
+msgstr "オフラインキャッシュ"
+
+msgid "Manage offline cache"
+msgstr "オフラインキャッシュを管理"
+
+msgid "Browse and manage your downloaded tracks and albums."
+msgstr "ダウンロードしたトラックとアルバムを閲覧・管理します。"
+
+msgid "Open manager"
+msgstr "マネージャーを開く"
+
+msgid "Cache folder"
+msgstr "キャッシュフォルダ"
+
+msgid "Open the folder where offline tracks are stored on disk."
+msgstr "オフライントラックがディスクに保存されているフォルダを開きます。"
+
+msgid "Open folder"
+msgstr "フォルダを開く"
+
+msgid "Clear offline cache"
+msgstr "オフラインキャッシュを消去"
+
+msgid "Remove every downloaded track. This cannot be undone."
+msgstr "ダウンロードしたトラックをすべて削除します。この操作は取り消せません。"
+
+msgid "LYRICS"
+msgstr "歌詞"
+
+msgid "Clear lyrics cache"
+msgstr "歌詞キャッシュを消去"
+
+msgid "{} entries using {}"
+msgstr "{}件のエントリ、{}を使用"
+
+msgid "Manage"
+msgstr "管理"
+
+msgid "Artist Blacklist"
+msgstr "アーティストのブラックリスト"
+
+msgid "{} artist(s) blocked"
+msgstr "{}人のアーティストをブロック中"
+
+msgid "{} artist(s) blocked (disabled)"
+msgstr "{}人のアーティストをブロック中(無効)"
+
+msgid "Settings"
+msgstr "設定"
+
+msgid "Audio"
+msgstr "オーディオ"
+
+msgid "Playback"
+msgstr "再生"
+
+msgid "Appearance"
+msgstr "外観"
+
+msgid "Offline"
+msgstr "オフライン"
+
+msgid "Blacklist"
+msgstr "ブラックリスト"
+
+msgid "Integrations"
+msgstr "連携"
+
+msgid "Developer"
+msgstr "開発者"
+
+msgid "Loading settings..."
+msgstr "設定を読み込み中..."
+
+msgid "Added {}"
+msgstr "{}を追加しました"
+
+msgid "Clear All"
+msgstr "すべて消去"
+
+msgid "{} artists"
+msgstr "{}人のアーティスト"
+
+msgid "Loading blacklist…"
+msgstr "ブラックリストを読み込み中…"
+
+msgid "No blacklisted artists"
+msgstr "ブラックリストに登録されたアーティストはありません"
+
+msgid "To hide an artist, go to their page and use the menu."
+msgstr "アーティストを非表示にするには、そのページでメニューを使用してください。"
+
+msgid "No results for \"{}\""
+msgstr "「{}」の結果がありません"
+
+msgid "Clear Blacklist?"
+msgstr "ブラックリストを消去しますか?"
+
+msgid "This will remove all {} blacklisted artists. This cannot be undone."
+msgstr "ブラックリストの{}人のアーティストをすべて削除します。この操作は取り消せません。"
+
+msgid "SCROBBLERS"
+msgstr "スクロブラー"
+
+msgid "LAST.FM"
+msgstr "Last.fm"
+
+msgid "Scrobble to Last.fm"
+msgstr "Last.fmにスクロブル"
+
+msgid "Signed in as {}."
+msgstr "{}としてログイン中。"
+
+msgid "Connect your Last.fm account to enable scrobbling."
+msgstr "Last.fmアカウントを接続してスクロブルを有効にします。"
+
+msgid "Connect"
+msgstr "接続"
+
+msgid "Authorize QBZ in your browser, then click Finish."
+msgstr "ブラウザでQBZを認証し、「完了」をクリックしてください。"
+
+msgid "Connect Last.fm"
+msgstr "Last.fmを接続"
+
+msgid "Open authorize page"
+msgstr "認証ページを開く"
+
+msgid "Disconnect Last.fm"
+msgstr "Last.fmの接続を解除"
+
+msgid "Sign out of Last.fm."
+msgstr "Last.fmからログアウトします。"
+
+msgid "LISTENBRAINZ"
+msgstr "ListenBrainz"
+
+msgid "Scrobble to ListenBrainz"
+msgstr "ListenBrainzにスクロブル"
+
+msgid "Paste your ListenBrainz user token to enable scrobbling."
+msgstr "ListenBrainzのユーザートークンを貼り付けてスクロブルを有効にします。"
+
+msgid "User token"
+msgstr "ユーザートークン"
+
+msgid "From listenbrainz.org/settings."
+msgstr "listenbrainz.org/settingsから取得できます。"
+
+msgid "ListenBrainz token"
+msgstr "ListenBrainzトークン"
+
+msgid "Save token"
+msgstr "トークンを保存"
+
+msgid "Validates the token against ListenBrainz."
+msgstr "ListenBrainzに対してトークンを検証します。"
+
+msgid "Validating..."
+msgstr "検証中..."
+
+msgid "Connect ListenBrainz"
+msgstr "ListenBrainzを接続"
+
+msgid "Disconnect ListenBrainz"
+msgstr "ListenBrainzの接続を解除"
+
+msgid "Sign out of ListenBrainz."
+msgstr "ListenBrainzからログアウトします。"
+
+msgid "DISCORD"
+msgstr "Discord"
+
+msgid "Discord Rich Presence"
+msgstr "Discordリッチプレゼンス"
+
+msgid "Flatpak socket access"
+msgstr "Flatpakソケットアクセス"
+
+msgid "Streaming quality"
+msgstr "ストリーミング音質"
+
+msgid "The quality tier QBZ requests for playback."
+msgstr "QBZが再生時にリクエストする音質ティアです。"
+
+msgid "Limit quality to device"
+msgstr "音質をデバイスに合わせて制限"
+
+msgid "Cap streaming quality at the output device's maximum sample rate."
+msgstr "ストリーミング音質を出力デバイスの最大サンプルレートに制限します。"
+
+msgid "Maximum sample rate"
+msgstr "最大サンプルレート"
+
+msgid "The highest sample rate streamed tracks may use."
+msgstr "ストリーミングトラックが使用できる最大のサンプルレートです。"
+
+msgid "OUTPUT"
+msgstr "出力"
+
+msgid "Audio backend"
+msgstr "オーディオバックエンド"
+
+msgid "The audio stack QBZ routes playback through."
+msgstr "QBZが再生をルーティングするオーディオスタックです。"
+
+msgid "Output device"
+msgstr "出力デバイス"
+
+msgid "The DAC or sound device that receives audio."
+msgstr "オーディオを受け取るDACまたはサウンドデバイスです。"
+
+msgid "ALSA plugin"
+msgstr "ALSAプラグイン"
+
+msgid "How ALSA opens the device — hw is bit-perfect, plughw converts."
+msgstr "ALSAがデバイスを開く方法 — hwはビットパーフェクト、plughwは変換します。"
+
+msgid "Hardware volume control"
+msgstr "ハードウェア音量コントロール"
+
+msgid "Control volume through a mixer exposed by the selected ALSA device. If unavailable, direct playback stays fixed at 100%."
+msgstr "選択したALSAデバイスが提供するミキサーで音量を調整します。利用できない場合、ダイレクト再生の音量は100%に固定されます。"
+
+msgid "This ALSA device has no compatible hardware volume control. Direct playback remains fixed at 100%."
+msgstr "このALSAデバイスには互換性のあるハードウェア音量コントロールがありません。ダイレクト再生の音量は100%に固定されます。"
+
+msgid "QBZ could not fully release the previous audio device. See the audio log for details."
+msgstr "QBZは以前のオーディオデバイスを完全に解放できませんでした。詳細はオーディオログを確認してください。"
+
+msgid "BIT-PERFECT"
+msgstr "ビットパーフェクト"
+
+msgid "Exclusive mode"
+msgstr "排他モード"
+
+msgid "Lock the device so no other app can resample it."
+msgstr "他のアプリがリサンプリングできないようにデバイスをロックします。"
+
+msgid "Reserve DAC while running"
+msgstr "実行中はDACを予約"
+
+msgid "Hold the device reserved so other apps can't grab it."
+msgstr "他のアプリが取得できないようにデバイスを予約しておきます。"
+
+msgid "DAC passthrough"
+msgstr "DACパススルー"
+
+msgid "Send the bitstream untouched to the DAC."
+msgstr "ビットストリームをそのままDACに送ります。"
+
+msgid "Force bit-perfect"
+msgstr "ビットパーフェクトを強制"
+
+msgid "Pin the PipeWire quantum and rate for the active track."
+msgstr "再生中のトラックに対してPipeWireのクォンタムとレートを固定します。"
+
+msgid "Allow quality fallback"
+msgstr "音質フォールバックを許可"
+
+msgid "Drop to a lower tier when the requested one is unavailable."
+msgstr "リクエストしたティアが利用できない場合は低いティアに下げます。"
+
+msgid "HiFi Wizard"
+msgstr "HiFiウィザード"
+
+msgid "Auto-detect your DACs and set up bit-perfect playback, step by step."
+msgstr "DACを自動検出し、ビットパーフェクト再生をステップごとに設定します。"
+
+msgid "Open Wizard"
+msgstr "ウィザードを開く"
+
+msgid "STARTUP"
+msgstr "起動"
+
+msgid "Sync audio settings on startup"
+msgstr "起動時にオーディオ設定を同期"
+
+msgid "Reload saved audio settings into the player when QBZ launches."
+msgstr "QBZの起動時に保存済みのオーディオ設定をプレーヤーに再読み込みします。"
+
+msgid "Lock output device"
+msgstr "出力デバイスをロック"
+
+msgid "Keep external routing intact — skip switching the default sink."
+msgstr "外部のルーティングをそのまま維持 — デフォルトのシンクの切り替えをスキップします。"
+
+msgid "THEME"
+msgstr "テーマ"
+
+msgid "Theme"
+msgstr "テーマ"
+
+msgid "Album header gradient"
+msgstr "アルバムヘッダーのグラデーション"
+
+msgid "Intelligent Search"
+msgstr "インテリジェント検索"
+
+msgid "Generate a color theme from your system wallpaper or a custom image"
+msgstr "システムの壁紙またはカスタム画像からカラーテーマを生成します"
+
+msgid "Select Image..."
+msgstr "画像を選択..."
+
+msgid "Detected: "
+msgstr "検出: "
+
+msgid "Experimental: theme may not match your system exactly."
+msgstr "実験的:テーマがシステムと完全に一致しない場合があります。"
+
+msgid "Regenerate"
+msgstr "再生成"
+
+msgid "TYPOGRAPHY & LANGUAGE"
+msgstr "タイポグラフィと言語"
+
+msgid "Language"
+msgstr "言語"
+
+msgid "UI Scale"
+msgstr "UIスケール"
+
+msgid "Immersive search"
+msgstr "没入型検索"
+
+msgid "Immersive default view"
+msgstr "没入型のデフォルト表示"
+
+msgid "LIBRARY & VISUALS"
+msgstr "ライブラリとビジュアル"
+
+msgid "Show navigation in sidebar"
+msgstr "サイドバーにナビゲーションを表示"
+
+msgid "My QBZ"
+msgstr "マイQBZ"
+
+msgid "Show playlist cover collages in sidebar"
+msgstr "サイドバーにプレイリストのカバーコラージュを表示"
+
+msgid "Show album artwork in Local Library track list"
+msgstr "ローカルライブラリのトラックリストにアルバムアートワークを表示"
+
+msgid "NOTIFICATIONS"
+msgstr "通知"
+
+msgid "In-app toasts notifications"
+msgstr "アプリ内トースト通知"
+
+msgid "System Notifications"
+msgstr "システム通知"
+
+msgid "WINDOW TITLE"
+msgstr "ウィンドウタイトル"
+
+msgid "Show track in window title"
+msgstr "ウィンドウタイトルにトラックを表示"
+
+msgid "Title template"
+msgstr "タイトルテンプレート"
+
+msgid "Placeholders: {{artist}}, {{track}}, {{album}}"
+msgstr "プレースホルダー:{{artist}}、{{track}}、{{album}}"
+
+msgid "TITLE BAR"
+msgstr "タイトルバー"
+
+msgid "Use system title bar"
+msgstr "システムのタイトルバーを使用"
+
+msgid "Hide title bar"
+msgstr "タイトルバーを非表示"
+
+msgid "Hide the title bar completely (for tiling window manager users)"
+msgstr "タイトルバーを完全に非表示にします(タイル型ウィンドウマネージャー利用者向け)"
+
+msgid "WINDOW CONTROLS"
+msgstr "ウィンドウコントロール"
+
+msgid "Window controls position"
+msgstr "ウィンドウコントロールの位置"
+
+msgid "Show window controls"
+msgstr "ウィンドウコントロールを表示"
+
+msgid "PLAYER VIEWS"
+msgstr "プレーヤー表示"
+
+msgid "Show volume +/- buttons"
+msgstr "音量+/-ボタンを表示"
+
+msgid "Mini player default view"
+msgstr "ミニプレーヤーのデフォルト表示"
+
+msgid "Startup page"
+msgstr "起動ページ"
+
+msgid "Choose which page to show when the app starts"
+msgstr "アプリ起動時に表示するページを選択します"
+
+msgid "Show Purchases"
+msgstr "購入済みを表示"
+
+msgid "MENU BAR"
+msgstr "メニューバー"
+
+msgid "SYSTEM TRAY"
+msgstr "システムトレイ"
+
+msgid "Enable tray icon"
+msgstr "トレイアイコンを有効にする"
+
+msgid "Show icon in system tray (requires restart)"
+msgstr "システムトレイにアイコンを表示(再起動が必要)"
+
+msgid "Close to tray"
+msgstr "閉じてトレイに格納"
+
+msgid "Keep playing in the tray instead of quitting when you close the window"
+msgstr "ウィンドウを閉じても終了せず、トレイで再生を続けます"
+
+msgid "Hide Dock icon when closed to menu bar"
+msgstr "メニューバーに格納したときにDockアイコンを非表示"
+
+msgid "Tray icon variant"
+msgstr "トレイアイコンの種類"
+
+msgid "IMMERSIVE"
+msgstr "没入モード"
+
+msgid "Background effect"
+msgstr "背景エフェクト"
+
+msgid "Immersive Panels"
+msgstr "没入型パネル"
+
+msgid "Enable or disable individual immersive view panels"
+msgstr "個々の没入型ビューのパネルを有効または無効にします"
+
+msgid "Animation Frame Rate"
+msgstr "アニメーションフレームレート"
+
+msgid "Per-animation FPS control for immersive mode"
+msgstr "没入モードのアニメーションごとのFPSコントロール"
+
+msgid "PLAYLISTS"
+msgstr "プレイリスト"
+
+msgid "No playlists yet."
+msgstr "プレイリストがまだありません。"
+
+msgid "Manage playlists"
+msgstr "プレイリストを管理"
+
+msgid "Remove from queue"
+msgstr "キューから削除"
+
+msgid "Stop after this"
+msgstr "この曲の後に停止"
+
+msgid "Remove all after"
+msgstr "以降をすべて削除"
+
+msgid "History"
+msgstr "履歴"
+
+msgid "NOW PLAYING"
+msgstr "再生中"
+
+msgid "UP NEXT ({} of {}, {} left)"
+msgstr "次の曲({}/{}、残り{})"
+
+msgid "Page {} of {}"
+msgstr "{}/{}ページ"
+
+msgid "Your queue is empty"
+msgstr "キューは空です"
+
+msgid "Play an album or track to get started"
+msgstr "アルバムやトラックを再生して始めましょう"
+
+msgid "No tracks match your search"
+msgstr "検索に一致するトラックがありません"
+
+msgid "RECENTLY PLAYED"
+msgstr "最近再生した項目"
+
+msgid "Nothing played yet"
+msgstr "まだ再生履歴がありません"
+
+msgid "Search queue"
+msgstr "キューを検索"
+
+msgid "Auto-follow"
+msgstr "自動追従"
+
+msgid "Font"
+msgstr "フォント"
+
+msgid "System"
+msgstr "システム"
+
+msgid "LINE Seed JP"
+msgstr "LINE Seed JP"
+
+msgid "Montserrat"
+msgstr "Montserrat"
+
+msgid "Noto Sans"
+msgstr "Noto Sans"
+
+msgid "Source Sans 3"
+msgstr "Source Sans 3"
+
+msgid "Size"
+msgstr "サイズ"
+
+msgid "S"
+msgstr "S"
+
+msgid "M"
+msgstr "M"
+
+msgid "L"
+msgstr "L"
+
+msgid "XL"
+msgstr "XL"
+
+msgid "Active color"
+msgstr "アクティブカラー"
+
+msgid "Uppercase"
+msgstr "大文字"
+
+msgid "Dimming"
+msgstr "減光"
+
+msgid "Soft"
+msgstr "弱"
+
+msgid "Strong"
+msgstr "強"
+
+msgid "Copy lyrics"
+msgstr "歌詞をコピー"
+
+msgid "Reset"
+msgstr "リセット"
+
+msgid "Previous"
+msgstr "前へ"
+
+msgid "Pause"
+msgstr "一時停止"
+
+msgid "Repeat"
+msgstr "リピート"
+
+msgid "Add to…"
+msgstr "追加先…"
+
+msgid "Add album to collection"
+msgstr "アルバムをコレクションに追加"
+
+msgid "Remove album from collection"
+msgstr "アルバムをコレクションから削除"
+
+msgid "Remove from library"
+msgstr "ライブラリから削除"
+
+msgid "{} (not playable)"
+msgstr "{}(再生不可)"
+
+msgid "Cast"
+msgstr "キャスト"
+
+msgid "Connected to"
+msgstr "接続先"
+
+msgid "Streaming {} · {}"
+msgstr "ストリーミング中 {} · {}"
+
+msgid "No devices found"
+msgstr "デバイスが見つかりません"
+
+msgid "Looking for Chromecast & DLNA on your network"
+msgstr "ネットワーク上のChromecastとDLNAを検索中"
+
+msgid "Display settings"
+msgstr "表示設定"
+
+msgid "Fetching lyrics..."
+msgstr "歌詞を取得中..."
+
+msgid "No lyrics available"
+msgstr "利用できる歌詞がありません"
+
+msgid "Missing lyrics? You can contribute them to LRCLIB:"
+msgstr "歌詞がありませんか?LRCLIBに投稿できます:"
+
+msgid "Lyrics unavailable offline"
+msgstr "歌詞はオフラインでは利用できません"
+
+msgid "Lyrics source"
+msgstr "歌詞のソース"
+
+msgid "Qobuz Connect"
+msgstr "Qobuz Connect"
+
+msgid "Connected"
+msgstr "接続済み"
+
+msgid "Disconnected"
+msgstr "切断済み"
+
+msgid "Playing on: {}"
+msgstr "再生先：{}"
+
+msgid "Looking for devices…"
+msgstr "デバイスを検索中…"
+
+msgid "Make sure your renderer is on the same network"
+msgstr "レンダラーが同じネットワーク上にあることを確認してください"
+
+msgid "Play here"
+msgstr "ここで再生"
+
+msgid "Audio settings"
+msgstr "オーディオ設定"
+
+msgid "Normalization"
+msgstr "ノーマライズ"
+
+msgid "Level loudness across tracks"
+msgstr "トラック間の音量を均一化"
+
+msgid "Gapless"
+msgstr "ギャップレス"
+
+msgid "Seamless track transitions"
+msgstr "シームレスなトラック切り替え"
+
+msgid "Now Playing view"
+msgstr "再生中ビュー"
+
+msgid "New"
+msgstr "新規"
+
+msgid "Classic"
+msgstr "クラシック"
+
+msgid "Miniplayer"
+msgstr "ミニプレーヤー"
+
+msgid "Immersive"
+msgstr "没入"
+
+msgid "Unmute"
+msgstr "ミュート解除"
+
+msgid "Mute"
+msgstr "ミュート"
+
+msgid "Volume"
+msgstr "音量"
+
+msgid "Qobuz Connect: On"
+msgstr "Qobuz Connect：オン"
+
+msgid "Qobuz Connect: Off"
+msgstr "Qobuz Connect：オフ"
+
+msgid "Volume down"
+msgstr "音量を下げる"
+
+msgid "Volume up"
+msgstr "音量を上げる"
+
+msgid "Nothing playing"
+msgstr "再生していません"
+
+msgid "Go to where this is playing from"
+msgstr "再生元へ移動"
+
+msgid "Casting"
+msgstr "キャスト中"
+
+msgid "Output mode"
+msgstr "出力モード"
+
+msgid "Move to root"
+msgstr "ルートへ移動"
+
+msgid "No folders yet."
+msgstr "フォルダがまだありません。"
+
+msgid "Discover"
+msgstr "見つける"
+
+msgid "Mixtapes"
+msgstr "ミックステープ"
+
+msgid "Collections"
+msgstr "コレクション"
+
+msgid "Search playlists"
+msgstr "プレイリストを検索"
+
+msgid "Sort by"
+msgstr "並べ替え"
+
+msgid "Name (A-Z)"
+msgstr "名前（A-Z）"
+
+msgid "# of tracks"
+msgstr "トラック数"
+
+msgid "Refresh"
+msgstr "更新"
+
+msgid "Logged out"
+msgstr "ログアウト済み"
+
+msgid "Offline (manual)"
+msgstr "オフライン（手動）"
+
+msgid "Offline (hard)"
+msgstr "オフライン（強制）"
+
+msgid "You're signed out. Sign-in needs a connection."
+msgstr "ログアウトしています。ログインには接続が必要です。"
+
+msgid "Connection available — sign back in to Qobuz."
+msgstr "接続が利用可能です — Qobuzに再ログインしてください。"
+
+msgid "You're signed out — sign back in to Qobuz."
+msgstr "ログアウトしています — Qobuzに再ログインしてください。"
+
+msgid "Sign in"
+msgstr "ログイン"
+
+msgid "Offline mode"
+msgstr "オフラインモード"
+
+msgid "Enter"
+msgstr "入る"
+
+msgid "Guest"
+msgstr "ゲスト"
+
+msgid "Not signed in"
+msgstr "未ログイン"
+
+msgid "Keyboard Shortcuts"
+msgstr "キーボードショートカット"
+
+msgid "Documentation"
+msgstr "ドキュメント"
+
+msgid "Report an Issue"
+msgstr "問題を報告"
+
+msgid "Log Out"
+msgstr "ログアウト"
+
+msgid "Create Mixtape"
+msgstr "ミックステープを作成"
+
+msgid "Create Collection"
+msgstr "コレクションを作成"
+
+msgid "NAME"
+msgstr "名前"
+
+msgid "KIND"
+msgstr "種類"
+
+msgid "+ New Mixtape"
+msgstr "+ 新規ミックステープ"
+
+msgid "+ New Collection"
+msgstr "+ 新規コレクション"
+
+msgid "Rename"
+msgstr "名前を変更"
+
+msgid "Edit description"
+msgstr "説明を編集"
+
+msgid "Delete \"{}\"? This cannot be undone."
+msgstr "「{}」を削除しますか？この操作は取り消せません。"
+
+msgid "All ({})"
+msgstr "すべて（{}）"
+
+msgid "Random queue"
+msgstr "ランダムキュー"
+
+msgid "Number of songs"
+msgstr "曲数"
+
+msgid "{} songs available"
+msgstr "{}曲が利用可能"
+
+msgid "No mixtapes yet"
+msgstr "ミックステープがまだありません"
+
+msgid "Position"
+msgstr "位置"
+
+msgid "Items"
+msgstr "項目"
+
+msgid "Recently updated"
+msgstr "最近更新"
+
+msgid "No results found"
+msgstr "結果が見つかりません"
+
+msgid "No collections yet"
+msgstr "コレクションがまだありません"
+
+msgid "All kinds"
+msgstr "すべての種類"
+
+msgid "Artist Collections"
+msgstr "アーティストコレクション"
+
+msgid "Remove from collection"
+msgstr "コレクションから削除"
+
+msgid "Not found"
+msgstr "見つかりません"
+
+msgid "Upload cover"
+msgstr "カバーをアップロード"
+
+msgid "Clear custom cover"
+msgstr "カスタムカバーをクリア"
+
+msgid "Album shuffle"
+msgstr "アルバムシャッフル"
+
+msgid "In order"
+msgstr "順番どおり"
+
+msgid "Convert to Collection"
+msgstr "コレクションに変換"
+
+msgid "Convert to Mixtape"
+msgstr "ミックステープに変換"
+
+msgid "1 filter"
+msgstr "フィルター1件"
+
+msgid "{} filters"
+msgstr "{}件のフィルター"
+
+msgid "Type"
+msgstr "種類"
+
+msgid "All types"
+msgstr "すべての種類"
+
+msgid "Track"
+msgstr "トラック"
+
+msgid "Qobuz"
+msgstr "Qobuz"
+
+msgid "Plex"
+msgstr "Plex"
+
+msgid "Item"
+msgstr "項目"
+
+msgid "Already added"
+msgstr "追加済み"
+
+msgid "ADD TO MIXTAPE/COLLECTION"
+msgstr "ミックステープ/コレクションに追加"
+
+msgid "No matches."
+msgstr "一致するものがありません。"
+
+msgid "No mixtapes or collections yet."
+msgstr "ミックステープもコレクションもまだありません。"
+
+msgid "EP"
+msgstr "EP"
+
+msgid "Single"
+msgstr "シングル"
+
+msgid "Live"
+msgstr "ライブ"
+
+msgid "Compilation"
+msgstr "コンピレーション"
+
+msgid "Use auto-detected"
+msgstr "自動検出を使用"
+
+msgid "alternate"
+msgstr "別バージョン"
+
+msgid "compilation"
+msgstr "コンピレーション"
+
+msgid "BUILD ARTIST COLLECTION"
+msgstr "アーティストコレクションを作成"
+
+msgid "ORDER BY"
+msgstr "並べ替え基準"
+
+msgid "Release date"
+msgstr "リリース日"
+
+msgid "Manual"
+msgstr "手動"
+
+msgid "Loading..."
+msgstr "読み込み中..."
+
+msgid "ALBUM"
+msgstr "アルバム"
+
+msgid "{} of {} album selected"
+msgid_plural "{} of {} albums selected"
+msgstr[0] "{}/{}アルバムを選択中"
+
+msgid "Now Playing"
+msgstr "再生中"
+
+msgid "No lyrics"
+msgstr "歌詞なし"
+
+msgid "No track selected"
+msgstr "トラックが選択されていません"
+
+msgid "Loading suggestions..."
+msgstr "おすすめを読み込み中..."
+
+msgid "Failed to load suggestions"
+msgstr "おすすめの読み込みに失敗しました"
+
+msgid "Recommended tracks"
+msgstr "おすすめのトラック"
+
+msgid "Exit Immersive"
+msgstr "没入を終了"
+
+msgid "FOCUS"
+msgstr "フォーカス"
+
+msgid "Plasma"
+msgstr "プラズマ"
+
+msgid "Aurora"
+msgstr "オーロラ"
+
+msgid "SPLIT"
+msgstr "分割"
+
+msgid "Track Info"
+msgstr "トラック情報"
+
+msgid "Suggestions"
+msgstr "おすすめ"
+
+msgid "UP NEXT"
+msgstr "次に再生"
+
+msgid "Tracks you play will appear here"
+msgstr "再生したトラックがここに表示されます"
+
+msgid "No track playing"
+msgstr "再生中のトラックがありません"
+
+msgid "Queue is empty"
+msgstr "キューが空です"
+
+msgid "Search albums & tracks…"
+msgstr "アルバムとトラックを検索…"
+
+msgid "Acclaimed Releases"
+msgstr "高評価のリリース"
+
+msgid "No award-winning releases yet."
+msgstr "受賞リリースがまだありません。"
+
+msgid "Award"
+msgstr "アワード"
+
+msgid "Unfollow award"
+msgstr "アワードのフォローを解除"
+
+msgid "Follow award"
+msgstr "アワードをフォロー"
+
+msgid "See All"
+msgstr "すべて表示"
+
+msgid "Other awards"
+msgstr "その他のアワード"
+
+msgid "{} item needs attention before bit-perfect playback will work."
+msgid_plural "{} items need attention before bit-perfect playback will work."
+msgstr[0] "ビットパーフェクト再生を有効にするには{}項目の対応が必要です。"
+
+msgid "Removed {} artist from blacklist"
+msgid_plural "Removed {} artists from blacklist"
+msgstr[0] "ブラックリストから{}人のアーティストを削除しました"
+
+msgid "Removed {} folder"
+msgid_plural "Removed {} folders"
+msgstr[0] "{}フォルダを削除しました"
+
+msgid "Scan complete ({} file skipped)"
+msgid_plural "Scan complete ({} files skipped)"
+msgstr[0] "スキャン完了（{}ファイルをスキップ）"
+
+msgid "{} album"
+msgid_plural "{} albums"
+msgstr[0] "{}アルバム"
+
+msgid "{} item"
+msgid_plural "{} items"
+msgstr[0] "{}項目"
+
+msgid "{} duplicate skipped"
+msgid_plural "{} duplicates skipped"
+msgstr[0] "{}件の重複をスキップ"
+
+msgid "Removed {} item"
+msgid_plural "Removed {} items"
+msgstr[0] "{}項目を削除しました"
+
+msgid "Caching {} track offline…"
+msgid_plural "Caching {} tracks offline…"
+msgstr[0] "{}トラックをオフラインにキャッシュ中…"
+
+msgid "(Re)start the PipeWire audio services"
+msgstr "PipeWireオーディオサービスを（再）起動"
+
+msgid "({} local)"
+msgstr "（{}ローカル）"
+
+msgid "176.4 kHz"
+msgstr "176.4 kHz"
+
+msgid "192 kHz"
+msgstr "192 kHz"
+
+msgid "352.8 kHz"
+msgstr "352.8 kHz"
+
+msgid "384 kHz"
+msgstr "384 kHz"
+
+msgid "44.1 kHz"
+msgstr "44.1 kHz"
+
+msgid "48 kHz"
+msgstr "48 kHz"
+
+msgid "88.2 kHz"
+msgstr "88.2 kHz"
+
+msgid "96 kHz"
+msgstr "96 kHz"
+
+msgid "A fresh mix every week."
+msgstr "毎週新しいミックスを。"
+
+msgid "Add a folder before scanning"
+msgstr "スキャン前にフォルダを追加してください"
+
+msgid "Added to queue"
+msgstr "キューに追加しました"
+
+msgid "Added {} to {}"
+msgstr "{}を{}に追加しました"
+
+msgid "Added {} to {} ({})"
+msgstr "{}を{}に追加しました（{}）"
+
+msgid "Adding tracks to playlist..."
+msgstr "プレイリストにトラックを追加中..."
+
+msgid "Adding tracks: {} / {}"
+msgstr "トラックを追加中：{}/{}"
+
+msgid "Album folder not found on disk"
+msgstr "アルバムフォルダがディスク上に見つかりません"
+
+msgid "Album metadata saved"
+msgstr "アルバムのメタデータを保存しました"
+
+msgid "Album title is required"
+msgstr "アルバムタイトルは必須です"
+
+msgid "Albums of the Week"
+msgstr "今週のアルバム"
+
+msgid "Albums on Local Library"
+msgstr "ローカルライブラリのアルバム"
+
+msgid "Already in {}"
+msgstr "すでに{}にあります"
+
+msgid "Always skip track"
+msgstr "常にトラックをスキップ"
+
+msgid "Always try lowest quality"
+msgstr "常に最低音質を試す"
+
+msgid "April"
+msgstr "4月"
+
+msgid "Are you absolutely sure?"
+msgstr "本当によろしいですか？"
+
+msgid "Artist Spotlight"
+msgstr "アーティストスポットライト"
+
+msgid "Artists on Local Library"
+msgstr "ローカルライブラリのアーティスト"
+
+msgid "Ask me"
+msgstr "確認する"
+
+msgid "August"
+msgstr "8月"
+
+msgid "Authorize QBZ in your browser, then click \"Finish\""
+msgstr "ブラウザでQBZを認証してから「完了」をクリックしてください"
+
+msgid "Available tracks only — offline"
+msgstr "利用可能なトラックのみ — オフライン"
+
+msgid "Bit-perfect (Hardware / Digital)"
+msgstr "ビットパーフェクト（ハードウェア/デジタル）"
+
+msgid "Blacklist disabled"
+msgstr "ブラックリストを無効にしました"
+
+msgid "Blacklist enabled"
+msgstr "ブラックリストを有効にしました"
+
+msgid "Booklet open task failed: {}"
+msgstr "ブックレットを開くタスクに失敗しました：{}"
+
+msgid "COLLECTION"
+msgstr "コレクション"
+
+msgid "Cache cleared"
+msgstr "キャッシュをクリアしました"
+
+msgid "Cached for offline"
+msgstr "オフライン用にキャッシュ済み"
+
+msgid "Cannot convert this kind"
+msgstr "この種類は変換できません"
+
+msgid "Checked {} tracks - all OK"
+msgstr "{}トラックをチェックしました - すべて問題なし"
+
+msgid "Checking playlist link..."
+msgstr "プレイリストのリンクを確認中..."
+
+msgid "Checking your audio stack…"
+msgstr "オーディオスタックを確認中…"
+
+msgid "Couldn't load the test tracks (offline?)"
+msgstr "テストトラックを読み込めませんでした（オフライン？）"
+
+msgid "Choose a cover image"
+msgstr "カバー画像を選択"
+
+msgid "Choose a folder to play"
+msgstr "再生するフォルダを選択"
+
+msgid "Choose a {} icon"
+msgstr "{}アイコンを選択"
+
+msgid "Cleaning up missing files..."
+msgstr "欠落ファイルを整理中..."
+
+msgid "Cleanup failed"
+msgstr "整理に失敗しました"
+
+msgid "Clear Plex cache?"
+msgstr "Plexキャッシュをクリアしますか？"
+
+msgid "Clear library database?"
+msgstr "ライブラリデータベースをクリアしますか？"
+
+msgid "Code copied"
+msgstr "コードをコピーしました"
+
+msgid "Compilations"
+msgstr "コンピレーション"
+
+msgid "Connected as {}"
+msgstr "{}として接続済み"
+
+msgid "Connected to {} (v{})"
+msgstr "{}に接続済み（v{}）"
+
+msgid "Continue Listening"
+msgstr "続けて再生"
+
+msgid "Converted"
+msgstr "変換しました"
+
+msgid "Couldn't add folder"
+msgstr "フォルダを追加できませんでした"
+
+msgid "Couldn't change folder location (path may already exist)"
+msgstr "フォルダの場所を変更できませんでした（パスがすでに存在している可能性があります）"
+
+msgid "Couldn't clean up missing files"
+msgstr "欠落ファイルを整理できませんでした"
+
+msgid "Couldn't clear the Plex cache"
+msgstr "Plexキャッシュをクリアできませんでした"
+
+msgid "Couldn't clear the library database"
+msgstr "ライブラリデータベースをクリアできませんでした"
+
+msgid "Couldn't clear the offline cache"
+msgstr "オフラインキャッシュをクリアできませんでした"
+
+msgid "Couldn't create the Qobuz playlist"
+msgstr "Qobuzプレイリストを作成できませんでした"
+
+msgid "Couldn't load library folders"
+msgstr "ライブラリフォルダを読み込めませんでした"
+
+msgid "Couldn't load that album"
+msgstr "そのアルバムを読み込めませんでした"
+
+msgid "Couldn't load that playlist"
+msgstr "そのプレイリストを読み込めませんでした"
+
+msgid "Couldn't load that track"
+msgstr "そのトラックを読み込めませんでした"
+
+msgid "Couldn't load this album"
+msgstr "このアルバムを読み込めませんでした"
+
+msgid "Couldn't load this artist"
+msgstr "このアーティストを読み込めませんでした"
+
+msgid "Couldn't load this collection"
+msgstr "このコレクションを読み込めませんでした"
+
+msgid "Couldn't load this playlist"
+msgstr "このプレイリストを読み込めませんでした"
+
+msgid "Couldn't open that folder"
+msgstr "そのフォルダを開けませんでした"
+
+msgid "Couldn't save folder settings"
+msgstr "フォルダ設定を保存できませんでした"
+
+msgid "Couldn't save metadata: {}"
+msgstr "メタデータを保存できませんでした：{}"
+
+msgid "Cover removed"
+msgstr "カバーを削除しました"
+
+msgid "Cover updated"
+msgstr "カバーを更新しました"
+
+msgid "Creating playlist..."
+msgstr "プレイリストを作成中..."
+
+msgid "Critics' Picks"
+msgstr "評論家の選曲"
+
+msgid "DAC: {} · {} · {} ch"
+msgstr "DAC：{} · {} · {} ch"
+
+msgid "December"
+msgstr "12月"
+
+msgid "Defaults"
+msgstr "デフォルト"
+
+msgid "Disconnect from Plex?"
+msgstr "Plexから切断しますか？"
+
+msgid "EPs & Singles"
+msgstr "EPとシングル"
+
+msgid "Enable PipeWire in your NixOS configuration"
+msgstr "NixOS構成でPipeWireを有効にしてください"
+
+msgid "Enter a title or artist to search"
+msgstr "検索するタイトルまたはアーティストを入力してください"
+
+msgid "Enter code {} at the Plex sign-in page"
+msgstr "Plexのログインページでコード{}を入力してください"
+
+msgid "Error: {}"
+msgstr "エラー：{}"
+
+msgid "Error: {} (did you authorize in the browser?)"
+msgstr "エラー：{}（ブラウザで認証しましたか？）"
+
+msgid "Essentials by Genre"
+msgstr "ジャンル別の定番"
+
+msgid "Every track needs a title"
+msgstr "すべてのトラックにタイトルが必要です"
+
+msgid "Failed to cast track"
+msgstr "トラックのキャストに失敗しました"
+
+msgid "Failed to change play mode"
+msgstr "再生モードの変更に失敗しました"
+
+msgid "Failed to clear blacklist"
+msgstr "ブラックリストのクリアに失敗しました"
+
+msgid "Failed to clear lyrics cache"
+msgstr "歌詞キャッシュのクリアに失敗しました"
+
+msgid "Failed to create temp dir: {}"
+msgstr "一時ディレクトリの作成に失敗しました：{}"
+
+msgid "Failed to decode booklet page: {}"
+msgstr "ブックレットページのデコードに失敗しました：{}"
+
+msgid "Failed to delete"
+msgstr "削除に失敗しました"
+
+msgid "Failed to fetch booklet: {}"
+msgstr "ブックレットの取得に失敗しました：{}"
+
+msgid "Failed to fetch metadata"
+msgstr "メタデータの取得に失敗しました"
+
+msgid "Failed to read booklet: {}"
+msgstr "ブックレットの読み込みに失敗しました：{}"
+
+msgid "Failed to remove artist"
+msgstr "アーティストの削除に失敗しました"
+
+msgid "Failed to remove cover"
+msgstr "カバーの削除に失敗しました"
+
+msgid "Failed to remove items"
+msgstr "項目の削除に失敗しました"
+
+msgid "Failed to rename"
+msgstr "名前の変更に失敗しました"
+
+msgid "Failed to save description"
+msgstr "説明の保存に失敗しました"
+
+msgid "Failed to toggle blacklist"
+msgstr "ブラックリストの切り替えに失敗しました"
+
+msgid "Failed to upload cover"
+msgstr "カバーのアップロードに失敗しました"
+
+msgid "Failed to write booklet: {}"
+msgstr "ブックレットの書き込みに失敗しました：{}"
+
+msgid "Library Albums"
+msgstr "ライブラリのアルバム"
+
+msgid "February"
+msgstr "2月"
+
+msgid "File not available — is the drive mounted?"
+msgstr "ファイルが利用できません — ドライブはマウントされていますか？"
+
+msgid "Files not available — is the drive mounted?"
+msgstr "ファイルが利用できません — ドライブはマウントされていますか？"
+
+msgid "Folder opened"
+msgstr "フォルダを開きました"
+
+msgid "Found {} tracks from {}."
+msgstr "{}トラックが{}から見つかりました。"
+
+msgid "From the same artist"
+msgstr "同じアーティストから"
+
+msgid "From your most-played playlists."
+msgstr "よく再生するプレイリストから。"
+
+msgid "Ideal Discography"
+msgstr "理想のディスコグラフィー"
+
+msgid "Image"
+msgstr "画像"
+
+msgid "Import failed: {}"
+msgstr "インポートに失敗しました：{}"
+
+msgid "Imported {} of {} tracks into QBZ."
+msgstr "{}/{}トラックをQBZにインポートしました。"
+
+msgid "Install the ALSA bridge so playback can reach PipeWire"
+msgstr "再生がPipeWireに届くようにALSAブリッジをインストール"
+
+msgid "Install the PipeWire audio stack"
+msgstr "PipeWireオーディオスタックをインストール"
+
+msgid "Install the PipeWire tools (pw-dump)"
+msgstr "PipeWireツール（pw-dump）をインストール"
+
+msgid "Install the Pulse compatibility tools (optional fallback)"
+msgstr "Pulse互換ツールをインストール（任意のフォールバック）"
+
+msgid "January"
+msgstr "1月"
+
+msgid "July"
+msgstr "7月"
+
+msgid "June"
+msgstr "6月"
+
+msgid "Last.fm disconnected"
+msgstr "Last.fmを切断しました"
+
+msgid "Last.fm sign-in failed to start"
+msgstr "Last.fmのログインを開始できませんでした"
+
+msgid "Library database cleared"
+msgstr "ライブラリデータベースを消去しました"
+
+msgid "ListenBrainz disconnected"
+msgstr "ListenBrainzを切断しました"
+
+msgid "Listening suggestions"
+msgstr "リスニングの提案"
+
+msgid "Loaded {} cached tracks"
+msgstr "キャッシュ済み{}トラックを読み込みました"
+
+msgid "Log in to cache tracks offline"
+msgstr "オフラインでトラックをキャッシュするにはログイン"
+
+msgid "Lossless: {}"
+msgstr "ロスレス：{}"
+
+msgid "Lyrics cache cleared"
+msgstr "歌詞キャッシュを消去しました"
+
+msgid "Lyrics copied"
+msgstr "歌詞をコピーしました"
+
+msgid "MIXTAPE"
+msgstr "ミックステープ"
+
+msgid "March"
+msgstr "3月"
+
+msgid "Matching tracks: {} / {} ({} found)"
+msgstr "一致したトラック：{} / {}（{}件見つかりました）"
+
+msgid "May"
+msgstr "5月"
+
+msgid "Middle-click to pause"
+msgstr "中クリックで一時停止"
+
+msgid "Middle-click to play"
+msgstr "中クリックで再生"
+
+msgid "Mixed queue — not cast to Qobuz Connect"
+msgstr "混在キュー — Qobuz Connectにキャストしません"
+
+msgid "More From Your Library"
+msgstr "ライブラリからもっと"
+
+msgid "More Labels"
+msgstr "その他のレーベル"
+
+msgid "Most Streamed"
+msgstr "最も再生された"
+
+msgid "Network folder detected"
+msgstr "ネットワークフォルダを検出しました"
+
+msgid "Never"
+msgstr "なし"
+
+msgid "New Releases"
+msgstr "新着リリース"
+
+msgid "Next Track"
+msgstr "次のトラック"
+
+msgid "No limit"
+msgstr "制限なし"
+
+msgid "No matching tracks found."
+msgstr "一致するトラックが見つかりません。"
+
+msgid "No sinks detected — reinstall the ALSA UCM profiles, then reboot"
+msgstr "シンクが検出されません — ALSA UCMプロファイルを再インストールして再起動してください"
+
+msgid "No top tracks available for this artist"
+msgstr "このアーティストの人気トラックはありません"
+
+msgid "No tracks available offline"
+msgstr "オフラインで利用できるトラックはありません"
+
+msgid "Not available offline"
+msgstr "オフラインでは利用できません"
+
+msgid "Nothing playable in this playlist right now"
+msgstr "現在このプレイリストに再生できるものがありません"
+
+msgid "November"
+msgstr "11月"
+
+msgid "October"
+msgstr "10月"
+
+msgid "Offline cache cleared"
+msgstr "オフラインキャッシュを消去しました"
+
+msgid "Offline cache is full — free space or raise the limit"
+msgstr "オフラインキャッシュがいっぱいです — 空き容量を作るか上限を上げてください"
+
+msgid "Offline caching failed"
+msgstr "オフラインキャッシュに失敗しました"
+
+msgid "On Local Library"
+msgstr "ローカルライブラリにあり"
+
+msgid "Opened folder ({} files skipped)"
+msgstr "フォルダを開きました（{}ファイルをスキップ）"
+
+msgid "Other Outputs"
+msgstr "その他の出力"
+
+msgid "PLAYLIST"
+msgstr "プレイリスト"
+
+msgid "Paste your ListenBrainz user token first"
+msgstr "まずListenBrainzのユーザートークンを貼り付けてください"
+
+msgid "Play/Pause"
+msgstr "再生／一時停止"
+
+msgid "Playing next"
+msgstr "次に再生"
+
+msgid "Playing {} of {}"
+msgstr "{}/{}を再生中"
+
+msgid "Playlist ({} local)"
+msgstr "プレイリスト（{}件ローカル）"
+
+msgid "Playlist created in Qobuz™."
+msgstr "Qobuz™にプレイリストを作成しました。"
+
+msgid "Playlist uploaded to Qobuz"
+msgstr "プレイリストをQobuzにアップロードしました"
+
+msgid "Playlist: {}"
+msgstr "プレイリスト：{}"
+
+msgid "Plex link failed to start"
+msgstr "Plexの連携を開始できませんでした"
+
+msgid "Plugin Hardware"
+msgstr "プラグインハードウェア"
+
+msgid "Press Accolades"
+msgstr "プレス称賛"
+
+msgid "Previous Track"
+msgstr "前のトラック"
+
+msgid "Purchase Only"
+msgstr "購入のみ"
+
+msgid "QBZ requesting {} · {}-bit"
+msgstr "QBZが{} · {}ビットを要求中"
+
+msgid "Qobuz Connect is unavailable while offline"
+msgstr "オフライン中はQobuz Connectを利用できません"
+
+msgid "Qobuz Connect renderer disconnected"
+msgstr "Qobuz Connectレンダラーが切断されました"
+
+msgid "Qobuz Connect renderer unreachable"
+msgstr "Qobuz Connectレンダラーに接続できません"
+
+msgid "Qobuzissimes"
+msgstr "Qobuzissimes"
+
+msgid "Quit QBZ"
+msgstr "QBZを終了"
+
+msgid "Rate limited, try again shortly"
+msgstr "レート制限中です。しばらくしてからもう一度お試しください"
+
+msgid "Recently Played"
+msgstr "最近再生した項目"
+
+msgid "Rediscover Your Library"
+msgstr "ライブラリを再発見"
+
+msgid "Release Watch"
+msgstr "リリースウォッチ"
+
+msgid "Removed \"{}\" ({})"
+msgstr "「{}」を削除しました（{}）"
+
+msgid "Removed album from offline"
+msgstr "アルバムをオフラインから削除しました"
+
+msgid "Removed from offline"
+msgstr "オフラインから削除しました"
+
+msgid "Removed {} of {} tracks"
+msgstr "{}/{}トラックを削除しました"
+
+msgid "Scan cancelled"
+msgstr "スキャンをキャンセルしました"
+
+msgid "Scan complete"
+msgstr "スキャンが完了しました"
+
+msgid "Scan failed"
+msgstr "スキャンに失敗しました"
+
+msgid "Scanning track paths..."
+msgstr "トラックパスをスキャン中..."
+
+msgid "Scroll to adjust volume"
+msgstr "スクロールで音量を調整"
+
+msgid "Search failed: {}"
+msgstr "検索に失敗しました：{}"
+
+msgid "Searching Qobuz catalog..."
+msgstr "Qobuzカタログを検索中..."
+
+msgid "Select music folder"
+msgstr "音楽フォルダを選択"
+
+msgid "September"
+msgstr "9月"
+
+msgid "Show/Hide Window"
+msgstr "ウィンドウを表示／非表示"
+
+msgid "Similar to {}"
+msgstr "{}に似ている"
+
+msgid "Skipped: {}"
+msgstr "スキップ：{}"
+
+msgid "Some tracks can't be cast to Qobuz Connect"
+msgstr "一部のトラックはQobuz Connectにキャストできません"
+
+msgid "Song Radio"
+msgstr "ソングラジオ"
+
+msgid "Split into {} playlists (Qobuz 2000-track limit)"
+msgstr "{}個のプレイリストに分割（Qobuzの2000トラック上限）"
+
+msgid "Start the sign-in first"
+msgstr "まずログインを開始してください"
+
+msgid "Starting…"
+msgstr "開始中…"
+
+msgid "System default"
+msgstr "システムの既定"
+
+msgid "TRACK"
+msgstr "トラック"
+
+msgid "These items resolved to 0 playable tracks"
+msgstr "これらの項目で再生できるトラックは0件でした"
+
+msgid "This action cannot be undone."
+msgstr "この操作は取り消せません。"
+
+msgid "This album has no playable tracks"
+msgstr "このアルバムに再生できるトラックはありません"
+
+msgid "This collection resolved to 0 playable tracks"
+msgstr "このコレクションで再生できるトラックは0件でした"
+
+msgid "This item resolved to 0 playable tracks"
+msgstr "この項目で再生できるトラックは0件でした"
+
+msgid "This modifies your audio files on disk and cannot be undone."
+msgstr "これはディスク上のオーディオファイルを変更し、取り消せません。"
+
+msgid "This playlist has no playable tracks"
+msgstr "このプレイリストに再生できるトラックはありません"
+
+msgid "This removes cached Plex libraries and tracks. Your sign-in is kept."
+msgstr "これはキャッシュされたPlexのライブラリとトラックを削除します。ログイン状態は保持されます。"
+
+msgid "This track is no longer available"
+msgstr "このトラックは利用できなくなりました"
+
+msgid "This track is not yet available"
+msgstr "このトラックはまだ利用できません"
+
+msgid "Track count differs from the result; titles applied by position"
+msgstr "トラック数が結果と異なります。タイトルは位置順に適用されました"
+
+msgid "Track not available offline"
+msgstr "トラックはオフラインで利用できません"
+
+msgid "Track not castable to Qobuz Connect"
+msgstr "トラックはQobuz Connectにキャストできません"
+
+msgid "Track unavailable on Qobuz Connect"
+msgstr "トラックはQobuz Connectで利用できません"
+
+msgid "Tracks matched: {} / {}"
+msgstr "一致したトラック：{} / {}"
+
+msgid "Unavailable Plex track"
+msgstr "利用できないPlexトラック"
+
+msgid "Unavailable track"
+msgstr "利用できないトラック"
+
+msgid "Unknown"
+msgstr "不明"
+
+msgid "Unknown Artist"
+msgstr "不明なアーティスト"
+
+msgid "Unknown source"
+msgstr "不明なソース"
+
+msgid "Upcoming"
+msgstr "近日公開"
+
+msgid "Upload incomplete — local playlist kept"
+msgstr "アップロードが未完了です — ローカルプレイリストを保持しました"
+
+msgid "Various Artists"
+msgstr "ヴァリアスアーティスト"
+
+msgid "Waiting for the DAC to start playing…"
+msgstr "DACの再生開始を待っています…"
+
+msgid "Write tags to audio files?"
+msgstr "オーディオファイルにタグを書き込みますか？"
+
+msgid "Writing tags to files isn't supported for CUE albums; use sidecar mode"
+msgstr "CUEアルバムではファイルへのタグ書き込みに対応していません。サイドカーモードを使用してください"
+
+msgid "Year must be a number"
+msgstr "年は数値で入力してください"
+
+msgid "You're offline — try again when connected"
+msgstr "オフラインです — 接続後にもう一度お試しください"
+
+msgid "Your audio stack is ready for bit-perfect playback."
+msgstr "オーディオスタックはビットパーフェクト再生の準備ができています。"
+
+msgid "Your queue is empty — add some tracks first, or press Play test."
+msgstr "キューが空です — まずトラックを追加するか、テスト再生を押してください。"
+
+msgid "by {}"
+msgstr "{}による"
+
+msgid "hw (Direct Hardware)"
+msgstr "hw（ダイレクトハードウェア）"
+
+msgid "pcm (Most compatible)"
+msgstr "pcm（最も互換性が高い）"
+
+msgid "plughw (Auto-convert)"
+msgstr "plughw（自動変換）"
+
+msgid "{} + {} more"
+msgstr "{} + 他{}件"
+
+msgid "{} albums · {} tracks"
+msgstr "{}アルバム · {}トラック"
+
+msgid "{} h {} min"
+msgstr "{}時間{}分"
+
+msgid "{} libraries found"
+msgstr "{}個のライブラリが見つかりました"
+
+msgid "{} min"
+msgstr "{}分"
+
+msgid "{} removed from blacklist"
+msgstr "{}をブラックリストから削除しました"
+
+msgid "{} tracks loaded"
+msgstr "{}トラックを読み込みました"
+
+msgid "{} tracks · {}"
+msgstr "{}トラック · {}"
+
+msgid "{} {}"
+msgstr "{} {}"
+
+msgid "{} {}, {}"
+msgstr "{} {}、{}"
+
+msgid "{} — Complete Discography"
+msgstr "{} — 全ディスコグラフィー"
+
+msgid "· Unlimited"
+msgstr "· 無制限"
+
+msgid "· of {}"
+msgstr "· {}中"
+
+# --- Purchases (Slice 13) ---
+msgid "My Purchases"
+msgstr "購入済み"
+
+msgid "Purchases are downloaded as DRM-free files. Availability depends on your Qobuz region."
+msgstr "購入済みはDRMフリーのファイルとしてダウンロードされます。利用可否はQobuzの地域によります。"
+
+msgid "Search purchases…"
+msgstr "購入済みを検索…"
+
+msgid "No purchases yet"
+msgstr "まだ購入はありません"
+
+msgid "No purchased tracks yet"
+msgstr "まだ購入したトラックはありません"
+
+msgid "Filters"
+msgstr "フィルター"
+
+msgid "Availability"
+msgstr "利用可否"
+
+msgid "Hide unavailable"
+msgstr "利用不可を非表示"
+
+msgid "CD Quality"
+msgstr "CD音質"
+
+msgid "MP3"
+msgstr "MP3"
+
+msgid "Downloads"
+msgstr "ダウンロード"
+
+msgid "Hide downloaded"
+msgstr "ダウンロード済みを非表示"
+
+msgid "Group: A–Z"
+msgstr "グループ：A–Z"
+
+msgid "Sort: Date"
+msgstr "並べ替え：日付"
+
+msgid "Sort: Artist"
+msgstr "並べ替え：アーティスト"
+
+msgid "Sort: Album"
+msgstr "並べ替え：アルバム"
+
+msgid "Sort: Quality"
+msgstr "並べ替え：音質"
+
+msgid "Date"
+msgstr "日付"
+
+msgid "Download all"
+msgstr "すべてダウンロード"
+
+msgid "Download complete"
+msgstr "ダウンロードが完了しました"
+
+msgid "Download cancelled ({}/{})"
+msgstr "ダウンロードをキャンセルしました（{}/{}）"
+
+msgid "Downloading {}/{}..."
+msgstr "ダウンロード中{}/{}..."
+
+msgid "Select format"
+msgstr "フォーマットを選択"
+
+msgid "Purchased on"
+msgstr "購入日"
+
+msgid "Add these downloaded tracks to your local library."
+msgstr "これらのダウンロードしたトラックをローカルライブラリに追加します。"
+
+msgid "{} tracks"
+msgstr "{}トラック"
+
+msgid "Choose folder"
+msgstr "フォルダを選択"
+
+msgid "Couldn't add to library"
+msgstr "ライブラリに追加できませんでした"
+
+msgid "Added to library"
+msgstr "ライブラリに追加しました"
+
+msgid "Purchased from Qobuz"
+msgstr "Qobuzで購入済み"
+
+msgid "Couldn't load purchases. Check your connection."
+msgstr "購入済みを読み込めませんでした。接続を確認してください。"
+
+msgid "This track has no album to download"
+msgstr "このトラックにはダウンロードできるアルバムがありません"
+
+msgid "Failed to start download. Please try again."
+msgstr "ダウンロードを開始できませんでした。もう一度お試しください。"
+
+msgid "No downloadable formats available"
+msgstr "ダウンロード可能なフォーマットがありません"
+
+msgid "Download goodies"
+msgstr "特典をダウンロード"
+
+# Playlist "Suggested Songs" section (T8)
+msgid "Suggested songs"
+msgstr "おすすめの曲"
+
+msgid "Suggest songs for this playlist"
+msgstr "このプレイリストに曲を提案"
+
+msgid "Finding similar artists..."
+msgstr "似たアーティストを検索中..."
+
+msgid "Refresh suggestions"
+msgstr "提案を更新"
+
+msgid "Not interested"
+msgstr "興味なし"
+
+# Slint polish batch (radio / playlist follow-copy / MusicBrainz / reco)
+msgid "QBZ Radio"
+msgstr "QBZラジオ"
+
+msgid "Qobuz Radio"
+msgstr "Qobuzラジオ"
+
+msgid "Create QBZ radio"
+msgstr "QBZラジオを作成"
+
+msgid "Create Qobuz radio"
+msgstr "Qobuzラジオを作成"
+
+msgid "Follow on Qobuz"
+msgstr "Qobuzでフォロー"
+
+msgid "Following on Qobuz"
+msgstr "Qobuzでフォロー中"
+
+msgid "Copy to your library"
+msgstr "ライブラリにコピー"
+
+msgid "METADATA"
+msgstr "メタデータ"
+
+msgid "MusicBrainz"
+msgstr "MusicBrainz"
+
+msgid "Enable artist relationships and enhanced metadata from MusicBrainz. No telemetry — it only matches releases to enrich artist pages and playlist song suggestions. Turn off to disable those sections."
+msgstr "MusicBrainzからのアーティストの関連性と拡張メタデータを有効にします。テレメトリはありません — リリースを照合してアーティストページとプレイリストの曲の提案を充実させるだけです。オフにするとこれらのセクションを無効にします。"
+
+msgid "No tracks to add"
+msgstr "追加するトラックがありません"
+
+msgid "Failed to add tracks"
+msgstr "トラックの追加に失敗しました"
+
+msgid "Copied to your library"
+msgstr "ライブラリにコピーしました"
+
+msgid "Failed to copy playlist"
+msgstr "プレイリストのコピーに失敗しました"
+
+msgid "Playlist has no tracks to copy"
+msgstr "プレイリストにコピーするトラックがありません"
+
+msgid "Added {} track"
+msgid_plural "Added {} tracks"
+msgstr[0] "{}トラックを追加しました"
+
+msgid "Added {} track to {}"
+msgid_plural "Added {} tracks to {}"
+msgstr[0] "{}トラックを{}に追加しました"
+
+msgid "Added {} track to queue"
+msgid_plural "Added {} tracks to queue"
+msgstr[0] "{}トラックをキューに追加しました"
+
+msgid "Unfollow on Qobuz"
+msgstr "Qobuzでフォロー解除"
+
+msgid "Stops in"
+msgstr "停止まで"
+
+msgid "Cancel Timer"
+msgstr "タイマーをキャンセル"
+
+msgid "Stop playback after:"
+msgstr "再生を停止する時間："
+
+msgid "30 min"
+msgstr "30分"
+
+msgid "1 hr"
+msgstr "1時間"
+
+msgid "2 hr"
+msgstr "2時間"
+
+msgid "3 hr"
+msgstr "3時間"
+
+msgid "5 hr"
+msgstr "5時間"
+
+msgid "Custom…"
+msgstr "カスタム…"
+
+msgid "min"
+msgstr "分"
+
+msgid "Set Timer"
+msgstr "タイマーを設定"
+
+msgid "Cancel stop after this"
+msgstr "この後の停止をキャンセル"
+
+msgid "LOGS"
+msgstr "ログ"
+
+msgid "Application logs"
+msgstr "アプリケーションログ"
+
+msgid "View the in-app log, copy it (secrets redacted), or upload it to share in a GitHub issue."
+msgstr "アプリ内のログを表示、コピー（機密情報は伏せ字）、またはアップロードしてGitHubのIssueで共有できます。"
+
+msgid "Open log viewer"
+msgstr "ログビューアーを開く"
+
+msgid "Setting"
+msgstr "設定項目"
+
+msgid "Saved"
+msgstr "保存済み"
+
+msgid "Runtime"
+msgstr "ランタイム"
+
+msgid "Diagnostics"
+msgstr "診断"
+
+msgid "Runtime vs saved configuration snapshot."
+msgstr "ランタイムと保存済み設定のスナップショット。"
+
+msgid "Exported"
+msgstr "エクスポート済み"
+
+msgid "Export to clipboard"
+msgstr "クリップボードにエクスポート"
+
+msgid "Cast Discovery"
+msgstr "キャストの検出"
+
+msgid "Scanning…"
+msgstr "スキャン中…"
+
+msgid "Scan for devices"
+msgstr "デバイスをスキャン"
+
+msgid "Graphics"
+msgstr "グラフィック"
+
+msgid "Environment"
+msgstr "環境"
+
+msgid "Logs"
+msgstr "ログ"
+
+msgid "View logs"
+msgstr "ログを表示"
+
+msgid "Upload failed."
+msgstr "アップロードに失敗しました。"
+
+msgid "All levels"
+msgstr "すべてのレベル"
+
+msgid "Error"
+msgstr "エラー"
+
+msgid "Warn"
+msgstr "警告"
+
+msgid "Info"
+msgstr "情報"
+
+msgid "Debug"
+msgstr "デバッグ"
+
+msgid "Trace"
+msgstr "トレース"
+
+msgid "Search logs…"
+msgstr "ログを検索…"
+
+msgid "Auto-tail"
+msgstr "自動追尾"
+
+msgid "Time"
+msgstr "時刻"
+
+msgid "Level"
+msgstr "レベル"
+
+msgid "Target"
+msgstr "ターゲット"
+
+msgid "Message"
+msgstr "メッセージ"
+
+msgid "No log entries."
+msgstr "ログエントリはありません。"
+
+msgid "Copied"
+msgstr "コピーしました"
+
+msgid "Copy all"
+msgstr "すべてコピー"
+
+msgid "Copy diagnostics bundle"
+msgstr "診断バンドルをコピー"
+
+msgid "Uploading…"
+msgstr "アップロード中…"
+
+msgid "Upload (public)"
+msgstr "アップロード（公開）"
+
+msgid "Open log file"
+msgstr "ログファイルを開く"
+
+msgid "Report an issue"
+msgstr "問題を報告"
+
+msgid "Go to logs"
+msgstr "ログへ移動"
+
+msgid "Create issue report"
+msgstr "Issueレポートを作成"
+
+msgid "To make bug and issue resolution easier, it's recommended to share the application logs. We have been careful to mask the logs we send so no sensitive data is included. The process is manual, never automatic, so you can verify what is being shared."
+msgstr "バグや問題の解決を容易にするため、アプリケーションログの共有をおすすめします。送信するログは機密データが含まれないよう慎重に伏せ字にしています。処理は手動で行われ、自動で行われることはないため、共有される内容を確認できます。"
+
+msgid "Cache window"
+msgstr "キャッシュ期間"
+
+msgid "24 hours"
+msgstr "24時間"
+
+msgid "36 hours"
+msgstr "36時間"
+
+msgid "48 hours"
+msgstr "48時間"
+
+msgid "72 hours"
+msgstr "72時間"
+
+msgid "Refresh now"
+msgstr "今すぐ更新"
+
+msgid "No internet connection — you can start in offline mode with your local library and downloads"
+msgstr "インターネット接続がありません — ローカルライブラリとダウンロードでオフラインモードを開始できます"
+
+msgid "QBZ requires an active Qobuz™ subscription. Your credentials are sent directly to Qobuz™."
+msgstr "QBZには有効なQobuz™サブスクリプションが必要です。認証情報はQobuz™に直接送信されます。"
+
+msgid "Qobuz™ is a trademark of Qobuz. QBZ is an open-source application licensed under the MIT License and is not affiliated with, endorsed by, or certified by Qobuz."
+msgstr "Qobuz™はQobuzの商標です。QBZはMIT Licenseの下でライセンスされたオープンソースアプリケーションであり、Qobuzと提携、推奨、認定の関係はありません。"
+
+msgid "This creates the playlist on Qobuz with its Qobuz tracks, keeps local files attached, and removes the local-only copy."
+msgstr "これはQobuzトラックを含むプレイリストをQobuz上に作成し、ローカルファイルを関連付けたまま保持し、ローカルのみのコピーを削除します。"
+
+msgid "Add this to the current queue, or clear the queue and start playing it?"
+msgstr "現在のキューに追加しますか、それともキューをクリアして再生を開始しますか？"
+
+msgid "This playlist already contains {} of the {} tracks you're adding. Add only the new ones, or add everything including duplicates."
+msgstr "このプレイリストには、すでに{}件（追加する{}件のトラックのうち）が含まれています。新しいものだけを追加するか、重複を含めてすべて追加してください。"
+
+msgid "This wizard helps you configure your DAC for bit-perfect playback on Linux. QBZ never changes your system automatically — it auto-detects your DACs, shows you the exact commands and config to copy, and lets you test playback right here."
+msgstr "このウィザードはLinuxでビットパーフェクト再生のためにDACを設定する手助けをします。QBZがシステムを自動的に変更することはありません。DACを自動検出し、コピーすべき正確なコマンドと設定を表示し、ここで再生をテストできるようにします。"
+
+msgid "You are responsible for your own backups. This is a helper, not a system recovery tool."
+msgstr "バックアップはご自身の責任で行ってください。これは補助ツールであり、システム復旧ツールではありません。"
+
+msgid "The built-in test plays four tracks spanning different bit-depths and sample rates (16/44.1, 24/44.1, 24/96, 24/192) so you can see your DAC switch. If you'd rather use your own queue, add one track of each kind first so every rate is exercised."
+msgstr "内蔵テストは異なるビット深度とサンプルレート（16/44.1、24/44.1、24/96、24/192）にまたがる4つのトラックを再生し、DACの切り替えを確認できます。独自のキューを使いたい場合は、すべてのレートが試されるよう、各種類のトラックを1つずつ先に追加してください。"
+
+msgid "QBZ is packaged as Flatpak/Snap and can't inspect your host audio stack. If playback already works, you're set. Pick your distribution and init system below for the right setup commands."
+msgstr "QBZはFlatpak/Snapとしてパッケージ化されており、ホストのオーディオスタックを検査できません。すでに再生が機能している場合は設定完了です。適切なセットアップコマンドのために、以下でディストリビューションとinitシステムを選択してください。"
+
+msgid "QBZ already pins rate, sink and exclusive mode at runtime. These files only change system-wide behavior — copy and run them yourself if you want them. Back up first."
+msgstr "QBZはすでに実行時にレート、シンク、排他モードを固定します。これらのファイルはシステム全体の動作のみを変更します。必要な場合はご自身でコピーして実行してください。先にバックアップを取ってください。"
+
+msgid "Plays four tracks at different bit-depths and sample rates through the selected DAC. Watch your DAC's display switch rates — and confirm it below."
+msgstr "選択したDACを通じて異なるビット深度とサンプルレートで4つのトラックを再生します。DACのディスプレイでレートが切り替わるのを確認し、以下で確認してください。"
+
+msgid "Your DAC is ready for bit-perfect playback. If you applied the config files, restart the audio services (or log out and back in) for them to take effect."
+msgstr "DACはビットパーフェクト再生の準備ができています。設定ファイルを適用した場合は、有効にするためにオーディオサービスを再起動（またはログアウトして再ログイン）してください。"
+
+msgid "Live session topology and a rolling event log for debugging Qobuz Connect at runtime."
+msgstr "Qobuz Connectを実行時にデバッグするための、ライブセッショントポロジーと随時更新されるイベントログ。"
+
+msgid "Start uncached tracks via streaming instead of waiting for the full download."
+msgstr "完全なダウンロードを待つ代わりに、キャッシュされていないトラックをストリーミングで開始します。"
+
+msgid "Blacklisted artists are hidden from search results, radio, suggestions, and similar artists."
+msgstr "ブラックリストに登録されたアーティストは、検索結果、ラジオ、提案、類似アーティストから非表示になります。"
+
+msgid "Blacklist filtering is disabled. Blacklisted artists are shown everywhere until you re-enable it."
+msgstr "ブラックリストフィルタリングは無効です。再度有効にするまで、ブラックリストに登録されたアーティストはあらゆる場所に表示されます。"
+
+msgid "Send your plays to Last.fm and ListenBrainz. Works for Qobuz, local, and Plex tracks. This switch also decides whether Recommendations may read your listening history from those services."
+msgstr "再生履歴をLast.fmとListenBrainzに送信します。Qobuz、ローカル、Plexのトラックに対応しています。このスイッチは、おすすめがそれらのサービスから再生履歴を読み取れるかどうかも決めます。"
+
+msgid "Show what you're listening to as your Discord status. Opt-in — Discord must be running."
+msgstr "聴いている曲をDiscordのステータスとして表示します。オプトイン制で、Discordが起動している必要があります。"
+
+msgid ""
+"Flatpak install and the presence isn't showing? Grant access to Discord's IPC socket, then restart QBZ:\n"
+"flatpak override --user --filesystem=xdg-run/discord-ipc-0 com.blitzfc.qbz"
+msgstr ""
+"Flatpakインストールでプレゼンスが表示されませんか？DiscordのIPCソケットへのアクセスを許可してから、QBZを再起動してください：\n"
+"flatpak override --user --filesystem=xdg-run/discord-ipc-0 com.blitzfc.qbz"
+
+msgid "Use artwork-derived blur as a backdrop in album and artist detail views."
+msgstr "アルバムとアーティストの詳細ビューで、アートワークから生成したぼかしを背景として使用します。"
+
+msgid "Smart search cache, ranking, and the search preview dropdown. On by default."
+msgstr "スマート検索キャッシュ、ランキング、検索プレビューのドロップダウン。デフォルトでオンです。"
+
+msgid "What selecting a result in the Immersive search does. Disabled turns the in-immersive search off."
+msgstr "没入型検索で結果を選択したときの動作。無効にすると没入内検索がオフになります。"
+
+msgid "Which immersive view opens by default. 'Remember last' restores your last view."
+msgstr "デフォルトで開く没入ビュー。「前回を記憶」は最後に表示していたビューを復元します。"
+
+msgid "Move the Discover, Library, Local Library and My QBZ sections out of the header and into the sidebar."
+msgstr "見つける、ライブラリ、ローカルライブラリ、マイQBZのセクションをヘッダーからサイドバーに移動します。"
+
+msgid "Rename the My QBZ hub. Leave the name blank (or hit reset) to restore the default."
+msgstr "マイQBZハブの名前を変更します。名前を空白にする（またはリセットを押す）とデフォルトに戻ります。"
+
+msgid "Render a 2×2 thumbnail of track covers next to each playlist. Disable on low-end machines to skip the extra images."
+msgstr "各プレイリストの横にトラックカバーの2×2サムネイルを表示します。低スペックのマシンでは無効にして追加の画像を省略してください。"
+
+msgid "Display the album cover thumbnail next to each track in the Tracks and Folders views. Off by default — large libraries pay a per-row image-decode cost."
+msgstr "トラックとフォルダのビューで、各トラックの横にアルバムカバーのサムネイルを表示します。デフォルトではオフです。大規模なライブラリでは行ごとに画像デコードのコストがかかります。"
+
+msgid "Replace QBZ custom title bar with your system's native window decorations. Changing this will restart the app."
+msgstr "QBZのカスタムタイトルバーをシステムのネイティブなウィンドウ装飾に置き換えます。これを変更するとアプリが再起動します。"
+
+msgid "Place the window control buttons on the left or right side of the title bar"
+msgstr "ウィンドウ操作ボタンをタイトルバーの左側または右側に配置します"
+
+msgid "Show minimize, maximize, and close buttons in the title bar. Disable if your window manager handles these."
+msgstr "最小化、最大化、閉じるボタンをタイトルバーに表示します。ウィンドウマネージャーがこれらを処理する場合は無効にしてください。"
+
+msgid "Add discrete plus and minus buttons next to the volume slider in the player bar."
+msgstr "プレーヤーバーの音量スライダーの横に、独立したプラスとマイナスのボタンを追加します。"
+
+msgid "Show the Purchases section in the sidebar for browsing and downloading your purchased music"
+msgstr "購入した音楽の閲覧とダウンロードのために、サイドバーに購入済みセクションを表示します"
+
+msgid "Keep playing in the menu bar instead of quitting when you close the window"
+msgstr "ウィンドウを閉じたときに終了せず、メニューバーで再生を続けます"
+
+msgid "Run as a menu-bar-only app while the window is closed. Off keeps the Dock icon (like Spotify)"
+msgstr "ウィンドウを閉じている間、メニューバーのみのアプリとして実行します。オフにするとDockアイコンを保持します（Spotifyのように）"
+
+msgid "Pick a mono glyph to match your panel (Plasma, GNOME's permanently dark top bar) or the full colour vinyl logo"
+msgstr "パネルに合わせたモノクログリフ（Plasma、GNOMEの常に暗いトップバー）またはフルカラーのレコードロゴを選択してください"
+
+msgid "Controls how the blurred artwork background is rendered in immersive mode."
+msgstr "没入モードでぼかしたアートワーク背景がどのように描画されるかを制御します。"
+
+msgid "Disabled panels are hidden from the visualizer menu so you don't land on them by mistake."
+msgstr "無効にしたパネルはビジュアライザーメニューから非表示になり、誤って表示してしまうことを防ぎます。"
+
+msgid "Configure frame rate per animation. Lower values save CPU. Requires re-entering immersive mode to apply."
+msgstr "アニメーションごとにフレームレートを設定します。低い値ほどCPUを節約します。適用するには没入モードに入り直す必要があります。"
+
+msgid "No internet connection — your local library and downloads keep working."
+msgstr "インターネット接続がありません — ローカルライブラリとダウンロードは引き続き機能します。"
+
+msgid "Create a random queue with songs from this collection. How many songs do you want?"
+msgstr "このコレクションの曲でランダムなキューを作成します。曲数はいくつにしますか？"
+
+msgid "No items yet. Add albums, tracks, or playlists from their detail pages."
+msgstr "まだ項目がありません。詳細ページからアルバム、トラック、またはプレイリストを追加してください。"
+
+msgid ""
+"Music Player\n"
+"Nothing playing"
+msgstr ""
+"ミュージックプレーヤー\n"
+"再生中の項目はありません"
+
+msgid "Offline listening period expired — reconnect to verify your subscription"
+msgstr "オフライン再生期間が終了しました — サブスクリプションを確認するために再接続してください"
+
+msgid "This removes ALL indexed tracks from the database. Your audio files are NOT deleted. You will need to re-scan your folders afterward."
+msgstr "これはデータベースからインデックス済みのすべてのトラックを削除します。オーディオファイルは削除されません。後でフォルダを再スキャンする必要があります。"
+
+msgid "This signs out of Plex and clears the locally cached libraries and tracks."
+msgstr "これはPlexからログアウトし、ローカルにキャッシュされたライブラリとトラックをクリアします。"
+
+msgid "A native music streaming client for Linux, designed for audiophiles who need bit-perfect Hi-Fi playback without browser sample rate limitations."
+msgstr "ブラウザのサンプルレート制限にとらわれず、ビットパーフェクトなHi-Fi再生を求めるオーディオファイルのために設計された、Linux向けのネイティブ音楽ストリーミングクライアント。"
+
+msgid "Acknowledgments"
+msgstr "謝辞"
+
+msgid "Animated background renderer"
+msgstr "アニメーション背景レンダラー"
+
+msgid "Audio playback engine"
+msgstr "オーディオ再生エンジン"
+
+msgid "Author"
+msgstr "作者"
+
+msgid "Build"
+msgstr "ビルド"
+
+msgid "Build Info"
+msgstr "ビルド情報"
+
+msgid "Codename"
+msgstr "コードネーム"
+
+msgid "Contributors"
+msgstr "貢献者"
+
+msgid "Hatred towards all those companies that discriminate against the Linux community and don't provide us with a decent client for their product."
+msgstr "Linuxコミュニティを差別し、自社製品向けのまともなクライアントを提供しないすべての企業への怒りを込めて。"
+
+msgid "Icon library"
+msgstr "アイコンライブラリ"
+
+msgid "License"
+msgstr "ライセンス"
+
+msgid "Lyrics API"
+msgstr "歌詞API"
+
+msgid "Made with"
+msgstr "使用技術"
+
+msgid "Music link aggregation API"
+msgstr "音楽リンク集約API"
+
+msgid "Music metadata database"
+msgstr "音楽メタデータベース"
+
+msgid "Music streaming service and API"
+msgstr "音楽ストリーミングサービスおよびAPI"
+
+msgid "Platform"
+msgstr "プラットフォーム"
+
+msgid "Release"
+msgstr "リリース"
+
+msgid "Release notes are not available."
+msgstr "リリースノートはありません。"
+
+msgid "Synced lyrics provider"
+msgstr "同期歌詞プロバイダー"
+
+msgid "UI framework"
+msgstr "UIフレームワーク"
+
+msgid "Version"
+msgstr "バージョン"
+
+msgid "Website"
+msgstr "ウェブサイト"
+
+msgid "What's new"
+msgstr "新着情報"
+
+msgid "What's new in v{}"
+msgstr "v{}の新機能"
+
+msgid "in"
+msgstr "制作地"
+
+msgid "QBZ uses your Last.fm and ListenBrainz account data when they're connected (if they aren't, we recommend connecting them to enrich this section). Here you set how often that data is fetched — it defaults to 48 hours, or you can request an update right now."
+msgstr "QBZは、Last.fmとListenBrainzのアカウントが接続されている場合、そのデータを利用します（未接続の場合は、このセクションを充実させるために接続することをおすすめします）。ここでは、そのデータを取得する頻度を設定できます — 既定は48時間ですが、今すぐ更新をリクエストすることもできます。"
+
+msgid "A native music streaming client for Linux, designed for audiophiles who need bit-perfect Hi-Fi playback."
+msgstr "ビットパーフェクトなHi-Fi再生を求めるオーディオファイルのために設計された、Linux向けのネイティブ音楽ストリーミングクライアント。"
+
+msgid "Built with Slint, and powered by Rodio and Symphonia. With thanks to Qobuz, MusicBrainz, Song.link/Odesli, LRCLIB, lyrics.ovh, Lucide, and Kawarp."
+msgstr "Slintで構築し、RodioとSymphoniaを採用しています。Qobuz、MusicBrainz、Song.link/Odesli、LRCLIB、lyrics.ovh、Lucide、Kawarpに感謝します。"
+
+msgid "Extra large"
+msgstr "特大"
+
+msgid "INTERFACE"
+msgstr "インターフェース"
+
+msgid "Interface size"
+msgstr "インターフェースのサイズ"
+
+msgid "Scales the whole interface, like browser zoom. Small fits more content on screen, Large and Extra large improve readability (requires restart)"
+msgstr "ブラウザのズームのようにインターフェース全体を拡大縮小します。「小」は画面により多くのコンテンツを表示し、「大」と「特大」は読みやすさを向上させます（再起動が必要）"
+
+msgid "Interface size changed — restart QBZ to apply"
+msgstr "インターフェースのサイズを変更しました — 適用するには QBZ を再起動してください"
+
+msgid "Extra small"
+msgstr "極小"
+
+# Login-screen browser-flow narration (2026-07-02)
+msgid "Sign in with your browser"
+msgstr "ブラウザでサインイン"
+
+msgid "Continue in your web browser — QBZ is waiting for you to finish signing in."
+msgstr "ウェブブラウザで続行してください — QBZ はサインインの完了を待っています。"
+
+msgid "The browser may open in the background without taking focus — check your other windows."
+msgstr "ブラウザは前面に出ずにバックグラウンドで開くことがあります — 他のウィンドウを確認してください。"
+
+msgid "Signing you in…"
+msgstr "サインインしています…"
+
+msgid "Sign-in failed"
+msgstr "サインインに失敗しました"
+
+msgid "About QBZ"
+msgstr "QBZについて"
+
+msgid "Already used by"
+msgstr "すでに使用中:"
+
+msgid "Auto (recommended)"
+msgstr "自動（推奨）"
+
+msgid "Discrete GPU (higher performance)"
+msgstr "外部GPU（高パフォーマンス）"
+
+msgid "Integrated GPU (lower power)"
+msgstr "内蔵GPU（低消費電力）"
+
+msgid "Auto picks the best renderer for your graphics hardware. Only change this if the app feels slow or renders incorrectly (requires restart)"
+msgstr "自動はグラフィックハードウェアに最適なレンダラーを選択します。動作が遅い、または表示が乱れる場合のみ変更してください（再起動が必要）"
+
+msgid "Customize Shortcuts"
+msgstr "ショートカットをカスタマイズ"
+
+msgid "GPU"
+msgstr "GPU"
+
+msgid "GPU (compatibility)"
+msgstr "GPU（互換）"
+
+msgid "Go"
+msgstr "移動"
+
+msgid "Line Bed"
+msgstr "Line Bed"
+
+msgid "Tunnel Flow"
+msgstr "Tunnel Flow"
+
+msgid "Open Music Link"
+msgstr "音楽リンクを開く"
+
+msgid "Open Playlist Importer"
+msgstr "プレイリストインポーターを開く"
+
+msgid "Open Qobuz Link"
+msgstr "Qobuzリンクを開く"
+
+msgid "Paste a Qobuz, Spotify, Apple Music, Tidal, Deezer or song.link URL"
+msgstr "Qobuz、Spotify、Apple Music、Tidal、Deezer、song.linkのURLを貼り付けてください"
+
+msgid "Place the Purchases entry in the custom title bar instead of the sidebar"
+msgstr "購入をサイドバーではなくカスタムタイトルバーに表示します"
+
+msgid "Press keys…"
+msgstr "キーを押してください…"
+
+msgid "Purchases"
+msgstr "購入"
+
+msgid "Purchases in title bar"
+msgstr "タイトルバーに購入を表示"
+
+msgid "RENDERER"
+msgstr "レンダラー"
+
+msgid "Rendering backend"
+msgstr "レンダリングバックエンド"
+
+msgid "Reset All to Defaults"
+msgstr "すべてリセット"
+
+msgid "Resolving…"
+msgstr "解決中…"
+
+msgid "Software"
+msgstr "ソフトウェア"
+
+msgid "Spectral Ribbon"
+msgstr "Spectral Ribbon"
+
+msgid "This looks like a playlist."
+msgstr "これはプレイリストのようです。"
+
+msgid "Wave Bed"
+msgstr "Wave Bed"
+
+msgid "What's New"
+msgstr "新着情報"
+
+msgid "modified"
+msgstr "変更済み"
+
+msgid "Block this album"
+msgstr "このアルバムをブロック"
+
+msgid "Blocked albums are hidden from search, discovery, and listings — even when their artist is allowed."
+msgstr "ブロックしたアルバムは、アーティストが許可されていても、検索・ディスカバー・一覧に表示されません。"
+
+msgid "No blocked albums"
+msgstr "ブロック中のアルバムはありません"
+
+msgid "This will remove all {} blocked albums. This cannot be undone."
+msgstr "{}件のブロック中アルバムをすべて解除します。この操作は元に戻せません。"
+
+msgid "To block an album, open its menu and choose Block this album."
+msgstr "アルバムをブロックするには、メニューから「このアルバムをブロック」を選択してください。"
+
+msgid "Unblock album"
+msgstr "アルバムのブロックを解除"
+
+msgid "{} albums"
+msgstr "{}枚のアルバム"
+
+msgid "{} artists, {} albums blocked"
+msgstr "{}人のアーティスト、{}枚のアルバムをブロック中"
+
+msgid "{} artists, {} albums blocked (disabled)"
+msgstr "{}人のアーティスト、{}枚のアルバムをブロック中（無効）"
+
+msgid "A personalized Discover tab built from your listening. For the best results connect Last.fm and ListenBrainz below — MusicBrainz is used automatically to match releases."
+msgstr "リスニング履歴から作られるパーソナライズされた「見つける」タブ。最良の結果を得るには、下のLast.fmとListenBrainzを接続してください。リリースの照合にはMusicBrainzが自動的に使用されます。"
+
+msgid "Based on what you've been into lately"
+msgstr "最近よく聴いているものから"
+
+msgid "Built with Rust and Slint, and powered by Rodio and Symphonia. With thanks to Qobuz, MusicBrainz, Song.link/Odesli, LRCLIB, lyrics.ovh, and Lucide."
+msgstr "RustとSlintで開発され、RodioとSymphoniaを利用しています。Qobuz、MusicBrainz、Song.link/Odesli、LRCLIB、lyrics.ovh、Lucideに感謝します。"
+
+msgid "Connect Last.fm or ListenBrainz in Settings, or play more music, to get personalized recommendations."
+msgstr "設定でLast.fmまたはListenBrainzを接続するか、もっと音楽を再生すると、パーソナライズされたおすすめが表示されます。"
+
+msgid "JACK is not bit-perfect"
+msgstr "JACKはビットパーフェクトではありません"
+
+msgid "More like the artists you love"
+msgstr "好きなアーティストに似たもの"
+
+msgid "No recommendations yet"
+msgstr "おすすめはまだありません"
+
+msgid "Popular artists on Qobuz"
+msgstr "Qobuzで人気のアーティスト"
+
+msgid "RECOMMENDATIONS"
+msgstr "おすすめ"
+
+msgid "Recommendations"
+msgstr "おすすめ"
+
+msgid "Show Recommendations in Discover"
+msgstr "「見つける」におすすめを表示"
+
+msgid "The JACK backend routes audio through the JACK graph, which resamples to the graph's sample rate. For bit-perfect playback use ALSA (direct) or PipeWire with passthrough."
+msgstr "JACKバックエンドはオーディオをJACKグラフ経由でルーティングするため、グラフのサンプルレートにリサンプリングされます。ビットパーフェクト再生にはALSA（ダイレクト）またはパススルー対応のPipeWireを使用してください。"
+
+msgid "Weekly Exploration"
+msgstr "今週の発見"
+
+msgid "Weekly Jams"
+msgstr "今週のお気に入り"
+
+msgid "Keep your system's native window decorations. Turn off to use the QBZ header as the title bar, with its own window controls and drag support. Takes effect after restarting QBZ."
+msgstr "システムのネイティブなウィンドウ装飾を使用します。オフにすると、QBZのヘッダーがタイトルバーになり、独自のウィンドウコントロールとドラッグに対応します。QBZの再起動後に反映されます。"
+
+msgid "Frameless window without window controls or header drag (for tiling window manager users)"
+msgstr "フレームなしウィンドウ。ウィンドウコントロールやヘッダーのドラッグなし（タイル型ウィンドウマネージャーのユーザー向け）"
+
+msgid "Title bar mode changed — restart QBZ to apply"
+msgstr "タイトルバーモードを変更しました — 適用するにはQBZを再起動してください"
+
+# Compact header navigation (opt-in, 2026-07-03)
+msgid "Compact header navigation"
+msgstr "ヘッダーのコンパクトナビゲーション"
+
+msgid "Use the icon-only section navigation in the header even while the sidebar is open."
+msgstr "サイドバーが開いていても、ヘッダーにアイコンのみのセクションナビゲーションを使用します。"
+
+# DSD support Phase 1 (2026-07-03)
+msgid "DSD: {}"
+msgstr "DSD: {}"
+
+msgid "Cannot play DSD file"
+msgstr "DSDファイルを再生できません"
+
+# DSD Phases 2-3: delivery mode (2026-07-03)
+msgid "DSD playback"
+msgstr "DSD再生"
+
+msgid "How DSD tracks reach the DAC. WARNING: choose DoP or Native only if your DAC supports it — on any other DAC they play as loud noise. Volume is fixed in DoP/Native mode. Native additionally needs kernel support for the DAC."
+msgstr "DSDトラックをDACへ送る方法。警告：DACが対応している場合のみDoPまたはネイティブを選択してください。対応していないDACでは大きなノイズとして再生されます。DoP/ネイティブモード中は音量が固定されます。ネイティブはさらにDAC用のカーネルサポートが必要です。"
+
+msgid "Convert to PCM (works everywhere)"
+msgstr "PCMに変換（すべての環境で動作）"
+
+msgid "DoP — DSD over PCM (bit-perfect)"
+msgstr "DoP — PCM上のDSD（ビットパーフェクト）"
+
+msgid "Native DSD (kernel support required)"
+msgstr "ネイティブDSD（カーネルサポートが必要）"
+
+msgid "Date added"
+msgstr "追加日"
+
+msgid "Renderer setting reverted to Auto — the previous start didn't finish"
+msgstr "レンダラー設定を自動に戻しました — 前回の起動が完了しませんでした"
+
+msgid "Renderer switched to GPU (compatibility) — the GPU renderer failed to start"
+msgstr "レンダラーをGPU（互換）に切り替えました — GPUレンダラーを起動できませんでした"
+
+msgid "Audio output error"
+msgstr "オーディオ出力エラー"
+
+msgid "Direct ALSA device access is blocked inside Flatpak/Snap — switch the audio backend to PipeWire or System Default"
+msgstr "Flatpak/Snap 内では ALSA デバイスへの直接アクセスがブロックされます — オーディオバックエンドを PipeWire またはシステム既定に切り替えてください"
+
+msgid "Auto theme generation failed"
+msgstr "自動テーマの生成に失敗しました"
+
+msgid "Play all tracks"
+msgstr "すべてのトラックを再生"
+
+msgid "Shuffle all tracks"
+msgstr "すべてのトラックをシャッフル"
+
+msgid "Select multiple tracks"
+msgstr "複数のトラックを選択"
+
+msgid "Play a random album"
+msgstr "ランダムなアルバムを再生"
+
+msgid "Open a random artist"
+msgstr "ランダムなアーティストを開く"
+
+msgid "Play a random playlist"
+msgstr "ランダムなプレイリストを再生"
+
+msgid "Open a random label"
+msgstr "ランダムなレーベルを開く"
+
+msgid "Start from current theme"
+msgstr "現在のテーマから開始"
+
+msgid "Copy the colors of the currently applied theme into the editor as a starting point."
+msgstr "現在適用中のテーマの色を出発点としてエディターにコピーします。"
+
+msgid "Use current colors"
+msgstr "現在の色を使用"
+
+msgid "Dark theme"
+msgstr "ダークテーマ"
+
+msgid "Set the overall light or dark polarity. Affects derived shades, borders and overlays."
+msgstr "全体の明暗の極性を設定します。派生する陰影、境界線、オーバーレイに影響します。"
+
+msgid "SURFACES"
+msgstr "サーフェス"
+
+msgid "Background"
+msgstr "背景"
+
+msgid "Surface"
+msgstr "サーフェス"
+
+msgid "Elevated"
+msgstr "浮き出し"
+
+msgid "TEXT"
+msgstr "テキスト"
+
+msgid "Text"
+msgstr "テキスト"
+
+msgid "Secondary text"
+msgstr "セカンダリテキスト"
+
+msgid "ACCENT"
+msgstr "アクセント"
+
+msgid "Accent"
+msgstr "アクセント"
+
+msgid "Danger"
+msgstr "危険"
+
+msgid "Warning"
+msgstr "警告"
+
+msgid "Success"
+msgstr "成功"
+
+msgid "OTHER"
+msgstr "その他"
+
+msgid "Border"
+msgstr "境界線"
+
+# Unavailable-track auto-skip (Tauri #467 parity)
+msgid "No available tracks to play"
+msgstr "再生できるトラックがありません"
+# Always-visible log uploader entry (settings sub-nav footer)
+msgid "Share logs"
+msgstr "ログを共有"
+# Guest local-only mode disclaimer line (login screen, #553)
+msgid "QBZ can be used as an offline player without a Qobuz™ account (no access to the Qobuz™ library)."
+msgstr "QBZはQobuz™アカウントなしでオフラインプレーヤーとして使用できます（Qobuz™ライブラリにはアクセスできません）。"
+# Renderer degradation ladder toast (generic: GL or software rung)
+msgid "Renderer switched automatically — the previous renderer failed to start"
+msgstr "レンダラーを自動的に切り替えました — 前のレンダラーは起動できませんでした"
+
+# QConnect startup behavior (Settings > Playback, ported from Tauri)
+msgid "Auto-connect Qobuz Connect on startup"
+msgstr "起動時にQobuz Connectを自動接続"
+msgid "Choose whether Qobuz Connect activates automatically when QBZ launches."
+msgstr "QBZの起動時にQobuz Connectを自動的に有効にするかを選択します。"
+msgid "Remember state"
+msgstr "状態を記憶"
+msgid "On by default"
+msgstr "デフォルトでオン"
+msgid "Off by default"
+msgstr "デフォルトでオフ"
+
+msgid "QBZ recovered from repeated startup crashes — some restored state was reset"
+msgstr "QBZ は起動時の連続クラッシュから復旧しました — 復元された状態の一部がリセットされました"
+
+# QConnect device name (Settings > Playback, ported from Tauri)
+msgid "Qobuz Connect device name"
+msgstr "Qobuz Connectのデバイス名"
+
+msgid "The name other Qobuz Connect apps see for this device. Applies on the next connection."
+msgstr "他のQobuz Connectアプリに表示されるこのデバイスの名前です。次回の接続時に適用されます。"
+
+# Quality downgrade tooltip (#590 follow-up)
+msgid "Source: {}"
+msgstr "ソース: {}"
+
+msgid "Output: {}"
+msgstr "出力: {}"
+
+# Local Library header Plex sync button (#573)
+msgid "Sync Plex library"
+msgstr "Plexライブラリを同期"
+
+# Library Albums sort options (#566)
+msgid "Recently added"
+msgstr "最近追加した順"
+
+msgid "First added"
+msgstr "追加が古い順"
+
+msgid "Random"
+msgstr "ランダム"
+
+
+# Offline cache clear — communicate it does not remove downloads (#606)
+msgid "Frees up cached data. Your downloaded albums are kept — remove those from the offline manager above."
+msgstr "キャッシュデータを解放します。ダウンロード済みのアルバムは保持されます。削除は上のオフラインマネージャーから行ってください。"
+
+msgid "Couldn't clear the cache"
+msgstr "キャッシュを削除できませんでした"
+
+
+# Task 18 — Settings > Developer > Export settings modal (daemon 04 §4.2)
+msgid "SETTINGS PORTABILITY"
+msgstr "設定の移行"
+
+msgid "Export settings…"
+msgstr "設定をエクスポート…"
+
+msgid "Save a portable bundle of your settings to move to another machine or the qbzd daemon."
+msgstr "設定を持ち運び可能なバンドルとして保存し、別のマシンや qbzd デーモンに移せます。"
+
+msgid "Export…"
+msgstr "エクスポート…"
+
+msgid "Export settings"
+msgstr "設定をエクスポート"
+
+msgid "Save your settings as a bundle to import on the qbzd daemon or another machine."
+msgstr "設定をバンドルとして保存し、qbzd デーモンや別のマシンでインポートできます。"
+
+msgid "Include Qobuz login and integration tokens"
+msgstr "Qobuz のログインと連携トークンを含める"
+
+msgid "Anyone with the file can use your accounts. It is saved readable only by you; delete it after importing."
+msgstr "ファイルを読める人は誰でもあなたのアカウントを使用できます。自分だけが読み取れる形で保存されます。インポート後は削除してください。"
+
+msgid "Export"
+msgstr "エクスポート"
+
+msgid "Bundle saved. On the daemon box:"
+msgstr "バンドルを保存しました。デーモンのマシンで:"
+
+msgid "Could not export settings"
+msgstr "設定をエクスポートできませんでした"
+
+
+# Share menu Song.link/Album.link toasts (#514)
+msgid "Fetching Song.link..."
+msgstr "Song.linkを取得中..."
+
+msgid "Fetching Album.link..."
+msgstr "Album.linkを取得中..."
+
+msgid "Link copied"
+msgstr "リンクをコピーしました"
+
+msgid "Failed to copy link"
+msgstr "リンクをコピーできませんでした"
+
+# Dynamic app background (Appearance settings)
+msgid "Ambient"
+msgstr "アンビエント"
+
+msgid "Blurred art"
+msgstr "ぼかしアートワーク"
+
+msgid "Dynamic background"
+msgstr "ダイナミック背景"
+
+msgid "Animated album-art background behind the whole app. High resource use — GPU accelerated."
+msgstr "アプリ全体の背後にアルバムアートワークのアニメーション背景を表示します。リソース使用量が高く、GPUアクセラレーションを使用します。"
+
+# Preferred GPU (Renderer settings)
+msgid "Preferred GPU"
+msgstr "優先GPU"
+
+msgid "Which GPU renders the app. Only the GPUs actually present are listed. Choosing one other than the default also switches the renderer to Vulkan — the only backend Qt can select a GPU on (requires restart)"
+msgstr "アプリを描画するGPU。実際に存在するGPUのみを表示します。既定以外を選ぶとレンダラーもVulkanに切り替わります — QtがGPUを選択できる唯一のバックエンドです（再起動が必要）"
+
+msgid "Which GPU renders the app. On a hybrid laptop, picking the discrete GPU moves the dynamic-background load off the integrated one (cooler, but more power). Auto is recommended (requires restart)"
+msgstr "どのGPUでアプリをレンダリングするかを選びます。ハイブリッド構成のノートPCでは、ディスクリートGPUを選ぶとダイナミック背景の負荷を内蔵GPUから移せます（温度は下がりますが消費電力は増えます）。自動を推奨します（再起動が必要）"
+
+msgid "discrete"
+msgstr "ディスクリート"
+
+msgid "integrated"
+msgstr "内蔵"
+
+msgid "Preferred GPU changed — restart QBZ to apply"
+msgstr "優先GPUを変更しました — 適用するには QBZ を再起動してください"
+
+msgid "Selected GPU is unavailable in this display session — using Auto"
+msgstr "選択したGPUはこのディスプレイセッションでは利用できないため、自動設定を使用します"
+
+msgid "Renderer changed — restart QBZ to apply"
+msgstr "レンダラーを変更しました — 適用するには QBZ を再起動してください"
+
+msgid "Search your library"
+msgstr "ライブラリを検索"
+
+msgid "From catalog"
+msgstr "カタログから"
+
+msgid "In library"
+msgstr "ライブラリ内"
+
+# Issue #637: header action-button tooltips + 403 back-off toast
+msgid "Add to favorites"
+msgstr "お気に入りに追加"
+
+msgid "Remove from favorites"
+msgstr "お気に入りから削除"
+
+msgid "Start radio"
+msgstr "ラジオを開始"
+
+msgid "Booklet"
+msgstr "ブックレット"
+
+msgid "Add to Mixtape"
+msgstr "ミックステープに追加"
+
+msgid "Album info"
+msgstr "アルバム情報"
+
+msgid "More options"
+msgstr "その他のオプション"
+
+msgid "Follow artist"
+msgstr "アーティストをフォロー"
+
+msgid "Unfollow"
+msgstr "フォロー解除"
+
+msgid "Artist network"
+msgstr "アーティストネットワーク"
+
+msgid "Upload to Qobuz"
+msgstr "Qobuzにアップロード"
+
+msgid "Select tracks"
+msgstr "トラックを選択"
+
+msgid "Qobuz is temporarily refusing requests — backing off. Try again shortly."
+msgstr "Qobuzが一時的にリクエストを拒否しています。少し待って再試行してください。"
+
+
+msgid "Flatpak"
+msgstr "Flatpak"
+
+msgid "Snap"
+msgstr "Snap"
+
+msgid "FLATPAK SANDBOX"
+msgstr "FLATPAK サンドボックス"
+
+msgid "SNAP SANDBOX"
+msgstr "SNAP サンドボックス"
+
+msgid "QBZ is running inside a Flatpak sandbox. Some features need one-time permission grants — run the commands in a terminal, then restart QBZ. Grants persist across updates."
+msgstr "QBZ は Flatpak サンドボックス内で動作しています。一部の機能には一度だけの権限付与が必要です。コマンドをターミナルで実行してから QBZ を再起動してください。権限はアップデート後も保持されます。"
+
+msgid "QBZ is running inside a Snap sandbox. Some audio interfaces need one-time connections — run these commands in a terminal, then restart QBZ."
+msgstr "QBZ は Snap サンドボックス内で動作しています。一部のオーディオインターフェースは一度だけ接続する必要があります。これらのコマンドをターミナルで実行してから QBZ を再起動してください。"
+
+msgid "Exclusive DAC access (bit-perfect)"
+msgstr "DAC 排他アクセス（ビットパーフェクト）"
+
+msgid "Recommended for exclusive mode: lets QBZ ask PipeWire to hand over the DAC cleanly (D-Bus device reservation). Without it, PipeWire keeps holding the DAC and other apps keep mixing through it even with ALSA + hw + Exclusive selected."
+msgstr "排他モードに推奨：QBZ が PipeWire に DAC の引き渡しを要求できます（D-Bus デバイス予約）。これがないと PipeWire が DAC を保持し続け、ALSA + hw + Exclusive を選択していても他のアプリの音が混ざり続けます。"
+
+msgid "Music on NAS or external drives"
+msgstr "NAS や外部ドライブの音楽"
+
+msgid "Grants access to a folder outside the sandbox. Repeat the command for each folder you need."
+msgstr "サンドボックス外のフォルダへのアクセスを許可します。必要なフォルダごとにコマンドを繰り返してください。"
+
+msgid "Required audio connections"
+msgstr "必須のオーディオ接続"
+
+msgid "Optional — external drives & NAS"
+msgstr "任意 — 外部ドライブと NAS"
+
+msgid "Copy"
+msgstr "コピー"
+
+msgid "Cut"
+msgstr "切り取り"
+
+msgid "Paste"
+msgstr "貼り付け"
+
+msgid "Copied!"
+msgstr "コピーしました！"
+
+msgid "Limited by your streaming quality setting"
+msgstr "ストリーミング音質の設定により制限されています"
+
+msgid "Qobuz has no higher quality for this track"
+msgstr "このトラックにはこれ以上高い音質は提供されていません"
+
+msgid "offline copy — cap not applied"
+msgstr "オフラインコピー — 上限は適用されません"
+
+msgid "cached copy — cap not applied"
+msgstr "キャッシュされたコピー — 上限は適用されません"
+
+msgid "Limited by your output device's limit"
+msgstr "出力デバイスの上限により制限されています"
+
+msgid "Cap the requested streaming quality at your output device's limit. Applies to local playback only, never to casting."
+msgstr "リクエストするストリーミング音質を出力デバイスの上限に制限します。ローカル再生のみに適用され、キャストには適用されません。"
+
+msgid "Your device's exact limits could not be read on this system, so a common set is assumed. The cap still applies, but may not match your hardware exactly."
+msgstr "このシステムではデバイスの正確な上限を読み取れなかったため、一般的なセットを想定しています。制限は引き続き適用されますが、実際のハードウェアと完全には一致しない場合があります。"
+
+msgid "Detected device limit"
+msgstr "検出されたデバイスの上限"
+
+msgid "Quality for this device"
+msgstr "このデバイスの音質"
+
+msgid "Follow app setting ({})"
+msgstr "アプリの設定に従う（{}）"
+
+msgid "Hi-Res — 24-bit, up to 96 kHz"
+msgstr "Hi-Res — 24-bit、最大96 kHz"
+
+msgid "CD — 16-bit / 44.1 kHz"
+msgstr "CD — 16-bit / 44.1 kHz"
+
+msgid "MP3 320"
+msgstr "MP3 320"
+
+msgid "Qobuz only offers these tiers — there is no 48 kHz option. The step below Hi-Res is CD 44.1 kHz."
+msgstr "Qobuzが提供するのはこれらの段階のみで、48 kHzのオプションはありません。Hi-Resの一つ下はCD 44.1 kHzです。"
+
+msgid "Limited by the quality cap for {}"
+msgstr "{}の音質上限により制限されています"
+
+msgid "capped for this device"
+msgstr "このデバイス向けに上限適用中"
+
+msgid "Albums by folder"
+msgstr "フォルダー別アルバム"
+
+msgid "Albums by metadata"
+msgstr "メタデータ別アルバム"
+
+msgid "ALBUMS VIEW"
+msgstr "アルバムビュー"
+
+msgid "Album grouping"
+msgstr "アルバムのグループ化"
+
+msgid "Folders: one card per album folder — best for compilations and box sets. Metadata: split by album + artist tags."
+msgstr "フォルダー: アルバムフォルダーごとに1枚のカード — コンピレーションやボックスセットに最適。メタデータ: アルバム+アーティストのタグで分割。"
+
+msgid "+{} more artists"
+msgstr "他 {} 人のアーティスト"
+
+msgid "Show less"
+msgstr "表示を減らす"
+# Most Played Albums rail title
+msgid "Most Played Albums"
+msgstr "最も再生したアルバム"
+
+# Most Played Albums View-all — per-card play count
+msgid "{} plays"
+msgstr "{} 回再生"
+
+# Lyrics translation (Qobuz API v10) — floating-toggle tooltips, flyout row, error toast
+msgid "Show lyrics translation"
+msgstr "歌詞の翻訳を表示"
+
+msgid "Hide lyrics translation"
+msgstr "歌詞の翻訳を隠す"
+
+msgid "Translation language"
+msgstr "翻訳言語"
+
+msgid "Auto (account language)"
+msgstr "自動（アカウントの言語）"
+
+msgid "Translation is not available right now. Please try again later."
+msgstr "翻訳は現在利用できません。後でもう一度お試しください。"
+# Discover Recommendations — reco-scoped dismissals (Not interested management)
+
+msgid "Dismissed artists only leave your Recommendations — they still appear in search and everywhere else."
+msgstr "除外したアーティストは「おすすめ」からのみ消えます — 検索やその他の場所には引き続き表示されます。"
+
+msgid "No dismissed artists"
+msgstr "除外したアーティストはいません"
+
+msgid "To stop seeing an artist in Recommendations, open its card menu and choose Not interested."
+msgstr "おすすめにアーティストを表示しないようにするには、そのカードのメニューを開いて「興味なし」を選んでください。"
+
+msgid "{} won't appear in Recommendations anymore"
+msgstr "{} はおすすめに表示されなくなります"
+
+msgid "Artist dismissed from Recommendations"
+msgstr "アーティストをおすすめから除外しました"
+
+msgid "{} restored to Recommendations"
+msgstr "{} をおすすめに復元しました"
+
+msgid "LIBRARY › ALL"
+msgstr "ライブラリ › すべて"
+
+msgid "Show local files & Plex"
+msgstr "ローカルファイルと Plex を表示"
+
+msgid "Include your favorited local files and Plex items in the Library All feed."
+msgstr "お気に入りのローカルファイルと Plex のアイテムをライブラリの「すべて」フィードに含めます。"
+
+msgid "Play indicator animation"
+msgstr "再生インジケーターのアニメーション"
+
+msgid "Animate the now-playing row with equalizer bars. Off (default) shows a static pause icon with an accent edge mark — lighter on CPU."
+msgstr "再生中の行をイコライザーバーでアニメーション表示します。オフ（デフォルト）では静的な一時停止アイコンと行の端にアクセントマークを表示し、CPU負荷を抑えます。"
+
+msgid "Invert swipe navigation direction"
+msgstr "スワイプナビゲーションの方向を反転"
+
+msgid "Swap the two-finger touchpad swipe: left goes back, right goes forward."
+msgstr "トラックパッドの2本指スワイプを入れ替えます：左で戻る、右で進む。"
+
+msgid "Local items in Library All"
+msgstr "ライブラリ「すべて」のローカル項目"
+
+msgid "Favorited items only: what you hearted. Entire local library: every folder and Plex album, artist and track."
+msgstr "お気に入りのみ：ハートを付けた項目。ローカルライブラリ全体：フォルダと Plex のすべてのアルバム・アーティスト・トラック。"
+
+msgid "Favorited items only"
+msgstr "お気に入りのみ"
+
+msgid "Entire local library"
+msgstr "ローカルライブラリ全体"
+
+msgid "Select multiple albums"
+msgstr "複数のアルバムを選択"
+
+msgid "Play later"
+msgstr "後で再生"
+
+msgid "Added to play later"
+msgstr "「後で再生」に追加しました"
+
+msgid "Next in queue"
+msgstr "キューの次"
+
+msgid "Next up"
+msgstr "次に再生"
+
+msgid "Removed {} tracks from favorites"
+msgstr "{} トラックをお気に入りから削除しました"
+
+msgid "Removing {} tracks from favorites…"
+msgstr "{} トラックをお気に入りから削除中…"
+
+# Blacklist album-axis toasts (msgids from crates/qbz/src/blacklist_manager.rs:287-330)
+
+msgid "Album \"{}\" blocked"
+msgstr "アルバム「{}」をブロックしました"
+
+msgid "Album \"{}\" unblocked"
+msgstr "アルバム「{}」のブロックを解除しました"
+
+msgid "Failed to block album"
+msgstr "アルバムのブロックに失敗しました"
+
+msgid "Failed to unblock album"
+msgstr "アルバムのブロック解除に失敗しました"
+
+msgid "Failed to clear album blacklist"
+msgstr "アルバムのブラックリストのクリアに失敗しました"
+
+msgid "Removed {} album from blacklist"
+msgid_plural "Removed {} albums from blacklist"
+msgstr[0] "ブラックリストから{}枚のアルバムを削除しました"
+
+msgid "Playlist imported"
+msgstr "プレイリストをインポートしました"
+
+msgid "Playlist import failed"
+msgstr "プレイリストのインポートに失敗しました"
+
+msgid "Not logged in to Qobuz"
+msgstr "Qobuzにログインしていません"
+
+# Qt playlist manager — folder modals (contract block 2)
+
+msgid "Delete folder"
+msgstr "フォルダを削除"
+
+msgid "Delete the folder “{}”? Its playlists move back to the root."
+msgstr "フォルダ「{}」を削除しますか？プレイリストはルートに戻ります。"
+
+msgid "Choose a folder image"
+msgstr "フォルダ画像を選択"
+
+msgid "Images"
+msgstr "画像"
+
+msgid "Failed to create folder"
+msgstr "フォルダの作成に失敗しました"
+
+msgid "Failed to save folder"
+msgstr "フォルダの保存に失敗しました"
+
+msgid "Failed to delete folder"
+msgstr "フォルダの削除に失敗しました"
+
+msgid "Failed to rename playlist"
+msgstr "プレイリストの名前変更に失敗しました"
+
+msgid "Failed to delete playlist"
+msgstr "プレイリストの削除に失敗しました"
+
+msgid "Couldn't create the playlist"
+msgstr "プレイリストを作成できませんでした"
+
+# My QBZ grid card — the heterogeneous grid mounts the standard AlbumCard,
+# whose first menu entry is "Open album"; a playlist cell overrides the NOUN.
+msgid "Open playlist"
+msgstr "プレイリストを開く"
+
+# Hotkeys layer (2026-08-03 hotkeys-port contract §5) — the keyboard-shortcut
+# action labels + category names for the cheatsheet and the customize editor.
+# Slint's Rust-side labels were never extracted (the port inherits the gap);
+# this block fixes it for both frontends. en is EXCLUDED on purpose
+# (sparse-override convention, qbz-i18n/src/lib.rs:120-125).
+
+msgid "Play / Pause"
+msgstr "再生 / 一時停止"
+
+msgid "Go Back"
+msgstr "戻る"
+
+msgid "Go Forward"
+msgstr "進む"
+
+msgid "Toggle Sidebar"
+msgstr "サイドバーの表示切替"
+
+msgid "Immersive Mode"
+msgstr "没入モード"
+
+msgid "Close / Dismiss"
+msgstr "閉じる / 破棄"
+
+msgid "Show Shortcuts"
+msgstr "ショートカットを表示"
+
+msgid "Toggle Mini Player"
+msgstr "ミニプレーヤーの表示切替"
+
+msgid "Seek Forward (5s)"
+msgstr "5秒進む"
+
+msgid "Seek Back (5s)"
+msgstr "5秒戻る"
+
+msgid "Seek Forward (10s)"
+msgstr "10秒進む"
+
+msgid "Seek Back (10s)"
+msgstr "10秒戻る"
+
+msgid "Micro View"
+msgstr "マイクロビュー"
+
+msgid "Compact View"
+msgstr "コンパクトビュー"
+
+msgid "Artwork View"
+msgstr "アートワークビュー"
+
+msgid "Listen list"
+msgstr "再生リスト"
+
+msgid "Lyrics View"
+msgstr "歌詞ビュー"
+
+msgid "Navigation"
+msgstr "ナビゲーション"
+
+msgid "Interface"
+msgstr "インターフェース"
+
+msgid "Mini Player"
+msgstr "ミニプレーヤー"
+
+
+# Kiosk shell (2026-08-02 kiosk-port contract)
+
+msgid "Cover"
+msgstr "カバー"
+
+msgid "Radio"
+msgstr "ラジオ"
+
+msgid "Up Next"
+msgstr "次に再生"
+
+# Kiosk <-> Desktop profile toggle (view-mode menu)
+
+msgid "Kiosk mode"
+msgstr "キオスクモード"
+
+msgid "Desktop mode"
+msgstr "デスクトップモード"
+
+# AlbumView cover menu / lightbox (Qt port, 2026-08-10)
+
+msgid "View cover"
+msgstr "カバーを表示"
+
+# ArtistView portrait menu / lightbox (Qt port, 2026-08-14) — the
+# artist twin of "View cover".
+
+msgid "View image"
+msgstr "画像を表示"
+
+msgid "Could not load the image"
+msgstr "画像を読み込めませんでした"
+
+# ArtistScene + MusicianPage (Qt port, 2026-08-14 contract §7). Copy is Tauri's
+# verbatim: ASCII "..." (not U+2026), U+00B7 in the hero subtitle, ASCII hyphen
+# in "(A-Z)". Reused rather than twinned — "Filter by genre", "Clear filter",
+# "No albums found", "Off", "Group: A-Z", "Group: Off", "Scene", "Appears On",
+# "Bands & Projects", "Load more", "Loading…", "Artist Scene",
+# "No artists found for this scene.", "No album appearances found." and
+# "Select an artist to see their albums." (period-only delta) already exist.
+# The {artist}/{genres}/{genre}/{name} placeholders are NAMED, per contract §7,
+# and are byte-identical in all eight locales. qbz_i18n::t_args CANNOT fill them
+# (substitute() at qbz-i18n/src/lib.rs:153-170 only matches a bare "{}") — every
+# call site substitutes explicitly, e.g. .replace("{artist}", name).
+
+msgid "Based on {artist} · {genres}"
+msgstr "{artist} · {genres} に基づく"
+
+msgid "Searching MusicBrainz for {genre} artists..."
+msgstr "MusicBrainz で {genre} のアーティストを検索中..."
+
+msgid "Verifying availability on Qobuz..."
+msgstr "Qobuz での配信状況を確認中..."
+
+msgid "Preparing results..."
+msgstr "結果を準備中..."
+
+msgid "No matching artists from this scene are currently available on Qobuz."
+msgstr "このシーンに該当するアーティストは現在 Qobuz では利用できません。"
+
+msgid "Loading albums..."
+msgstr "アルバムを読み込み中..."
+
+msgid "Failed to load albums"
+msgstr "アルバムを読み込めませんでした"
+
+msgid "Failed to load appearances"
+msgstr "参加作品を読み込めませんでした"
+
+msgid "Looking up {name}..."
+msgstr "{name} を検索中..."
+
+msgid "Failed to look up musician"
+msgstr "ミュージシャンを検索できませんでした"
+
+msgid "Browse view"
+msgstr "ブラウズ表示"
+
+msgid "Grid view"
+msgstr "グリッド表示"
+
+msgid "Alphabetical (A-Z)"
+msgstr "アルファベット順 (A-Z)"
+
+msgid "This musician appears in album credits but has limited catalog information available in Qobuz."
+msgstr "このミュージシャンはアルバムのクレジットに含まれていますが、Qobuz で利用できるカタログ情報は限られています。"
+
+msgid "Unable to verify this musician's catalog. The information shown is based on album credits."
+msgstr "このミュージシャンのカタログを確認できませんでした。表示されている情報はアルバムのクレジットに基づいています。"
+
+msgid "This musician appears in album credits."
+msgstr "このミュージシャンはアルバムのクレジットに含まれています。"
+
+msgid "Discography"
+msgstr "ディスコグラフィー"
+
+msgid "Live Albums"
+msgstr "ライブアルバム"
+
+msgid "Select an artist to see their albums"
+msgstr "アーティストを選択してアルバムを表示します"
+
+msgid "{} / {} artists"
+msgstr "{} / {} 組のアーティスト"
+
+# --- Unavailable tracks + replacement search (Qt port, contract 2026-08-17
+# §8-6). "Unavailable" and "This track is no longer available" already
+# exist in this file and are REUSED by the render and the reactive skip toast
+# — nothing below twins them.
+#
+# The skipped-tracks toast is a plural PAIR, per the convention already set by
+# "Scan complete ({} file skipped)" and "{} duplicate skipped": the queue build
+# drops N rows at once, and a singular-only string reads wrong in every locale
+# with plural rules. Russian carries all three forms.
+#
+# "No longer on Qobuz — playing your downloaded copy" is the cached-but-pulled
+# state (contract §5.3/F5): the track left the catalogue but the user owns a
+# downloaded copy, so it still plays. It cannot fold into "This track is no
+# longer available" — that sentence would be a lie on a row playing right now.
+#
+# Em dash is U+2014 with spaces on both sides, as everywhere else in this file.
+# nplurals=1 — one form, like every other plural entry in this file.
+msgid "Find available version"
+msgstr "利用可能なバージョンを探す"
+
+msgid "Replace unavailable track"
+msgstr "利用できないトラックを置き換え"
+
+msgid "No available version found"
+msgstr "利用可能なバージョンが見つかりませんでした"
+
+msgid "Track replaced"
+msgstr "トラックを置き換えました"
+
+msgid "Could not replace the track"
+msgstr "トラックの置き換えに失敗しました"
+
+msgid "The replacement was added at the end of the playlist"
+msgstr "代わりのトラックはプレイリストの最後に追加されました"
+
+msgid "{} track skipped — no longer available"
+msgid_plural "{} tracks skipped — no longer available"
+msgstr[0] "{}トラックをスキップしました — 利用できなくなりました"
+
+msgid "No longer on Qobuz — playing your downloaded copy"
+msgstr "Qobuz にはもうありません — ダウンロード済みのコピーを再生します"
+
+msgid "Exact match"
+msgstr "完全一致"
+
+msgid "Low confidence"
+msgstr "確度が低い"
+
+msgid "Replace"
+msgstr "置き換える"
+
+msgid "Replacing..."
+msgstr "置き換え中…"
+
+msgid "The replacement takes the unavailable track's place in the playlist."
+msgstr "置き換えた曲は、再生できない曲の位置に入ります。"
+
+# Discover configurator: items-per-carousel (Tauri parity recovery, 2026-08-19)
+msgid "Items per carousel"
+msgstr "カルーセルあたりの項目数"
+
+# Discover: Recently Played Playlists rail (context-aware play history, 2026-08-19)
+msgid "Recently Played Playlists"
+msgstr "最近再生したプレイリスト"
+
+msgid "Playlists you play will appear here."
+msgstr "再生したプレイリストがここに表示されます。"
+
+# Applied-filters tooltip (2026-08-19)
+msgid "+{} more"
+msgstr "他 {} 件"
+
+msgid "+{} more filters"
+msgstr "他 {} 件のフィルター"
+
+msgid "Applied filters"
+msgstr "適用中のフィルター"
+
+# Applied-filters tooltip: group labels (2026-08-19)
+msgid "Category"
+msgstr "カテゴリー"
+
+# Applied-filters tooltip: Library source switches (2026-08-19)
+msgid "Favorites"
+msgstr "お気に入り"
+
+# Discover configurator: Refresh content (2026-08-19)
+msgid "Refresh content"
+msgstr "コンテンツを更新"
+
+# Appearance: click-on-section opens the first tab (2026-08-19)
+msgid "Click on menu item navigates to first tab"
+msgstr "メニュー項目のクリックで最初のタブを開く"
+
+msgid "Clicking a section in the sidebar or title bar opens it on its first tab — Discover on Home, Library on All — instead of only showing its menu"
+msgstr "サイドバーやタイトルバーのセクションをクリックすると、メニューを表示するだけでなく最初のタブ（Discover は Home、Library は All）が開きます"
+
+# Discover configurator: per-rail default item count (2026-08-19)
+msgid "Default ({})"
+msgstr "デフォルト ({})"
+
+# Playlist importer expansion (2.0.3): file / JSON / ListenBrainz / Last.fm sources
+
+msgid "Streaming URL"
+msgstr "ストリーミング URL"
+
+msgid "Playlist file"
+msgstr "プレイリストファイル"
+
+msgid "JSON file"
+msgstr "JSON ファイル"
+
+msgid "ListenBrainz"
+msgstr "ListenBrainz"
+
+msgid "Last.fm"
+msgstr "Last.fm"
+
+msgid "Choose file…"
+msgstr "ファイルを選択…"
+
+msgid "No file selected"
+msgstr "ファイルが選択されていません"
+
+msgid "Only the track list is read — the referenced audio files are never opened, copied, or added to your Local Library. Each entry is matched against the Qobuz catalog."
+msgstr "読み込むのはトラック一覧だけです。参照されている音声ファイルを開いたり、コピーしたり、ローカルライブラリに追加することはありません。各項目は Qobuz のカタログと照合されます。"
+
+msgid "JSON is read best-effort — check the track count below before importing."
+msgstr "JSON はベストエフォートで読み込まれます。インポート前にトラック数を確認してください。"
+
+msgid "Could not read the file."
+msgstr "ファイルを読み込めませんでした。"
+
+msgid "No tracks found in the file."
+msgstr "ファイルにトラックが見つかりませんでした。"
+
+msgid "Unrecognized file format — use XSPF, PLS, M3U/M3U8, or JSON."
+msgstr "ファイル形式を認識できません。XSPF、PLS、M3U/M3U8、JSON を使用してください。"
+
+msgid "This looks like a live-stream manifest, not a playlist."
+msgstr "これはプレイリストではなくライブ配信のマニフェストのようです。"
+
+msgid "That file is too large to import."
+msgstr "このファイルは大きすぎてインポートできません。"
+
+msgid "Could not recognize a track list in this JSON."
+msgstr "この JSON からトラック一覧を認識できませんでした。"
+
+msgid "Username or profile URL"
+msgstr "ユーザー名またはプロフィール URL"
+
+msgid "Username or playlist URL"
+msgstr "ユーザー名またはプレイリスト URL"
+
+msgid "Play your library"
+msgstr "ライブラリを再生"
+
+msgid "Play your mix"
+msgstr "ミックスを再生"
+
+msgid "Play your recommendations"
+msgstr "おすすめを再生"
+
+msgid "Station"
+msgstr "ステーション"
+
+msgid "No playlists found for {}."
+msgstr "{} のプレイリストが見つかりませんでした。"
+
+msgid "Enter a public username."
+msgstr "公開ユーザー名を入力してください。"
+
+msgid "Duplicates: {}"
+msgstr "重複: {}"
+
+msgid "Media"
+msgstr "メディア"
+
+msgid "Open audio CD"
+msgstr "オーディオCDを開く"
+
+msgid "Audio CD"
+msgstr "オーディオCD"
+
+msgid "No optical drive found."
+msgstr "光学ドライブが見つかりません。"
+
+msgid "No disc in the drive."
+msgstr "ドライブにディスクがありません。"
+
+msgid "That disc has no audio tracks."
+msgstr "このディスクにはオーディオトラックがありません。"
+
+msgid "Could not read the disc."
+msgstr "ディスクを読み取れませんでした。"
+
+msgid "Track {}"
+msgstr "トラック {}"
+
+msgid "Open SACD image…"
+msgstr "SACDイメージを開く…"
+
+msgid "Choose a disc image"
+msgstr "ディスクイメージを選択"
+
+msgid "That image has no stereo audio area."
+msgstr "このイメージにはステレオ領域がありません。"
+
+msgid "This disc is DST-compressed, which QBZ cannot play yet."
+msgstr "このディスクはDST圧縮のため、QBZではまだ再生できません。"
+
+msgid "That file is not a disc image."
+msgstr "そのファイルはディスクイメージではありません。"
+
+msgid "That file is not a SACD image."
+msgstr "そのファイルはSACDイメージではありません。"
+
+msgid "That SACD image is damaged or unsupported."
+msgstr "そのSACDイメージは破損しているか、サポートされていません。"
+
+msgid "SACD"
+msgstr "SACD"
+
+msgid "Library Explorer"
+msgstr "ライブラリエクスプローラー"
+
+msgid "Genres"
+msgstr "ジャンル"
+
+msgid "All genres"
+msgstr "すべてのジャンル"
+
+msgid "All albums"
+msgstr "すべてのアルバム"
+
+msgid "No albums match these filters"
+msgstr "これらのフィルターに一致するアルバムはありません"
+
+msgid "Try a different genre, artist, album, source or quality."
+msgstr "別のジャンル、アーティスト、アルバム、ソース、または音質をお試しください。"
+
+msgid "Favorites only"
+msgstr "お気に入りのみ"
+
+msgid "Where should the ripped album go?"
+msgstr "取り込んだアルバムの保存先は?"
+
+msgid "Ripping"
+msgstr "取り込み中"
+
+msgid "Nothing to rip."
+msgstr "取り込むものがありません。"
+
+msgid "Ripped {} track to your library"
+msgid_plural "Ripped {} tracks to your library"
+msgstr[0] "{} 曲をライブラリに取り込みました"
+
+# Discs: rip wizard, metadata lookup and the disc tooltips (2026-08-21)
+
+msgid "Play a folder, CD or disc image without adding it to your library"
+msgstr "フォルダー・CD・ディスクイメージを、ライブラリに追加せずに再生します"
+
+msgid "Reading the disc…"
+msgstr "ディスクを読み取り中…"
+
+msgid "Re-scan your folders and media servers for new music"
+msgstr "フォルダーとメディアサーバーを再スキャンして新しい音楽を探します"
+
+msgid "Manage the folders your library is built from"
+msgstr "ライブラリのもとになるフォルダーを管理します"
+
+msgid "Play the whole disc from the first track"
+msgstr "1曲目からディスク全体を再生します"
+
+msgid "Play it in a shuffled order"
+msgstr "シャッフル再生します"
+
+msgid "Look this disc up and correct its details"
+msgstr "このディスクを検索して情報を修正します"
+
+msgid "Copy this CD to your computer as FLAC files"
+msgstr "このCDをFLACファイルとしてパソコンにコピーします"
+
+msgid "Close this disc and go back to your library"
+msgstr "このディスクを閉じてライブラリに戻ります"
+
+msgid "Correct disc details"
+msgstr "ディスク情報を修正"
+
+msgid "SACD image"
+msgstr "SACDイメージ"
+
+msgid "Close without changing anything"
+msgstr "何も変更せずに閉じます"
+
+msgid "Community database. Knows discs by their table of contents."
+msgstr "コミュニティのデータベース。ディスクを目次から識別します。"
+
+msgid "Collector database. Stronger on pressings, editions and catalogue numbers."
+msgstr "コレクター向けデータベース。プレス・エディション・カタログ番号に強いです。"
+
+msgid "Search this provider"
+msgstr "この提供元で検索します"
+
+msgid "The provider is rate-limiting right now. Try again in a moment."
+msgstr "現在、提供元がリクエストを制限しています。少し待ってから再試行してください。"
+
+msgid "No releases matched. Try fewer words, or the other provider."
+msgstr "一致するリリースがありません。語数を減らすか、別の提供元を試してください。"
+
+msgid "Search for the release this disc actually is."
+msgstr "このディスクが実際にどのリリースなのかを検索します。"
+
+msgid "Remove my correction"
+msgstr "自分の修正を削除"
+
+msgid "Forget the saved details for this disc and look it up fresh next time"
+msgstr "このディスクの保存済み情報を破棄し、次回あらためて検索します"
+
+msgid "Applying..."
+msgstr "適用中..."
+
+msgid "Use these details"
+msgstr "この情報を使う"
+
+msgid "Rename this disc and remember it for next time"
+msgstr "このディスクの名前を変更し、次回のために記憶します"
+
+msgid "Rip this CD"
+msgstr "このCDを取り込む"
+
+msgid "What will happen"
+msgstr "これから行うこと"
+
+msgid "Track names"
+msgstr "トラック名"
+
+msgid "Your library"
+msgstr "ライブラリ"
+
+msgid "Every track on the disc is read and written as a FLAC file — one folder per album, one file per track, with tags."
+msgstr "ディスクの各トラックを読み取り、FLACファイルとして書き出します。アルバムごとに1フォルダー、トラックごとに1ファイル、タグ付きです。"
+
+msgid "Format: FLAC (lossless) — the only format QBZ writes"
+msgstr "形式: FLAC（ロスレス）— QBZが書き出せる唯一の形式です"
+
+msgid "Where the album goes"
+msgstr "アルバムの保存先"
+
+msgid "Choose folder…"
+msgstr "フォルダーを選択…"
+
+msgid "Change…"
+msgstr "変更…"
+
+msgid "Pick the folder the album folder will be created in"
+msgstr "アルバムのフォルダーを作成する場所を選びます"
+
+msgid "Nothing chosen yet"
+msgstr "まだ選択されていません"
+
+msgid "This folder is already part of your Local Library."
+msgstr "このフォルダーはすでにローカルライブラリの一部です。"
+
+msgid "This folder is outside your Local Library, so the album will not appear there on its own."
+msgstr "このフォルダーはローカルライブラリの外にあるため、アルバムは自動では表示されません。"
+
+msgid "Choose a destination first and this step will know what to offer."
+msgstr "先に保存先を選ぶと、このステップで何を提案できるかが決まります。"
+
+msgid "Re-scan that folder when the rip finishes"
+msgstr "取り込みが終わったら、そのフォルダーを再スキャンします"
+
+msgid "Only that folder, not your whole library."
+msgstr "そのフォルダーだけで、ライブラリ全体ではありません。"
+
+msgid "Do nothing"
+msgstr "何もしない"
+
+msgid "The album appears the next time you scan."
+msgstr "次回スキャンしたときにアルバムが表示されます。"
+
+msgid "Add this folder to Local Library and scan it"
+msgstr "このフォルダーをローカルライブラリに追加してスキャンします"
+
+msgid "Future rips into the same folder will be picked up too."
+msgstr "同じフォルダーへの今後の取り込みも検出されます。"
+
+msgid "The files are written; the library will not know about them."
+msgstr "ファイルは書き出されますが、ライブラリはそれを認識しません。"
+
+msgid "A simple ripper, made to get your CDs into the library quickly. For AccurateRip checks and advanced options, use a dedicated tool."
+msgstr "ライブラリにCDをすばやく取り込むための、シンプルな取り込み機能です。AccurateRipによる検証や高度な設定が必要な場合は、専用ソフトをお使いください。"
+
+msgid "Close without ripping anything"
+msgstr "何も取り込まずに閉じます"
+
+msgid "Go back a step"
+msgstr "1つ前の手順に戻ります"
+
+msgid "Start ripping"
+msgstr "取り込みを開始"
+
+msgid "Go to the next step"
+msgstr "次の手順へ進みます"
+
+msgid "Read the disc and write the FLAC files"
+msgstr "ディスクを読み取り、FLACファイルを書き出します"
+
+msgid "Choose a destination folder first"
+msgstr "先に保存先フォルダーを選んでください"
+
+msgid "No disc is open."
+msgstr "ディスクが開かれていません。"
+
+msgid "Couldn't load that release."
+msgstr "そのリリースを読み込めませんでした。"
+
+msgid "Disc details updated"
+msgstr "ディスク情報を更新しました"
+
+msgid "Correction removed. Re-open the disc to look it up again."
+msgstr "修正を削除しました。もう一度検索するには、ディスクを開き直してください。"
+
+msgid "Only a physical CD can be ripped."
+msgstr "取り込めるのは物理CDだけです。"
+
+msgid "Choose where the album should go first."
+msgstr "先にアルバムの保存先を選んでください。"
+
+msgid "Couldn't add that folder to the library"
+msgstr "そのフォルダーをライブラリに追加できませんでした"
+
+# Rip progress panel, cancel and partial rips (2026-08-21)
+
+msgid "Writing FLAC files to"
+msgstr "FLACファイルの書き出し先:"
+
+msgid "Hide this panel — the rip keeps going"
+msgstr "このパネルを閉じます（取り込みは続きます）"
+
+msgid "Ripping — don't eject the disc until this finishes."
+msgstr "取り込み中です。完了するまでディスクを取り出さないでください。"
+
+msgid "Finished"
+msgstr "完了"
+
+msgid "Files already written stay on disk. Delete them yourself if you don't want them."
+msgstr "すでに書き出されたファイルはディスクに残ります。不要な場合はご自身で削除してください。"
+
+msgid "Stop ripping"
+msgstr "取り込みを停止"
+
+msgid "Stopping…"
+msgstr "停止中…"
+
+msgid "Stop after the current track. Nothing is deleted."
+msgstr "現在のトラックの後で停止します。何も削除されません。"
+
+msgid "Rip stopped. The files already written are still there."
+msgstr "取り込みを停止しました。すでに書き出されたファイルはそのまま残っています。"
+
+msgid "See what the rip is doing, or stop it"
+msgstr "取り込みの状況を見る、または停止します"
+
+msgid "Pick at least one track to rip."
+msgstr "取り込むトラックを1つ以上選んでください。"
+
+# Ephemeral pane: per-disc blocks and the track filter (2026-08-21)
+
+msgid "Disc {}"
+msgstr "ディスク {}"
+
+msgid "Filter tracks"
+msgstr "トラックを絞り込む"
+
+msgid "No track matches that."
+msgstr "一致するトラックがありません。"
+
+msgid "NAVIGATION"
+msgstr "ナビゲーション"
+
+msgid "SEARCH"
+msgstr "検索"
+
+msgid "PLAYER & VISUALS"
+msgstr "プレーヤーと表示"
+
+msgid "WINDOW"
+msgstr "ウィンドウ"
+
+msgid "SYSTEM INTEGRATION"
+msgstr "システム連携"
+
+msgid "The typeface used across the app. System follows your operating system; the other choices are bundled with QBZ (requires restart)"
+msgstr "アプリ全体で使う書体です。「システム」は OS のフォントを使用し、その他の選択肢は QBZ に同梱されています（再起動が必要）"
+
+msgid "Library folders"
+msgstr "ライブラリフォルダー"
+
+msgid "{} folders"
+msgstr "{} 個のフォルダー"
+
+msgid "No Qobuz account? You can still use QBZ as a player for your own music library"
+msgstr "Qobuz アカウントがなくても、QBZ を自分の音楽ライブラリのプレーヤーとして使えます"
+
+msgid "You're using QBZ without a Qobuz account. Your local library and downloads keep working."
+msgstr "Qobuz アカウントなしで QBZ を使っています。ローカルライブラリとダウンロードはそのまま使えます。"
+
+msgid "Continuous playback"
+msgstr "連続再生"
+
+msgid "Open"
+msgstr "開く"
+
+msgid "Folder view"
+msgstr "フォルダー表示"
+
+msgid "Open media"
+msgstr "メディアを開く"
+
+msgid "Open folder…"
+msgstr "フォルダーを開く…"
+
+# ローカルライブラリのタブ順と未ログイン時の開始先 (2026-08-24)
+msgid "LIBRARY TABS"
+msgstr "ライブラリタブ"
+
+msgid "Tab order and default"
+msgstr "タブの順序とデフォルト"
+
+msgid "Choose the order of Local Library tabs. The first one opens by default, including when QBZ starts without a Qobuz session."
+msgstr "ローカルライブラリのタブ順を選択します。Qobuz セッションなしで QBZ を起動した場合も、先頭のタブがデフォルトで開きます。"
+
+msgid "Local Library tabs"
+msgstr "ローカルライブラリのタブ"
+
+msgid "Reorder the Local Library tabs. The first tab opens by default and is shown when starting without a Qobuz session."
+msgstr "ローカルライブラリのタブを並べ替えます。先頭のタブがデフォルトで開き、Qobuz セッションなしで起動したときに表示されます。"
+
+msgid "Clicking a section in the sidebar or title bar opens its first tab — including your chosen Local Library default — instead of only showing its menu"
+msgstr "サイドバーまたはタイトルバーのセクションをクリックすると、メニューだけでなく、選択したローカルライブラリのデフォルトを含む先頭のタブが開きます"
+
+# ローカルライブラリのジャンルフィルター位置 (2026-08-24)
+msgid "GENRES VIEW"
+msgstr "ジャンル表示"
+
+msgid "Genre filters position"
+msgstr "ジャンルフィルターの位置"
+
+msgid "Place the chained genre filters above, beside or below the album results."
+msgstr "連動するジャンルフィルターをアルバム結果の上、横、または下に配置します。"
+
+msgid "Top"
+msgstr "上"
+
+msgid "Bottom"
+msgstr "下"
+
+msgid "Album metadata saved."
+msgstr "アルバムのメタデータを保存しました。"
+
+msgid "Album title is required."
+msgstr "アルバムタイトルは必須です。"
+
+msgid "Apply to form"
+msgstr "フォームに適用"
+
+msgid "CUE-based albums can only be edited with a sidecar."
+msgstr "CUE ベースのアルバムはサイドカーファイルでのみ編集できます。"
+
+msgid "CUE-based albums use sidecar metadata."
+msgstr "CUE ベースのアルバムはサイドカーメタデータを使用します。"
+
+msgid "Canonical"
+msgstr "正規"
+
+msgid "Close without saving"
+msgstr "保存せずに閉じる"
+
+msgid "Couldn't inspect album metadata."
+msgstr "アルバムのメタデータを検査できませんでした。"
+
+msgid "Couldn't load that metadata result."
+msgstr "そのメタデータ結果を読み込めませんでした。"
+
+msgid "Couldn't open the metadata source."
+msgstr "メタデータの情報源を開けませんでした。"
+
+msgid "Detected"
+msgstr "検出済み"
+
+msgid "Disc number"
+msgstr "ディスク番号"
+
+msgid "Editing the selected physical version"
+msgstr "選択した物理バージョンを編集中"
+
+msgid "Enter an album title or artist to search."
+msgstr "検索するアルバムタイトルまたはアーティストを入力してください。"
+
+msgid "Every track needs a title."
+msgstr "すべてのトラックにタイトルが必要です。"
+
+msgid "File names are shown for reference and cannot be changed here."
+msgstr "ファイル名は参照用に表示され、ここでは変更できません。"
+
+msgid "Find metadata"
+msgstr "メタデータを検索"
+
+msgid "ID3 writing"
+msgstr "ID3 書き込み"
+
+msgid "Metadata editing is available for local file versions only."
+msgstr "メタデータを編集できるのはローカルファイル版のみです。"
+
+msgid "Metadata search failed."
+msgstr "メタデータの検索に失敗しました。"
+
+msgid "No local album version is selected."
+msgstr "ローカルのアルバムバージョンが選択されていません。"
+
+msgid "None"
+msgstr "なし"
+
+msgid "One or more audio files are unavailable."
+msgstr "1 つ以上のオーディオファイルを利用できません。"
+
+msgid "Open source"
+msgstr "情報源を開く"
+
+msgid "QBZ will preflight every file, update its canonical tag layer, then read it back to verify the change. Keep a backup if these files cannot be replaced."
+msgstr "QBZ はすべてのファイルを事前確認し、正規タグレイヤーを更新してから再読込して変更を検証します。置き換えられないファイルの場合はバックアップを保管してください。"
+
+msgid "Save changes to"
+msgstr "変更の保存先"
+
+msgid "Some files contain conflicting tag layers. The canonical layer wins unless synchronization is enabled."
+msgstr "一部のファイルには競合するタグレイヤーがあります。同期を有効にしない限り、正規レイヤーが優先されます。"
+
+msgid "Synchronize compatible tag layers"
+msgstr "互換性のあるタグレイヤーを同期"
+
+msgid "Tag layers"
+msgstr "タグレイヤー"
+
+msgid "The canonical tag is not writable for every file."
+msgstr "すべてのファイルで正規タグを書き込めるわけではありません。"
+
+msgid "The metadata editor is no longer open."
+msgstr "メタデータエディターはすでに閉じています。"
+
+msgid "The metadata form could not be read."
+msgstr "メタデータフォームを読み取れませんでした。"
+
+msgid "The track list changed; reopen the editor."
+msgstr "トラックリストが変更されました。エディターを開き直してください。"
+
+msgid "The track list contains a duplicate row."
+msgstr "トラックリストに重複した行があります。"
+
+msgid "Track number"
+msgstr "トラック番号"
+
+msgid "Unknown metadata persistence mode."
+msgstr "不明なメタデータ保存モードです。"
+
+msgid "Write and verify"
+msgstr "書き込んで検証"
+
+msgid "Write metadata into audio files?"
+msgstr "メタデータをオーディオファイルに書き込みますか？"
+
+msgid "Year must be a valid number."
+msgstr "年には有効な数値を指定してください。"
+
+msgid "{} must be a positive number."
+msgstr "{} は正の数である必要があります。"
+
+msgid "The ephemeral session changed; reopen the metadata editor."
+msgstr "一時セッションが変更されました。メタデータエディターを開き直してください。"
+
+msgid "Album artists"
+msgstr "アルバムアーティスト"
+
+msgid "Album artists (ordered; separate with semicolons)"
+msgstr "アルバムアーティスト（順序付き、セミコロン区切り）"
+
+msgid "Artist credit"
+msgstr "アーティストクレジット"
+
+msgid "Artists (ordered; semicolon separated)"
+msgstr "アーティスト（順序付き、セミコロン区切り）"
+
+msgid "Artwork is larger than 25 MiB."
+msgstr "アートワークが25 MiBを超えています。"
+
+msgid "Artwork search failed."
+msgstr "アートワークの検索に失敗しました。"
+
+msgid "Artwork source did not provide a secure URL."
+msgstr "アートワークの提供元から安全なURLが返されませんでした。"
+
+msgid "Choose album artwork"
+msgstr "アルバムアートワークを選択"
+
+msgid "Choose another file"
+msgstr "別のファイルを選択"
+
+msgid "Choose file"
+msgstr "ファイルを選択"
+
+msgid "Compilation / Various Artists"
+msgstr "コンピレーション / Various Artists"
+
+msgid "Composers"
+msgstr "作曲者"
+
+msgid "Couldn't download that artwork."
+msgstr "そのアートワークをダウンロードできませんでした。"
+
+msgid "Couldn't stage artwork"
+msgstr "アートワークを準備できませんでした"
+
+msgid "Current artwork"
+msgstr "現在のアートワーク"
+
+msgid "Discogs release ID"
+msgstr "DiscogsリリースID"
+
+msgid "Enter an album title to find artwork."
+msgstr "アートワークを検索するにはアルバム名を入力してください。"
+
+msgid "File"
+msgstr "ファイル"
+
+msgid "Find artwork"
+msgstr "アートワークを検索"
+
+msgid "Local file"
+msgstr "ローカルファイル"
+
+msgid "MusicBrainz album artist IDs"
+msgstr "MusicBrainzアルバムアーティストID"
+
+msgid "MusicBrainz artist IDs"
+msgstr "MusicBrainzアーティストID"
+
+msgid "MusicBrainz recording ID"
+msgstr "MusicBrainz録音ID"
+
+msgid "MusicBrainz release ID"
+msgstr "MusicBrainzリリースID"
+
+msgid "MusicBrainz release-group ID"
+msgstr "MusicBrainzリリースグループID"
+
+msgid "MusicBrainz track ID"
+msgstr "MusicBrainzトラックID"
+
+msgid "Performers"
+msgstr "演奏者"
+
+msgid "Revert selection"
+msgstr "選択を元に戻す"
+
+msgid "Selected track details"
+msgstr "選択したトラックの詳細"
+
+msgid "That artwork result is no longer available."
+msgstr "そのアートワーク候補は利用できなくなりました。"
+
+msgid "The selected artwork changed; choose it again."
+msgstr "選択したアートワークが変更されました。もう一度選択してください。"
+
+msgid "The selected artwork has unsupported dimensions."
+msgstr "選択したアートワークの寸法はサポートされていません。"
+
+msgid "The selected file is not a supported image."
+msgstr "選択したファイルはサポートされている画像ではありません。"
+
+msgid "Goniometer"
+msgstr "ゴニオメーター"
+
+msgid "Oscilloscope"
+msgstr "オシロスコープ"
+
+msgid "Track waveform"
+msgstr "トラック波形"
+
+msgid "Show the full-track waveform in the player seek bar."
+msgstr "プレーヤーのシークバーにトラック全体の波形を表示します。"
+
+msgid "Compact header"
+msgstr "コンパクトヘッダー"
+
+msgid "Show less data in album headers."
+msgstr "アルバムヘッダーに表示する情報を減らします。"
+
+msgid "Show full album header"
+msgstr "アルバムヘッダーをすべて表示"
+
+msgid "Show compact album header"
+msgstr "アルバムヘッダーをコンパクトに表示"
+
+msgid "Immediate scrobbling"
+msgstr "即時スクロブル"
+
+msgid "Send scrobbles immediately while manual offline mode is enabled."
+msgstr "手動オフラインモードが有効な間も、スクロブルをすぐに送信します。"
+
+msgid "Accumulated scrobbling"
+msgstr "蓄積スクロブル"
+
+msgid "Queue scrobbles while the network is unavailable and send them when it returns. Last.fm accepts scrobbles up to 2 weeks old."
+msgstr "ネットワークが利用できない間はスクロブルをキューに保存し、復旧後に送信します。Last.fm が受け付けるのは2週間以内のスクロブルです。"
+
+msgid "Scrobble while logged out"
+msgstr "ログアウト中もスクロブル"
+
+msgid "Continue sending plays to connected scrobblers without a Qobuz session."
+msgstr "Qobuzセッションがなくても、接続済みのスクロブルサービスに再生履歴を送信します。"
+
+msgid "Focus on playing"
+msgstr "再生中の曲を追従"
+
+msgid "Go to top"
+msgstr "一番上へ"
+
+msgid "Quick view"
+msgstr "クイックビュー"
+
+msgid "Could not load album"
+msgstr "アルバムを読み込めませんでした"
+
+msgid "This album has no tracks."
+msgstr "このアルバムには曲がありません。"
+
+msgid "Reactive Rings"
+msgstr "リアクティブリング"
+
+msgid "Windows — yes, but read this first"
+msgstr "Windows — はい、ただしまずこれをお読みください"
+
+msgid "Don't show this again"
+msgstr "今後表示しない"
+
+msgid "I understand"
+msgstr "理解しました"
+# Hotkeys: the Spotify-parity playback actions + the keymap preset picker
+
+msgid "Volume Up"
+msgstr "音量を上げる"
+
+msgid "Volume Down"
+msgstr "音量を下げる"
+
+msgid "Mute / Unmute"
+msgstr "ミュート / 解除"
+
+msgid "Toggle Shuffle"
+msgstr "シャッフル切り替え"
+
+msgid "Cycle Repeat"
+msgstr "リピート切り替え"
+
+msgid "Like Track"
+msgstr "お気に入りに追加"
+
+msgid "Seek Forward"
+msgstr "早送り"
+
+msgid "Seek Back"
+msgstr "巻き戻し"
+
+msgid "Keymap"
+msgstr "キーマップ"
+
+msgid "Vim"
+msgstr "Vim"
+
+# Local Library QoL: Explorer, scan progress, and per-track metadata editor
+msgid "All years"
+msgstr "すべての年"
+
+msgid "Explorer columns"
+msgstr "エクスプローラーの列"
+
+msgid "Genre and year"
+msgstr "ジャンルと年"
+
+msgid "Years"
+msgstr "年"
+
+msgid "Edit track metadata"
+msgstr "トラックのメタデータを編集"
+
+msgid "Building library index"
+msgstr "ライブラリインデックスを作成中"
+
+msgid "Local folders"
+msgstr "ローカルフォルダー"
+
+msgid "Next track"
+msgstr "次のトラック"
+
+msgid "Overall"
+msgstr "全体"
+
+msgid "Previous track"
+msgstr "前のトラック"
+
+msgid "Scanning library"
+msgstr "ライブラリをスキャン中"
+
+msgid "The track is no longer in the library."
+msgstr "このトラックはライブラリに存在しません。"
+
+msgid "Updating library index"
+msgstr "ライブラリインデックスを更新中"
+
+msgid "Edit album"
+msgstr "アルバムを編集"
+
+msgid "Editing a local metadata sidecar"
+msgstr "ローカルのメタデータサイドカーを編集中"
+
+msgid "Media-server metadata is stored in a local sidecar."
+msgstr "メディアサーバーのメタデータはローカルのサイドカーファイルに保存されます。"
+
+msgid "Media-server metadata can only be edited with a sidecar."
+msgstr "メディアサーバーのメタデータはサイドカーファイルでのみ編集できます。"
+
+msgid "Network file"
+msgstr "ネットワークファイル"
+
+msgid "Offline download"
+msgstr "オフラインダウンロード"
+
+msgid "File path"
+msgstr "ファイルパス"
+
+msgid "Containing folder"
+msgstr "保存フォルダー"
+
+msgid "Media item ID"
+msgstr "メディア項目 ID"
+
+msgid "Album ID"
+msgstr "アルバム ID"
+
+msgid "Server"
+msgstr "サーバー"
+
+msgid "Duration"
+msgstr "再生時間"
+
+msgid "Channels"
+msgstr "チャンネル"
+
+msgid "File size"
+msgstr "ファイルサイズ"
+
+msgid "Location"
+msgstr "場所"
+
+msgid "The media item is no longer available."
+msgstr "メディア項目は利用できなくなりました。"
+
+msgid "The local album folder is not currently available."
+msgstr "ローカルのアルバムフォルダーは現在利用できません。"
+
+msgid "Everything is already available offline"
+msgstr "すべてオフラインで利用できます"
+
+msgid "Some tracks are already available offline"
+msgstr "一部のトラックはすでにオフラインで利用できます"
+
+msgid "{} of {} tracks in “{}” are already available offline."
+msgstr "{} / {} 曲（“{}”）はすでにオフラインで利用できます。"
+
+msgid "Download the entire playlist again"
+msgstr "プレイリスト全体を再ダウンロード"
+
+msgid "Download the entire album again"
+msgstr "アルバム全体を再ダウンロード"
+
+msgid "Re-downloads every track and can repair corrupt offline copies."
+msgstr "全トラックを再ダウンロードし、破損したオフラインコピーを修復できます。"
+
+msgid "Only missing tracks"
+msgstr "不足しているトラックのみ"
+
+msgid "Keeps existing offline copies and downloads tracks that are not available yet."
+msgstr "既存のオフラインコピーを保持し、まだ利用できないトラックだけをダウンロードします。"
+
+msgid "PRIVACY"
+msgstr "プライバシー"
+
+msgid "Listening history"
+msgstr "再生履歴"
+
+msgid "Keep a local log of what you play: track, source, how much of it you heard and when. It stays on this machine, per account, and never leaves it unless you enable a scrobbler."
+msgstr "再生した内容（トラック、ソース、どれだけ聴いたか、いつ聴いたか）をローカルに記録します。この記録はアカウントごとにこのマシンに保存され、スクロブラーを有効にしない限り外部には送信されません。"
+
+msgid "Clear listening history"
+msgstr "再生履歴を消去"
+
+msgid "Deletes every play recorded on this machine for this account. Scrobbles already sent are not affected."
+msgstr "このアカウントについてこのマシンに記録されたすべての再生を削除します。送信済みのスクロブルには影響しません。"
+
+msgid "Listening history cleared."
+msgstr "再生履歴を消去しました。"
+
+msgid "Couldn't clear listening history."
+msgstr "再生履歴を消去できませんでした。"
+
+msgid "Checking ALSA mixer controls…"
+msgstr "ALSA ミキサーコントロールを確認しています…"
+
+msgid "This device exposes multiple playback controls. Choose which one QBZ should use."
+msgstr "このデバイスには複数の再生コントロールがあります。QBZ が使用するものを選択してください。"
+
+msgid "The saved mixer control is no longer available. Choose another control."
+msgstr "保存されたミキサーコントロールは利用できなくなりました。別のコントロールを選択してください。"
+
+msgid "QBZ does not have permission to read this device's ALSA mixer."
+msgstr "QBZ にはこのデバイスの ALSA ミキサーを読み取る権限がありません。"
+
+msgid "The ALSA mixer is busy. Close the app using it and try again."
+msgstr "ALSA ミキサーは使用中です。使用しているアプリを閉じて、もう一度お試しください。"
+
+msgid "The selected ALSA device is no longer available."
+msgstr "選択した ALSA デバイスは利用できなくなりました。"
+
+msgid "This ALSA device does not expose a mixer."
+msgstr "この ALSA デバイスにはミキサーがありません。"
+
+msgid "QBZ could not write the selected ALSA mixer control. Direct playback remains fixed at 100%."
+msgstr "選択した ALSA ミキサーコントロールに書き込めませんでした。ダイレクト再生は 100% に固定されます。"
+
+msgid "Selected mixer control"
+msgstr "選択中のミキサーコントロール"
+
+msgid "Choose mixer control"
+msgstr "ミキサーコントロールを選択"
+
+msgid "Change mixer control"
+msgstr "ミキサーコントロールを変更"
+
+msgid "Qobuz Connect could not shut down safely. Quit and reopen QBZ, then try logging out again."
+msgstr "Qobuz Connect を安全に終了できませんでした。QBZ を終了して再度開き、もう一度ログアウトしてください。"
+
+msgid "Show filter panels"
+msgstr "フィルターパネルを表示"
+
+msgid "Hide filter panels"
+msgstr "フィルターパネルを非表示"
+
+msgid "Already in"
+msgstr "追加済み"
+
+msgid "Playlist index updating..."
+msgstr "プレイリストの索引を更新中..."
+
+msgid "{} of {}"
+msgstr "{} / {}"
+
+msgid "Last playlist"
+msgstr "前回のプレイリスト"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Sponsors"
+msgstr "スポンサー"
+
+msgid "And all those anonymous sponsors..."
+msgstr "そして、すべての匿名スポンサーの皆さん…"
+
+msgid "Qobuz Connect can't resolve local tracks. {} track was skipped and wasn't added to the queue. Turn off Qobuz Connect to play it."
+msgid_plural "Qobuz Connect can't resolve local tracks. {} tracks were skipped and weren't added to the queue. Turn off Qobuz Connect to play them."
+msgstr[0] "Qobuz Connect はローカルトラックを解決できません。{} 曲をスキップし、キューに追加しませんでした。再生するには Qobuz Connect をオフにしてください。"
+
+msgid "Qobuz Connect device"
+msgstr "Qobuz Connect デバイス"
+
+msgid "Continue playback on %1"
+msgstr "%1 で再生を続ける"
+
+msgid "Use the Qobuz Connect queue and keep that device active."
+msgstr "Qobuz Connect のキューを使用し、そのデバイスをアクティブのままにします。"
+
+msgid "Continue playback on this device"
+msgstr "このデバイスで再生を続ける"
+
+msgid "Use the Qobuz Connect queue and replace the local queue."
+msgstr "Qobuz Connect のキューを使用し、ローカルキューを置き換えます。"
+
+msgid "Continue this device's current playback"
+msgstr "このデバイスの現在の再生を続ける"
+
+msgid "Replace the Qobuz Connect queue and playback state with this device's current queue and position."
+msgstr "Qobuz Connect のキューと再生状態を、このデバイスの現在のキューと再生位置に置き換えます。"
+
+msgid "Cancel Qobuz Connect"
+msgstr "Qobuz Connect をキャンセル"
+
+msgid "Keep both queues unchanged and continue the current local playback."
+msgstr "両方のキューを変更せず、現在のローカル再生を続けます。"
+
+msgid "Choose how to continue"
+msgstr "続行方法を選択"
+
+msgid "This device and another Qobuz Connect renderer both have playback in progress. Choose which queue and device should continue."
+msgstr "このデバイスと別の Qobuz Connect レンダラーの両方で再生中です。続行するキューとデバイスを選択してください。"
+
+msgid "Ask every time"
+msgstr "毎回確認する"
+
+msgid "Continue on the active renderer"
+msgstr "アクティブなレンダラーで再生を続ける"
+
+msgid "Continue here with the Qobuz Connect queue"
+msgstr "Qobuz Connect のキューを使用してこのデバイスで続ける"
+
+msgid "Continue local playback and replace the Qobuz Connect queue"
+msgstr "ローカル再生を続け、Qobuz Connect のキューを置き換える"
+
+msgid "When playback conflicts"
+msgstr "再生が競合した場合"
+
+msgid "Ask each time or automatically choose which queue and device should continue."
+msgstr "毎回確認するか、続行するキューとデバイスを自動的に選択します。"
+
+msgid "Purchased"
+msgstr "購入日"
+
+msgid "Sort: Release date"
+msgstr "並び替え: 発売日"
+
+msgid "Until the purchased file is downloaded, Play streams the best quality Qobuz offers for this album. Once it is on disk, Play uses your copy."
+msgstr "購入したファイルをダウンロードするまでは、このアルバムに Qobuz が提供する最高品質でストリーミング再生します。ディスクに保存されると、再生はあなたのコピーを使います。"
+
+msgid "Open in Local Library"
+msgstr "ローカルライブラリで開く"
+
+msgid "Import / Export"
+msgstr "インポート / エクスポート"
+
+msgid "This bundle holds the app's own settings: audio, playback, appearance, integrations. It does not contain your Qobuz favorites, playlists, blacklist or purchases."
+msgstr "このバンドルにはアプリ自体の設定（オーディオ、再生、外観、連携）が含まれます。Qobuz のお気に入り、プレイリスト、ブラックリスト、購入は含まれません。"
+
+msgid "BLACKLIST"
+msgstr "ブラックリスト"
+
+msgid "Export blacklist…"
+msgstr "ブラックリストをエクスポート…"
+
+msgid "Save your blocked artists and albums as a file you can hand to another QBZ user."
+msgstr "ブロック中のアーティストとアルバムを、他の QBZ ユーザーに渡せるファイルとして保存します。"
+
+msgid "Import blacklist…"
+msgstr "ブラックリストをインポート…"
+
+msgid "Add blocked artists and albums from a file. Nothing already on your blacklist is removed."
+msgstr "ファイルからブロック中のアーティストとアルバムを追加します。既にブラックリストにあるものは削除されません。"
+
+msgid "Import…"
+msgstr "インポート…"
+
+msgid "Import failed."
+msgstr "インポートに失敗しました。"
+
+msgid "Not a QBZ blacklist file."
+msgstr "QBZ のブラックリストファイルではありません。"
+
+msgid "Choose a blacklist file"
+msgstr "ブラックリストファイルを選択"
+
+msgid "Imported {} artists and {} albums ({} already blocked)."
+msgstr "アーティスト {} 件とアルバム {} 件をインポートしました（{} 件はブロック済み）。"
+
+msgid "Member"
+msgstr "メンバー"
+
+msgid "QBZ requires a Qobuz™ account. Without an active subscription, playback is limited to 30-second previews; favorites, playlists and purchases still work. Your credentials are sent directly to Qobuz™."
+msgstr "QBZ には Qobuz™ アカウントが必要です。有効なサブスクリプションがない場合、再生は 30 秒のプレビューに制限されますが、お気に入り、プレイリスト、購入は引き続き利用できます。認証情報は Qobuz™ に直接送信されます。"
+
+msgid "ACCOUNT MIGRATION"
+msgstr "アカウント移行"
+
+msgid "Moves favorites, playlists and followed playlists from one Qobuz account into another, adding only what is missing and deleting nothing on either side. It does not move subscriptions or purchases: those stay with the Qobuz account that holds them."
+msgstr "お気に入り、プレイリスト、フォロー中のプレイリストを Qobuz アカウント間で移行します。足りないものだけを追加し、どちら側からも何も削除しません。サブスクリプションと購入は移行されません。それらは所有する Qobuz アカウントに残ります。"
+
+msgid "Create migration snapshot"
+msgstr "移行用スナップショットを作成"
+
+msgid "Sign in with the account you are moving FROM, then save its favorites and playlists to a file in its QBZ profile."
+msgstr "移行元のアカウントでサインインし、そのお気に入りとプレイリストを QBZ プロファイル内のファイルに保存します。"
+
+msgid "Create…"
+msgstr "作成…"
+
+msgid "Migrate into this account"
+msgstr "このアカウントに移行"
+
+msgid "Sign in with the account you are moving TO, then pick a snapshot below. Safe to repeat: a second run adds nothing."
+msgstr "移行先のアカウントでサインインし、下のスナップショットを選択します。繰り返しても安全です。2 回目の実行では何も追加されません。"
+
+msgid "No snapshots yet. Sign in with the old account and create one first."
+msgstr "スナップショットはまだありません。まず古いアカウントでサインインして作成してください。"
+
+msgid "{} favorites · {} playlists · {} followed"
+msgstr "お気に入り {} · プレイリスト {} · フォロー {}"
+
+msgid "this account"
+msgstr "このアカウント"
+
+msgid "Migrate…"
+msgstr "移行…"
+
+msgid "Account {} · {}"
+msgstr "アカウント {} · {}"
+
+msgid "Reading favorites and playlists…"
+msgstr "お気に入りとプレイリストを読み込み中…"
+
+msgid "Reading this account…"
+msgstr "このアカウントを読み込み中…"
+
+msgid "Adding favorites…"
+msgstr "お気に入りを追加中…"
+
+msgid "Adding playlists…"
+msgstr "プレイリストを追加中…"
+
+msgid "Following playlists…"
+msgstr "プレイリストをフォロー中…"
+
+msgid "{} / {} — {}"
+msgstr "{} / {} — {}"
+
+msgid "Snapshot failed."
+msgstr "スナップショットに失敗しました。"
+
+msgid "Migration failed."
+msgstr "移行に失敗しました。"
+
+msgid "Saved {} favorites, {} playlists and {} followed playlists to {}"
+msgstr "お気に入り {} 件、プレイリスト {} 件、フォロー中 {} 件を {} に保存しました"
+
+msgid "That snapshot was taken from this same account."
+msgstr "そのスナップショットはこのアカウント自身のものです。"
+
+msgid "Nothing to migrate: everything is already in this account."
+msgstr "移行するものはありません。すべてこのアカウントにあります。"
+
+msgid "Added {} favorites, {} playlists ({} tracks) and {} followed playlists; {} were already there."
+msgstr "お気に入り {} 件、プレイリスト {} 件（{} トラック）、フォロー {} 件を追加しました。{} 件は既にありました。"
+
+msgid "{} items failed; see the log."
+msgstr "{} 件が失敗しました。ログを確認してください。"
+
+msgid "Also copy the local profile"
+msgstr "ローカルプロファイルもコピー"
+
+msgid "Library folders, playlist folders and order, pinned items, blacklist and preferences of the old account's QBZ profile on this computer."
+msgstr "このコンピューター上の古いアカウントの QBZ プロファイルにあるライブラリフォルダー、プレイリストのフォルダーと順序、ピン留め、ブラックリスト、設定。"
+
+msgid "Media server connections"
+msgstr "メディアサーバー接続"
+
+msgid "Plex, Jellyfin and Subsonic settings, including their credentials."
+msgstr "Plex、Jellyfin、Subsonic の設定（認証情報を含む）。"
+
+msgid "Scrobbler accounts"
+msgstr "スクロブラーアカウント"
+
+msgid "Last.fm and ListenBrainz settings, including their credentials."
+msgstr "Last.fm と ListenBrainz の設定（認証情報を含む）。"
+
+msgid "The listen log and the events behind offline recommendations."
+msgstr "再生ログとオフラインおすすめの元になるイベント。"
+
+msgid "Local profile: {} rows copied; {} playlist rows had no match."
+msgstr "ローカルプロファイル: {} 行をコピー。プレイリストの {} 行は対応がありませんでした。"
+
+msgid "The library already had folders: run a rescan to index the added ones."
+msgstr "ライブラリには既にフォルダーがありました。追加分を索引化するには再スキャンしてください。"
+
+msgid "Restart QBZ to see the migrated local profile."
+msgstr "移行したローカルプロファイルを表示するには QBZ を再起動してください。"
+
+msgid "The local profile could not be copied; see the log."
+msgstr "ローカルプロファイルをコピーできませんでした。ログを確認してください。"
+msgid "Delete…"
+msgstr "削除…"
+
+msgid "Delete migration snapshot?"
+msgstr "移行スナップショットを削除しますか？"
+
+msgid "This removes only the migration bundle. The old account's QBZ profile and user data are kept."
+msgstr "移行バンドルのみを削除します。以前のアカウントのQBZプロファイルとユーザーデータは保持されます。"
+
+msgid "Delete snapshot"
+msgstr "スナップショットを削除"
+
+msgid "Migration snapshot deleted."
+msgstr "移行スナップショットを削除しました。"
+
+msgid "Could not delete the migration snapshot."
+msgstr "移行スナップショットを削除できませんでした。"
+
+msgid "{} is refreshing its library ({} items scanned). Wait for it to finish, then sync again."
+msgstr "{} はライブラリを更新中です（{} 件をスキャン済み）。完了してからもう一度同期してください。"
+
+msgid "No Plex, Jellyfin or Subsonic connection was stored in the source profile, so none could be copied."
+msgstr "移行元プロファイルに Plex、Jellyfin、Subsonic の接続が保存されていなかったため、コピーできませんでした。"
+
+msgid "Media server connections copied: {} of {}."
+msgstr "メディアサーバー接続のコピー：{} / {}。"
+
+msgid "Copying local profile…"
+msgstr "ローカルプロファイルをコピーしています…"
+
+msgid "Refreshing migrated data…"
+msgstr "移行したデータを更新しています…"
+
+msgid "This only happens once. Please wait for it to finish and do not close the window."
+msgstr "この処理は一度だけ行われます。完了するまで待ち、ウィンドウを閉じないでください。"
+
+msgid "You can close this panel; the migration will continue in the background."
+msgstr "このパネルを閉じても、移行はバックグラウンドで続行されます。"
+
+msgid "From"
+msgstr "移行元"
+
+msgid "To"
+msgstr "移行先"
+
+msgid "Step {} of {}"
+msgstr "ステップ {} / {}"
+
+msgid "Elapsed: {}"
+msgstr "経過時間：{}"
+
+msgid "Remaining: {}"
+msgstr "残り時間：{}"
+
+msgid "Review the saved source profiles, choose what to copy, and confirm the signed-in destination account."
+msgstr "保存済みの移行元プロファイルを確認し、コピーする項目を選択して、現在サインイン中の移行先アカウントを確認します。"
+
+msgid "Migrate account data"
+msgstr "アカウントデータを移行"
+
+msgid "Start migration"
+msgstr "移行を開始"
+
+msgid "What is a migration profile?"
+msgstr "移行プロファイルとは？"
+
+msgid "It is a one-time bundle created from the source account. It preserves that account's Qobuz favorites and playlists so they can be added to the account signed in now. Optional local data is copied directly from the old QBZ profile on this computer. Deleting the bundle does not delete the old profile or either account's data."
+msgstr "移行元アカウントから作成される一度限りのバンドルです。そのアカウントのQobuzのお気に入りとプレイリストを保存し、現在サインイン中のアカウントに追加できます。任意のローカルデータは、このコンピューター上の古いQBZプロファイルから直接コピーされます。バンドルを削除しても、古いプロファイルや各アカウントのデータは削除されません。"
+
+msgid "SAVED SOURCE PROFILES"
+msgstr "保存済みの移行元プロファイル"
+
+msgid "No saved migration profiles are available."
+msgstr "利用できる保存済み移行プロファイルはありません。"
+
+msgid "Selected"
+msgstr "選択済み"
+
+msgid "Select"
+msgstr "選択"
+
+msgid "MIGRATION DIRECTION"
+msgstr "移行方向"
+
+msgid "Select a source profile above"
+msgstr "上で移行元プロファイルを選択してください"
+
+msgid "Signed-in Qobuz account · ID {}"
+msgstr "サインイン中のQobuzアカウント · ID {}"
+
+msgid "WHAT TO COPY"
+msgstr "コピーする項目"
+
+msgid "Migration is additive: it does not remove favorites or playlists from either account."
+msgstr "移行は追加のみです。どちらのアカウントからもお気に入りやプレイリストは削除されません。"
+
+msgid "That library folder is disabled."
+msgstr "そのライブラリフォルダーは無効です。"
+
+msgid "That folder overlaps an existing library folder."
+msgstr "そのフォルダーは既存のライブラリフォルダーと重複しています。"
+
+msgid "This purchase is not available for download."
+msgstr "この購入作品はダウンロードできません。"
+
+msgid "Could not save playback preference."
+msgstr "再生設定を保存できませんでした。"
+
+msgid "Qobuz · stream/offline copy"
+msgstr "Qobuz · ストリーミング/オフラインコピー"
+
+msgid "Local purchase"
+msgstr "ローカル購入作品"
+
+msgid "Play with"
+msgstr "再生元"
+
+msgid "Download purchase"
+msgstr "購入作品をダウンロード"
+
+msgid "1 track purchased"
+msgstr "購入済み1曲"
+
+msgid "{} tracks purchased"
+msgstr "購入済み{}曲"
+
+msgid "This copy cannot be continued right now."
+msgstr "現在このコピーを続行できません。"
+
+msgid "Library folder refreshed."
+msgstr "ライブラリフォルダーを更新しました。"
+
+msgid "Download another copy"
+msgstr "別のコピーをダウンロード"
+
+msgid "Complete"
+msgstr "完了"
+
+msgid "Partial"
+msgstr "一部"
+
+msgid "Missing files"
+msgstr "不足しているファイル"
+
+msgid "Changed files"
+msgstr "変更されたファイル"
+
+msgid "Unreadable files"
+msgstr "読み取れないファイル"
+
+msgid "Local purchase copies"
+msgstr "購入済みローカルコピー"
+
+msgid "{} of {} tracks"
+msgstr "{} / {} 曲"
+
+msgid "Continue copy"
+msgstr "コピーを続行"
+
+msgid "Add to Local Library"
+msgstr "ローカルライブラリに追加"
+
+msgid "In Local Library"
+msgstr "ローカルライブラリ内"
+
+msgid "{} of {} tracks available in this folder."
+msgstr "このフォルダーで {} / {} 曲を利用できます。"
+
+msgid "{} failed"
+msgstr "{} 件失敗"
+
+msgid "{} cancelled"
+msgstr "{} 件キャンセル"
+
+msgid "Download finished"
+msgstr "ダウンロード完了"
+
+msgid "Shuffle: On"
+msgstr "シャッフル：オン"
+
+msgid "Shuffle: Off"
+msgstr "シャッフル：オフ"
+
+msgid "Repeat: Off"
+msgstr "リピート：オフ"
+
+msgid "Repeat: All"
+msgstr "リピート：すべて"
+
+msgid "Repeat: One"
+msgstr "リピート：1曲"
+
+msgid "Show album artwork in Queue track list"
+msgstr "キューのトラックリストにアルバムアートワークを表示"
+
+msgid "Replace queue track numbers with album cover thumbnails. Off by default."
+msgstr "キューのトラック番号をアルバムカバーのサムネイルに置き換えます。デフォルトではオフです。"
+
+msgid "Show album artwork in Library track list"
+msgstr "ライブラリのトラックリストにアルバムアートワークを表示"
+
+msgid "Display the album cover thumbnail between the track number and title. Off by default."
+msgstr "トラック番号とタイトルの間にアルバムカバーのサムネイルを表示します。デフォルトではオフです。"
+
+msgid "Play random"
+msgstr "ランダム再生"
+
+msgid "Play selected"
+msgstr "選択項目を再生"
+
+msgid "Cancel selection"
+msgstr "選択を解除"
+
+msgid "QOBUZ LINKS"
+msgstr "QOBUZ リンク"
+
+msgid "Open Qobuz links in QBZ"
+msgstr "Qobuz のリンクを QBZ で開く"
+
+msgid "Make QBZ the handler for qobuzapp:// links from your browser. Off, the official Qobuz app keeps them; QBZ's own qbz:// links always open here."
+msgstr "ブラウザーからの qobuzapp:// リンクを QBZ で処理します。オフの場合は公式の Qobuz アプリが処理します。QBZ 独自の qbz:// リンクは常にここで開きます。"
+
+msgid "Look for better replacement"
+msgstr "より良い代替盤を探す"
+
+msgid "Remove all favorites from this release"
+msgstr "このリリースのすべてのお気に入りを削除"
+
+msgid "Remove all favorites from this release?"
+msgstr "このリリースのすべてのお気に入りを削除しますか？"
+
+msgid "Remove the album and every track from this release from your Library?"
+msgstr "このリリースのアルバムとすべてのトラックをライブラリから削除しますか？"
+
+msgid "No replacement releases found"
+msgstr "代替リリースが見つかりません"
+
+msgid "Choosing a result opens the release. Your existing favorites are not changed."
+msgstr "結果を選ぶとリリースが開きます。現在のお気に入りは変更されません。"
+
+msgid "No favorites from this release to remove"
+msgstr "このリリースには削除するお気に入りがありません"
+
+msgid "Favorites removed from this release"
+msgstr "このリリースのお気に入りを削除しました"
+
+msgid "Could not remove favorites from this release"
+msgstr "このリリースのお気に入りを削除できませんでした"
+
+msgid "Some favorites could not be removed"
+msgstr "一部のお気に入りを削除できませんでした"
+
+msgid "Replace in Library"
+msgstr "ライブラリ内で置き換え"
+
+msgid "Replacing favorite..."
+msgstr "お気に入りを置き換えています..."
+
+msgid "The selected release replaces the unavailable album favorite."
+msgstr "選択したリリースで、利用できないお気に入りのアルバムを置き換えます。"
+
+msgid "The matching track from the selected release replaces the unavailable favorite."
+msgstr "選択したリリース内の一致する曲で、利用できないお気に入りを置き換えます。"
+
+msgid "Could not open the selected release"
+msgstr "選択したリリースを開けませんでした"
+
+msgid "Could not find a matching track in this release"
+msgstr "このリリース内に一致する曲が見つかりませんでした"
+
+msgid "Could not add the replacement favorite"
+msgstr "置き換え用のお気に入りを追加できませんでした"
+
+msgid "Favorite replaced"
+msgstr "お気に入りを置き換えました"
+
+msgid "The replacement was added, but the unavailable favorite could not be removed"
+msgstr "置き換えを追加しましたが、利用できないお気に入りを削除できませんでした"
+
+msgid "Failed to send playback to the selected device"
+msgstr "選択したデバイスに再生を転送できませんでした"
+
+msgid "Move up"
+msgstr "上に移動"
+
+msgid "Move down"
+msgstr "下に移動"
+
+msgid "Download"
+msgstr "ダウンロード"
+
+msgid "Edit"
+msgstr "編集"
+
+msgid "Grid"
+msgstr "グリッド"
+
+msgid "List"
+msgstr "リスト"
+
+msgid "Tree"
+msgstr "ツリー"
+
+msgid "Forward"
+msgstr "進む"

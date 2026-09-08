@@ -1,0 +1,63 @@
+[package]
+name = "qbz-secrets"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Device-bound secret wrapping for QBZ (offline cache keys, tokens)"
+
+[dependencies]
+# AES-256-GCM for the at-rest wrap/unwrap
+aes-gcm = "0.10"
+
+# KDF for the fallback path when OS keyring isn't available
+hkdf = "0.12"
+sha2 = "0.10"
+
+# RNG for nonces + install UUID generation
+rand = "0.10"
+
+# UUID for the persistent install identifier (salt component for fallback)
+uuid = { version = "1", features = ["v4", "serde"] }
+
+# Serde for the on-disk wrapper blob envelope
+serde = { workspace = true }
+
+# Base64 for keyring-roundtripped master key (secret-service expects a UTF-8 string)
+base64 = { workspace = true }
+
+# Errors
+thiserror = { workspace = true }
+log = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3"
+
+# OS keyring backends: Secret Service (Linux), Keychain (macOS), Credential
+# Manager (Windows). These are the only targets allowed to attempt a keyring.
+#
+# Every backend is opt-in. keyring 3.x ships no `default` feature contents at
+# all, and each platform arm reads `not(feature = "…-native")` → `pub use mock
+# as default`. That mock is an in-memory store whose writes *succeed*, so
+# depending on it does not fail loudly: it hands back a master key that never
+# outlives the process, and every blob wrapped in one run is undecryptable in
+# the next. `Backend::new` still reports `BackendKind::Keyring`, so the logs
+# say nothing is wrong.
+#
+# Linux names its backend here rather than relying on qbz-credentials and Cargo
+# feature unification. macOS and Windows opt into only their native stores.
+# Mobile and every other target omit `keyring` entirely and take the persisted
+# KDF path in `backend.rs`; an unsupported target must never reach the mock.
+#
+# `async-secret-service` and not `sync-secret-service`: keyring rejects enabling
+# both. `crypto-rust` is required by the Secret Service backend.
+[target.'cfg(target_os = "linux")'.dependencies]
+keyring = { version = "3", default-features = false, features = [
+  "async-secret-service",
+  "crypto-rust",
+] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+keyring = { version = "3", default-features = false, features = ["apple-native"] }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+keyring = { version = "3", default-features = false, features = ["windows-native"] }

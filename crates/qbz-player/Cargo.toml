@@ -1,0 +1,41 @@
+[package]
+name = "qbz-player"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Playback engine and queue management for QBZ"
+
+[dependencies]
+qbz-models = { path = "../qbz-models" }
+qbz-audio = { path = "../qbz-audio" }
+qbz-qobuz = { path = "../qbz-qobuz" }
+qbz-cmaf = { path = "../qbz-cmaf" }
+qbz-dsd = { path = "../qbz-dsd" }
+qbz-cache = { path = "../qbz-cache" }
+
+# Serialization
+serde = { workspace = true }
+
+# Async
+tokio = { workspace = true }
+async-trait = { workspace = true }
+futures-util = { workspace = true }
+tokio-stream = { workspace = true }
+
+# Logging
+log = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+# Random (for shuffle)
+rand = "0.10"
+
+# Audio decoding
+symphonia = { workspace = true }
+
+# Audio playback
+rodio = { version = "0.22", features = ["symphonia-all"] }
+
+# HTTP client for streaming
+reqwest = { workspace = true }

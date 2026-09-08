@@ -1,0 +1,153 @@
+# nfpm config — builds .deb and .rpm from the self-contained AppDir that
+# build-qt-linux.yml produces (linuxdeploy + linuxdeploy-plugin-qt: the qbz
+# binary, the Qt libraries, the platform/QML plugins and a qt.conf).
+# Used by release-linux(.yml/-aarch64.yml): nfpm package -f this-file -p deb|rpm
+#
+# Interpolated env (exported by the workflow):
+#   QBZ_VERSION  release version without the v prefix (e.g. 2.1.0)
+#   QBZ_ARCH     deb-style arch: amd64 | arm64
+#
+# WHY QT IS BUNDLED (2026-08-25): the tree needs Qt >= 6.8 (QtQuick.Effects,
+# Image.retainWhileLoading); Ubuntu 24.04 LTS ships 6.4.2 without the Effects
+# module at all, Fedora 40 is on 6.6. A package depending on distro Qt would
+# not install on the distros the APT/RPM repos promise. The tree lives under
+# /opt/qbz; /usr/bin/qbz is a symlink. No wrapper script: linuxdeploy patches
+# RPATH to $ORIGIN/../lib and writes bin/qt.conf, both resolved through
+# /proc/self/exe, and a wrapper exporting LD_LIBRARY_PATH would leak our Qt
+# into every process qbz spawns (the login browser, xdg-open).
+#
+# Runtime deps are what the AppDir does NOT carry (linuxdeploy's blacklist:
+# glibc, libstdc++, GL/EGL, X11/xcb/wayland client libs, fontconfig/freetype,
+# dbus, alsa, zlib, OpenSSL). Measured against the 2026-08-25 AppDir.
+
+name: qbz
+arch: ${QBZ_ARCH}
+platform: linux
+version: ${QBZ_VERSION}
+section: sound
+priority: optional
+maintainer: Victor Rodriguez <vicrodh@users.noreply.github.com>
+description: |
+  Native Qobuz client with hi-res audio support.
+  Bit-perfect playback, DAC passthrough, offline cache, local library.
+vendor: QBZ
+homepage: https://github.com/vicrodh/qbz
+license: MIT
+# The desktop package already carries /usr/bin/qbzd and its optional user
+# unit. Advertise that capability and make the daemon-only package an
+# alternative, not a co-installable duplicate of the same files.
+provides:
+  - qbzd
+conflicts:
+  - qbzd
+
+contents:
+  # LITERAL paths (nfpm does NOT expand env vars in contents[].src): the
+  # workflow unpacks the AppDir at ./AppDir and stages qbzd at ./qbzd before
+  # invoking nfpm; keep both sides in sync.
+  - src: ./AppDir/usr/bin
+    dst: /opt/qbz/bin
+    type: tree
+  - src: ./AppDir/usr/lib
+    dst: /opt/qbz/lib
+    type: tree
+  - src: ./AppDir/usr/plugins
+    dst: /opt/qbz/plugins
+    type: tree
+  - src: ./AppDir/usr/qml
+    dst: /opt/qbz/qml
+    type: tree
+  - src: LICENSE
+    dst: /usr/share/licenses/qbz/LICENSE
+  - src: licenses
+    dst: /usr/share/licenses/qbz/third-party
+    type: tree
+  - src: /opt/qbz/bin/qbz
+    dst: /usr/bin/qbz
+    type: symlink
+  # qbzd: the Slint-free daemon, built by its own job. Ships disabled (no
+  # scripts: postinstall) — integrations strictly opt-in; the unit's own
+  # header carries the `loginctl enable-linger` requirement.
+  - src: ./qbzd
+    dst: /usr/bin/qbzd
+    file_info:
+      mode: 0755
+  - src: crates/qbzd/service/qbzd.service
+    dst: /usr/lib/systemd/user/qbzd.service
+  # Installed as com.blitzfc.qbz.desktop so the AppStream metainfo's
+  # <launchable> and the MPRIS DesktopEntry both resolve.
+  - src: packaging/linux/qbz.desktop
+    dst: /usr/share/applications/com.blitzfc.qbz.desktop
+  - src: packaging/flatpak/com.blitzfc.qbz.metainfo.xml
+    dst: /usr/share/metainfo/com.blitzfc.qbz.metainfo.xml
+  - src: packaging/icons/32x32.png
+    dst: /usr/share/icons/hicolor/32x32/apps/qbz.png
+  - src: packaging/icons/48x48.png
+    dst: /usr/share/icons/hicolor/48x48/apps/qbz.png
+  - src: packaging/icons/64x64.png
+    dst: /usr/share/icons/hicolor/64x64/apps/qbz.png
+  - src: packaging/icons/128x128.png
+    dst: /usr/share/icons/hicolor/128x128/apps/qbz.png
+  - src: packaging/icons/256x256.png
+    dst: /usr/share/icons/hicolor/256x256/apps/qbz.png
+  - src: packaging/icons/512x512.png
+    dst: /usr/share/icons/hicolor/512x512/apps/qbz.png
+
+overrides:
+  deb:
+    depends:
+      # t64 alternatives cover Ubuntu 24.04+'s time_t64 renames.
+      - libc6 (>= 2.35)
+      - libstdc++6
+      - libasound2 | libasound2t64
+      - libdbus-1-3
+      - libssl3 | libssl3t64
+      - libfontconfig1
+      - libfreetype6
+      - libxkbcommon0
+      - libxkbcommon-x11-0
+      - libxcb1
+      - libxcb-cursor0
+      - libxcb-icccm4
+      - libxcb-image0
+      - libxcb-keysyms1
+      - libxcb-render-util0
+      - libxcb-shape0
+      - libxcb-xkb1
+      - libx11-6
+      - libgl1 | libgl1-mesa-glx
+      - libegl1
+      - zlib1g
+    recommends:
+      - libwayland-client0
+      - libwayland-egl1
+      - libwayland-cursor0
+      - pipewire
+  rpm:
+    depends:
+      # Soname-level requires survive package renames across Fedora/openSUSE
+      # (e.g. zlib -> zlib-ng-compat) — every distro Provides the soname.
+      - libasound.so.2()(64bit)
+      - libdbus-1.so.3()(64bit)
+      - libssl.so.3()(64bit)
+      - libfontconfig.so.1()(64bit)
+      - libfreetype.so.6()(64bit)
+      - libxkbcommon.so.0()(64bit)
+      - libxkbcommon-x11.so.0()(64bit)
+      - libxcb.so.1()(64bit)
+      - libxcb-cursor.so.0()(64bit)
+      - libX11.so.6()(64bit)
+      - libGL.so.1()(64bit)
+      - libEGL.so.1()(64bit)
+      - libz.so.1()(64bit)
+    recommends:
+      - libwayland-client
+      - libwayland-egl
+      - pipewire
+
+rpm:
+  group: Applications/Multimedia
+  compression: zstd
+
+deb:
+  compression: zstd

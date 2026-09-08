@@ -1,0 +1,39 @@
+{
+    "album_id": "5052205066164",
+    "track_id": 29006863,
+    "translation_langs": [],
+    "publishers": [
+        {
+            "copyright": "Reservoir Media Management, Inc.",
+            "zones": [
+                "WW",
+                "FR"
+            ]
+        },
+        {
+            "copyright": "Reservoir Media Management, Inc., Sony/ATV Music Publishing LLC",
+            "zones": [
+                "FR"
+            ]
+        }
+    ],
+    "writers": "DEVIN GARRETT TOWNSEND",
+    "original": {
+        "type": "plain",
+        "lang": "en",
+        "lines": [
+            {
+                "line": "Night follows me when you're gone"
+            },
+            {
+                "line": "And now how am I to carry on?"
+            },
+            {
+                "line": "But into the night into the darkness"
+            },
+            {
+                "line": "I must be strong, carry on"
+            }
+        ]
+    }
+}

@@ -1,0 +1,28 @@
+[package]
+name = "qconnect-lan"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Official Qobuz Connect LAN receiver wire and discovery"
+
+[dependencies]
+if-addrs = "0.15"
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+mdns-sd = "0.21"
+socket2 = "0.6"
+url = "2"
+zeroize = "1"
+
+[dev-dependencies]
+base64 = { workspace = true }
+qbz-credentials = { path = "../qbz-credentials" }
+qbz-qobuz = { path = "../qbz-qobuz" }
+qconnect-core = { path = "../qconnect-core" }
+qconnect-protocol = { path = "../qconnect-protocol" }
+qconnect-transport-ws = { path = "../qconnect-transport-ws" }
+reqwest = { workspace = true }
+rustls = { version = "0.23", features = ["aws_lc_rs"] }
+tokio = { workspace = true }
+uuid = { version = "1", features = ["v4"] }

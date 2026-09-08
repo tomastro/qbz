@@ -1,0 +1,33 @@
+# cross (https://github.com/cross-rs/cross) config for cross-compiling the
+# aarch64 `qbzd` daemon from an x86-64 Linux host. Used by
+# scripts/build-aarch64-qbzd.sh (CROSS mode). The Qt desktop binary is NOT
+# cross-built (cxx-qt needs the target Qt's qmake at build time; see
+# scripts/build-aarch64-linux.sh) — build it natively on an ARM box.
+#
+# `image` pins a newer Ubuntu (cross 0.2.5's default aarch64 image is Ubuntu
+# 16.04 "xenial" — EOL, archived repos, OpenSSL 1.0.2 — which breaks modern
+# deps). The :main image is Ubuntu 20.04+. If pulling :main ever fails, the
+# alternative is a newer cross itself:
+#   cargo install cross --git https://github.com/cross-rs/cross --locked
+#
+# The image ships the aarch64 toolchain but NOT the native dev libs qbz links
+# against, so we add the arm64 multiarch packages in pre-build. PKG_CONFIG_* is
+# set so build scripts resolve the :arm64 .pc files.
+#
+# NOTE: each pre-build entry is a single-line TOML string (backslash line
+# continuations are only valid in TOML """multi-line""" strings).
+
+[target.aarch64-unknown-linux-gnu]
+image = "ghcr.io/cross-rs/aarch64-unknown-linux-gnu:main"
+pre-build = [
+    "dpkg --add-architecture arm64",
+    "apt-get update",
+    "apt-get install -y --no-install-recommends pkg-config cmake clang libclang-dev nasm libasound2-dev:arm64 libjack-jackd2-dev:arm64 libdbus-1-dev:arm64 libssl-dev:arm64",
+]
+
+[target.aarch64-unknown-linux-gnu.env]
+passthrough = [
+    "PKG_CONFIG_ALLOW_CROSS=1",
+    "PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig",
+    "PKG_CONFIG_SYSROOT_DIR=/",
+]

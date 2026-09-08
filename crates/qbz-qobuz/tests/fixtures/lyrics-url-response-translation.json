@@ -1,0 +1,9 @@
+{
+  "track_id": 266725027,
+  "album_id": "gvcirtodd95kc",
+  "lyrics_url": "https://ga-cdn.qobuz.com/lyrics/266725027/original.json?Expires=2000000000&Signature=example&Key-Pair-Id=EXAMPLE",
+  "translation_requested": {
+    "lyrics_url": "https://ga-cdn.qobuz.com/lyrics/266725027/es.json?Expires=2000000000&Signature=example&Key-Pair-Id=EXAMPLE",
+    "lang": "es"
+  }
+}

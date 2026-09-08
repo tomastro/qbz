@@ -1,0 +1,83 @@
+# Copyright 2024-2026 Gentoo Authors
+# Distributed under the terms of the MIT License
+
+EAPI=8
+
+RUST_MIN_VER="1.89.0"
+inherit cargo xdg
+
+DESCRIPTION="Native hi-fi Qobuz desktop player for Linux"
+HOMEPAGE="https://qbz.lol https://github.com/vicrodh/qbz"
+
+MY_PV="${PV}"
+SRC_URI="
+	https://github.com/vicrodh/qbz/archive/refs/tags/v${MY_PV}.tar.gz -> qbz-${MY_PV}.tar.gz
+	https://github.com/vicrodh/qbz/releases/download/v${MY_PV}/qbz-${MY_PV}-cargo-vendor.tar.xz
+"
+
+LICENSE="MIT"
+SLOT="0"
+KEYWORDS="~amd64 ~arm64"
+IUSE="jack pipewire pulseaudio"
+RESTRICT="mirror"
+
+COMMON_DEPEND="
+	>=dev-qt/qtbase-6.8:6[gui,network,opengl]
+	>=dev-qt/qtdeclarative-6.8:6[network,opengl]
+	>=dev-qt/qtsvg-6.8:6
+	>=dev-qt/qtwayland-6.8:6
+	media-libs/alsa-lib
+"
+RDEPEND="
+	${COMMON_DEPEND}
+	x11-misc/xdg-utils
+	jack? ( virtual/jack )
+	pipewire? ( media-video/pipewire )
+	pulseaudio? ( media-libs/libpulse )
+"
+DEPEND="
+	${COMMON_DEPEND}
+	virtual/jack
+"
+BDEPEND="
+	dev-build/cmake
+	dev-lang/nasm
+	virtual/pkgconfig
+"
+
+S="${WORKDIR}/qbz-${MY_PV}"
+ECARGO_VENDOR="${WORKDIR}/qbz-${MY_PV}-cargo-vendor"
+
+src_compile() {
+	export QMAKE="${QMAKE:-$(command -v qmake6 || command -v /usr/lib64/qt6/bin/qmake)}"
+	cargo_src_compile --manifest-path crates/Cargo.toml -p qbz-qt --locked
+}
+
+src_install() {
+	dobin "${S}/crates/$(cargo_target_dir)/qbz"
+
+	insinto /usr/share/applications
+	newins packaging/linux/qbz.desktop com.blitzfc.qbz.desktop
+
+	local size
+	for size in 32 48 64 128 256 512; do
+		insinto "/usr/share/icons/hicolor/${size}x${size}/apps"
+		newins "packaging/icons/${size}x${size}.png" qbz.png
+	done
+
+	insinto /usr/share/metainfo
+	doins packaging/flatpak/com.blitzfc.qbz.metainfo.xml
+	dodoc LICENSE
+	insinto /usr/share/licenses/${PN}/third-party
+	doins licenses/*
+}
+
+pkg_postinst() {
+	xdg_icon_cache_update
+	xdg_desktop_database_update
+}
+
+pkg_postrm() {
+	xdg_icon_cache_update
+	xdg_desktop_database_update
+}

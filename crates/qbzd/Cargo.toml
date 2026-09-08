@@ -1,0 +1,68 @@
+[package]
+name = "qbzd"
+version.workspace = true
+edition = "2021"
+description = "QBZ headless Qobuz playback daemon (daemon + CLI + setup TUI in one binary)"
+license = "MIT"
+
+[[bin]]
+name = "qbzd"
+path = "src/main.rs"
+
+[dependencies]
+# workspace crates shared by the daemon and the Qt application
+qbz-models = { path = "../qbz-models" }
+qbz-app = { path = "../qbz-app" }
+qbz-core = { path = "../qbz-core" }
+qbz-player = { path = "../qbz-player" }
+qbz-audio = { path = "../qbz-audio" }          # PROTECTED — read-only consumer
+qbz-qobuz = { path = "../qbz-qobuz" }
+qbz-reco = { path = "../qbz-reco" }             # playlist recommendations (ArtistVectorStore); already in-tree via qbz-core
+qbz-integrations = { path = "../qbz-integrations" } # Last.fm / ListenBrainz scrobbling; already in-tree via qbz-core
+qbz-media-controls = { path = "../qbz-media-controls" } # MPRIS/media-key control (CONSOLE ext); mpris-server on Linux
+qbz-credentials = { path = "../qbz-credentials" }
+qbz-log = { path = "../qbz-log" }
+qconnect-core = { path = "../qconnect-core" }
+qconnect-protocol = { path = "../qconnect-protocol" }
+qconnect-transport-ws = { path = "../qconnect-transport-ws" }
+qconnect-app = { path = "../qconnect-app" }
+qconnect-lan = { path = "../qconnect-lan" }
+# runtime / wire
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+reqwest = { workspace = true }
+dirs = "6"
+rand = { workspace = true }
+log = { workspace = true }
+async-trait = { workspace = true }
+# QConnect glue copies (T9) — mirror the desktop copies' direct imports
+uuid = { version = "1", features = ["v4"] }                    # renderer-report action uuids
+rusqlite = { version = "0.40", features = ["bundled"] }        # daemon-root qconnect_settings.db KV
+futures-util = { workspace = true }                            # remote_stream.rs feeder (byte-exact)
+zeroize = "1"
+# new direct deps (versions already in lock where noted)
+tiny_http = "0.12"           # in lock via qbz-cast
+toml = "0.9"                 # in lock transitively
+urlencoding = "2"            # OAuth redirect_url encode + callback decode (in lock via qbz)
+open = "5"                   # system-browser launch for `qbzd login` (in lock via qbz)
+clap = { version = "4", features = ["derive"] }
+clap_complete = "4"
+# T13 setup TUI. Keep ratatui 0.30 aligned with the workspace's unicode-width
+# resolution; ratatui-core 0.30 accepts the locked 0.2.2 version (IV5).
+# The `crossterm` backend is a DEFAULT feature; re-exported as ratatui::crossterm.
+ratatui = "0.30"
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"                 # flock in src/lock.rs
+
+[target.'cfg(windows)'.dependencies]
+# LockFileEx (+ OVERLAPPED, hence Win32_System_IO) for the instance lock.
+windows-sys = { version = "0.61", features = [
+  "Win32_Foundation",
+  "Win32_Storage_FileSystem",
+  "Win32_System_IO",
+] }
+
+[dev-dependencies]
+tempfile = "3"

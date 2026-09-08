@@ -1,0 +1,40 @@
+[package]
+name = "qbz-integrations"
+version = "0.1.0"
+edition = "2021"
+description = "Third-party service integrations for QBZ (Last.fm, ListenBrainz, MusicBrainz)"
+license = "MIT"
+
+[dependencies]
+# Async runtime
+tokio = { version = "1", features = ["sync", "time"] }
+
+# HTTP client
+reqwest = { workspace = true, default-features = false, features = ["json", "query", "rustls-no-provider"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Logging
+log = "0.4"
+
+# Error handling
+thiserror = "1"
+
+# URL encoding for API queries
+urlencoding = "2"
+
+# Discord Rich Presence (now-listening activity). Same crate + version the
+# Tauri build used; frontend-agnostic (IPC-only, no Tauri dependency).
+discord-rich-presence = "1.1.0"
+
+# SQLite for caching (optional, enabled by default)
+rusqlite = { version = "0.40", features = ["bundled"], optional = true }
+
+# Time handling for cache TTL
+chrono = { version = "0.4", optional = true }
+
+[features]
+default = ["cache"]
+cache = ["dep:rusqlite", "dep:chrono"]

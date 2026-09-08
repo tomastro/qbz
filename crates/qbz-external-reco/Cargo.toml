@@ -1,0 +1,25 @@
+[package]
+name = "qbz-external-reco"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Frontend-agnostic external-recommendations engine (Last.fm + ListenBrainz -> Qobuz) for Discover"
+
+[dependencies]
+qbz-integrations = { path = "../qbz-integrations" }
+qbz-models = { path = "../qbz-models" }
+
+# Async
+tokio = { workspace = true }
+async-trait = { workspace = true }
+futures-util = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Cache (per-user SQLite, WAL per ADR-002)
+rusqlite = { version = "0.40", features = ["bundled"] }
+
+# Logging
+log = { workspace = true }

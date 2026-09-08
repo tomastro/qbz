@@ -1,0 +1,81 @@
+# nfpm config — builds the STANDALONE qbzd .deb and .rpm (daemon-only, no
+# desktop app). Used by release-linux(.yml/-aarch64.yml) alongside the main
+# nfpm.yaml; same literal-path rule: the workflow stages ./qbzd before
+# invoking nfpm (nfpm does NOT expand env vars in contents[].src).
+#
+# Interpolated env (exported by the workflow):
+#   QBZ_VERSION  release version without the v prefix (e.g. 2.0.3)
+#   QBZ_ARCH     deb-style arch: amd64 | arm64
+#
+# Measured runtime deps of the qbzd binary (ldd, 2026-07-24): libasound only
+# (+ libc/libm/libgcc from the toolchain). No fontconfig/freetype/GL — the
+# daemon is slint-free.
+
+name: qbzd
+arch: ${QBZ_ARCH}
+platform: linux
+version: ${QBZ_VERSION}
+section: sound
+priority: optional
+maintainer: Victor Rodriguez <vicrodh@users.noreply.github.com>
+description: |
+  QBZ headless daemon — Qobuz player for servers, Raspberry Pi and
+  other appliances. TUI setup wizard, QConnect renderer/receiver, local
+  library, offline cache. Includes an optional systemd user unit and can
+  generate service definitions for systemd, OpenRC, or runit.
+vendor: QBZ
+homepage: https://github.com/vicrodh/qbz
+license: MIT
+# qbz already contains this daemon and unit, so installing both packages
+# would otherwise create file conflicts at transaction time.
+conflicts:
+  - qbz
+
+contents:
+  # LITERAL path (nfpm prints env vars verbatim in contents[].src — the
+  # workflow places the stripped binary at ./qbzd before invoking nfpm).
+  - src: ./qbzd
+    dst: /usr/bin/qbzd
+    file_info:
+      mode: 0755
+  - src: crates/qbzd/service/qbzd.service
+    dst: /usr/lib/systemd/user/qbzd.service
+  - src: ./qbzd.bash
+    dst: /usr/share/bash-completion/completions/qbzd
+  - src: ./qbzd.zsh
+    dst: /usr/share/zsh/site-functions/_qbzd
+  - src: ./qbzd.fish
+    dst: /usr/share/fish/vendor_completions.d/qbzd.fish
+  - src: packaging/linux/qbzd-standalone-README.md
+    dst: /usr/share/doc/qbzd/README.md
+  - src: LICENSE
+    dst: /usr/share/licenses/qbzd/LICENSE
+  - src: licenses
+    dst: /usr/share/licenses/qbzd/third-party
+    type: tree
+
+overrides:
+  deb:
+    depends:
+      # t64 alternatives cover Ubuntu 24.04+'s time_t64 renames.
+      - libasound2 | libasound2t64
+    recommends:
+      # pw-metadata/pw-dump for bit-perfect sample-rate queries and DAC
+      # detection (same audio stack as the desktop app).
+      - pipewire-bin
+      - pulseaudio-utils
+      - xdg-utils
+  rpm:
+    depends:
+      - libasound.so.2()(64bit)
+    recommends:
+      - pipewire-utils
+      - pulseaudio-utils
+      - xdg-utils
+
+rpm:
+  group: Applications/Multimedia
+  compression: zstd
+
+deb:
+  compression: zstd

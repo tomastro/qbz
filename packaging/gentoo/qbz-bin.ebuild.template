@@ -1,0 +1,87 @@
+# Copyright 2024-2026 Gentoo Authors
+# Distributed under the terms of the MIT License
+
+EAPI=8
+
+inherit xdg
+
+DESCRIPTION="Native hi-fi Qobuz desktop player for Linux (prebuilt binary)"
+HOMEPAGE="https://qbz.lol https://github.com/vicrodh/qbz"
+
+MY_PV="${PV}"
+SRC_URI="
+	amd64? ( https://github.com/vicrodh/qbz/releases/download/v${MY_PV}/qbz_${MY_PV}_amd64.tar.gz )
+	arm64? ( https://github.com/vicrodh/qbz/releases/download/v${MY_PV}/qbz_${MY_PV}_aarch64.tar.gz )
+"
+
+LICENSE="MIT"
+SLOT="0"
+KEYWORDS="~amd64 ~arm64"
+IUSE="jack pipewire pulseaudio"
+RESTRICT="mirror strip"
+
+# Qt carries its own X11/Wayland, font and graphics dependencies. Keep only
+# direct QBZ requirements here; helper binaries are optional USE paths. The
+# per-arch Qt/glibc floors match the release builders.
+RDEPEND="
+	amd64? (
+		>=dev-qt/qtbase-6.8:6[gui,network,opengl]
+		>=dev-qt/qtdeclarative-6.8:6[network,opengl]
+		>=dev-qt/qtsvg-6.8:6
+		>=dev-qt/qtwayland-6.8:6
+		>=sys-libs/glibc-2.35
+	)
+	arm64? (
+		>=dev-qt/qtbase-6.9:6[gui,network,opengl]
+		>=dev-qt/qtdeclarative-6.9:6[network,opengl]
+		>=dev-qt/qtsvg-6.9:6
+		>=dev-qt/qtwayland-6.9:6
+		>=sys-libs/glibc-2.39
+	)
+	media-libs/alsa-lib
+	x11-misc/xdg-utils
+	jack? ( virtual/jack )
+	pipewire? ( media-video/pipewire )
+	pulseaudio? ( media-libs/libpulse )
+"
+
+QA_PREBUILT="usr/bin/qbz"
+S="${WORKDIR}"
+
+src_unpack() {
+	default
+	if use amd64; then
+		S="${WORKDIR}/qbz_${MY_PV}_amd64"
+	elif use arm64; then
+		S="${WORKDIR}/qbz_${MY_PV}_aarch64"
+	fi
+}
+
+src_install() {
+	dobin qbz
+
+	insinto /usr/share/applications
+	newins qbz.desktop com.blitzfc.qbz.desktop
+
+	local size
+	for size in 32 48 64 128 256 512; do
+		insinto "/usr/share/icons/hicolor/${size}x${size}/apps"
+		doins "icons/hicolor/${size}x${size}/apps/qbz.png"
+	done
+
+	insinto /usr/share/metainfo
+	doins com.blitzfc.qbz.metainfo.xml
+	dodoc LICENSE
+	insinto /usr/share/licenses/${PN}/third-party
+	doins licenses/*
+}
+
+pkg_postinst() {
+	xdg_icon_cache_update
+	xdg_desktop_database_update
+}
+
+pkg_postrm() {
+	xdg_icon_cache_update
+	xdg_desktop_database_update
+}

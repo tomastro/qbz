@@ -1,0 +1,297 @@
+name: release-aur
+
+on:
+  workflow_run:
+    workflows: ["release-linux"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to prepare (e.g. 2.1.0)"
+        required: true
+        type: string
+      pkgrel:
+        description: "Package release number"
+        required: false
+        default: "1"
+        type: string
+      publish:
+        description: "Push all four generated packages to AUR"
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: aur-prepare-publish
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  update-aur:
+    runs-on: ubuntu-24.04
+    # workflow_run prepares verified metadata only. Publishing is deliberately
+    # manual because the maintainer's AUR key requires an interactive passkey.
+    # Accept only a successful tag push produced inside this repository; the
+    # exact tag and main ancestry are checked again after checkout.
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_repository.full_name == github.repository &&
+       startsWith(github.event.workflow_run.head_branch, 'v') &&
+       !contains(github.event.workflow_run.head_branch, '-'))
+    steps:
+      - name: Checkout app repo
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.ref }}
+          fetch-depth: 0
+
+      - name: Resolve and verify release
+        id: release
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RUN_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          RUN_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          DISPATCH_VERSION: ${{ inputs.version }}
+          DISPATCH_PUBLISH: ${{ inputs.publish }}
+          DISPATCH_PKGREL: ${{ inputs.pkgrel }}
+        run: |
+          set -euo pipefail
+
+          if [[ "$EVENT_NAME" == workflow_run ]]; then
+            tag="$RUN_HEAD_BRANCH"
+            version="${tag#v}"
+            pkgrel=1
+            should_publish=false
+          else
+            version="$DISPATCH_VERSION"
+            tag="v${version}"
+            pkgrel="${DISPATCH_PKGREL:-1}"
+            should_publish="${DISPATCH_PUBLISH:-false}"
+          fi
+
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Invalid release version: $version"
+            exit 1
+          fi
+          if [[ ! "$pkgrel" =~ ^[1-9][0-9]*$ ]]; then
+            echo "::error::Invalid pkgrel: $pkgrel"
+            exit 1
+          fi
+          if [[ "$should_publish" == true && ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::AUR publishing is limited to stable x.y.z releases"
+            exit 1
+          fi
+
+          if [[ "$EVENT_NAME" == workflow_run || "$should_publish" == true ]]; then
+            git fetch origin main --tags
+            if ! git show-ref --verify --quiet "refs/tags/${tag}"; then
+              echo "::error::Release tag ${tag} does not exist"
+              exit 1
+            fi
+            tag_sha="$(git rev-parse "refs/tags/${tag}^{commit}")"
+            if [[ "$EVENT_NAME" == workflow_run && "$tag_sha" != "$RUN_HEAD_SHA" ]]; then
+              echo "::error::workflow_run SHA does not match ${tag}"
+              exit 1
+            fi
+            if ! git merge-base --is-ancestor "$tag_sha" origin/main; then
+              echo "::error::${tag} is not on main"
+              exit 1
+            fi
+          fi
+
+          {
+            echo "version=$version"
+            echo "tag=$tag"
+            echo "pkgrel=$pkgrel"
+            echo "should_publish=$should_publish"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Wait for all release assets
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          assets=(
+            "qbz_${VERSION}_amd64.tar.gz"
+            "qbz_${VERSION}_aarch64.tar.gz"
+            "qbzd-${VERSION}-linux-amd64.tar.gz"
+            "qbzd-${VERSION}-linux-aarch64.tar.gz"
+            "qbz-${VERSION}-cargo-vendor.tar.xz"
+          )
+
+          for attempt in $(seq 1 60); do
+            missing=()
+            for asset in "${assets[@]}"; do
+              url="https://github.com/vicrodh/qbz/releases/download/v${VERSION}/${asset}"
+              code="$(curl -sL -o /dev/null -w '%{http_code}' "$url")"
+              [[ "$code" == 200 ]] || missing+=("$asset")
+            done
+            if [[ ${#missing[@]} -eq 0 ]]; then
+              echo "All AUR assets are available"
+              break
+            fi
+            if [[ "$attempt" -eq 60 ]]; then
+              printf '::error::Timed out waiting for %s\n' "${missing[*]}"
+              exit 1
+            fi
+            echo "Attempt ${attempt}/60; waiting for: ${missing[*]}"
+            sleep 30
+          done
+
+      - name: Download sources and calculate checksums
+        id: checksums
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/aur-sources
+
+          download_hash() {
+            local output_name="$1" url="$2" file="$3" sum
+            curl -fsSL "$url" -o "/tmp/aur-sources/$file"
+            sum="$(sha256sum "/tmp/aur-sources/$file" | cut -d' ' -f1)"
+            echo "${output_name}=${sum}" >> "$GITHUB_OUTPUT"
+            echo "${file}: ${sum}"
+          }
+
+          base="https://github.com/vicrodh/qbz/releases/download/v${VERSION}"
+          download_hash qbz_amd64 "$base/qbz_${VERSION}_amd64.tar.gz" qbz-amd64.tar.gz
+          download_hash qbz_aarch64 "$base/qbz_${VERSION}_aarch64.tar.gz" qbz-aarch64.tar.gz
+          download_hash qbzd_amd64 "$base/qbzd-${VERSION}-linux-amd64.tar.gz" qbzd-amd64.tar.gz
+          download_hash qbzd_aarch64 "$base/qbzd-${VERSION}-linux-aarch64.tar.gz" qbzd-aarch64.tar.gz
+          download_hash vendor "$base/qbz-${VERSION}-cargo-vendor.tar.xz" vendor.tar.xz
+          download_hash source \
+            "https://github.com/vicrodh/qbz/archive/refs/tags/v${VERSION}.tar.gz" \
+            source.tar.gz
+
+      - name: Configure AUR SSH
+        if: steps.release.outputs.should_publish == 'true'
+        env:
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$AUR_SSH_PRIVATE_KEY" ]]; then
+            echo "::error::AUR_SSH_PRIVATE_KEY is required for publishing"
+            exit 1
+          fi
+          install -d -m 700 ~/.ssh
+          install -m 600 /dev/null ~/.ssh/aur
+          printf '%s\n' "$AUR_SSH_PRIVATE_KEY" > ~/.ssh/aur
+          {
+            echo "Host aur.archlinux.org"
+            echo "  IdentityFile ~/.ssh/aur"
+            echo "  IdentitiesOnly yes"
+            echo "  User aur"
+          } >> ~/.ssh/config
+          ssh-keyscan -t ed25519 aur.archlinux.org >> ~/.ssh/known_hosts
+
+      - name: Clone AUR package repos
+        env:
+          SHOULD_PUBLISH: ${{ steps.release.outputs.should_publish }}
+        run: |
+          set -euo pipefail
+          for package in qbz-bin qbz qbzd-bin qbzd; do
+            destination="/tmp/aur-${package}"
+            if [[ "$SHOULD_PUBLISH" == true ]]; then
+              url="ssh://aur@aur.archlinux.org/${package}.git"
+            else
+              url="https://aur.archlinux.org/${package}.git"
+            fi
+
+            if ! git clone "$url" "$destination"; then
+              if [[ "$SHOULD_PUBLISH" == true ]]; then
+                echo "::error::Could not clone AUR repository for ${package}"
+                exit 1
+              fi
+              # qbzd packages do not exist until their first AUR push.
+              mkdir -p "$destination"
+              git -C "$destination" init -b master
+              git -C "$destination" remote add origin "$url"
+            fi
+            git -C "$destination" checkout master 2>/dev/null || \
+              git -C "$destination" checkout -b master
+          done
+
+      - name: Stamp PKGBUILDs
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+          PKGREL: ${{ steps.release.outputs.pkgrel }}
+          QBZ_AMD64: ${{ steps.checksums.outputs.qbz_amd64 }}
+          QBZ_AARCH64: ${{ steps.checksums.outputs.qbz_aarch64 }}
+          QBZD_AMD64: ${{ steps.checksums.outputs.qbzd_amd64 }}
+          QBZD_AARCH64: ${{ steps.checksums.outputs.qbzd_aarch64 }}
+          SOURCE_SHA: ${{ steps.checksums.outputs.source }}
+          VENDOR_SHA: ${{ steps.checksums.outputs.vendor }}
+        run: |
+          set -euo pipefail
+          for package in qbz-bin qbz qbzd-bin qbzd; do
+            cp "packaging/aur/${package}/"* "/tmp/aur-${package}/"
+            sed -i "s/^pkgver=.*/pkgver=${VERSION}/" "/tmp/aur-${package}/PKGBUILD"
+            sed -i "s/^pkgrel=.*/pkgrel=${PKGREL}/" "/tmp/aur-${package}/PKGBUILD"
+          done
+
+          sed -i "s/^sha256sums_x86_64=.*/sha256sums_x86_64=('${QBZ_AMD64}')/" /tmp/aur-qbz-bin/PKGBUILD
+          sed -i "s/^sha256sums_aarch64=.*/sha256sums_aarch64=('${QBZ_AARCH64}')/" /tmp/aur-qbz-bin/PKGBUILD
+          sed -i "s/^sha256sums_x86_64=.*/sha256sums_x86_64=('${QBZD_AMD64}')/" /tmp/aur-qbzd-bin/PKGBUILD
+          sed -i "s/^sha256sums_aarch64=.*/sha256sums_aarch64=('${QBZD_AARCH64}')/" /tmp/aur-qbzd-bin/PKGBUILD
+          sed -i "s/^sha256sums=.*/sha256sums=('${SOURCE_SHA}' '${VENDOR_SHA}')/" /tmp/aur-qbz/PKGBUILD
+          sed -i "s/^sha256sums=.*/sha256sums=('${SOURCE_SHA}' '${VENDOR_SHA}')/" /tmp/aur-qbzd/PKGBUILD
+
+      - name: Generate and validate .SRCINFO files
+        run: |
+          set -euo pipefail
+          for package in qbz-bin qbz qbzd-bin qbzd; do
+            docker run --rm \
+              -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
+              -v "/tmp/aur-${package}:/pkg" archlinux:latest bash -euc '
+                useradd -m builder
+                chown -R builder:builder /pkg
+                runuser -u builder -- bash -c \
+                  "cd /pkg && makepkg --printsrcinfo > .SRCINFO"
+                chown -R "${HOST_UID}:${HOST_GID}" /pkg
+              '
+          done
+
+      - name: Commit and push all AUR packages
+        if: steps.release.outputs.should_publish == 'true'
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          for package in qbz-bin qbz qbzd-bin qbzd; do
+            directory="/tmp/aur-${package}"
+            git -C "$directory" config user.name "GitHub Actions"
+            git -C "$directory" config user.email "actions@github.com"
+            files=(PKGBUILD .SRCINFO)
+            [[ -f "$directory/qbzd.install" ]] && files+=(qbzd.install)
+            git -C "$directory" add "${files[@]}"
+            if git -C "$directory" diff --cached --quiet; then
+              echo "${package}: no metadata changes"
+              continue
+            fi
+            git -C "$directory" commit -m "Update to v${VERSION}"
+            git -C "$directory" push origin master
+          done
+
+      - name: Upload dry-run package metadata
+        if: steps.release.outputs.should_publish != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: aur-four-package-metadata
+          retention-days: 7
+          path: |
+            /tmp/aur-qbz-bin/PKGBUILD
+            /tmp/aur-qbz-bin/.SRCINFO
+            /tmp/aur-qbz/PKGBUILD
+            /tmp/aur-qbz/.SRCINFO
+            /tmp/aur-qbzd-bin/PKGBUILD
+            /tmp/aur-qbzd-bin/.SRCINFO
+            /tmp/aur-qbzd-bin/qbzd.install
+            /tmp/aur-qbzd/PKGBUILD
+            /tmp/aur-qbzd/.SRCINFO
+            /tmp/aur-qbzd/qbzd.install
+          if-no-files-found: error

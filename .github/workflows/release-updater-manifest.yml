@@ -1,0 +1,213 @@
+name: Generate Updater Manifest
+
+on:
+  workflow_run:
+    workflows:
+      - release-macos
+      - release-linux
+      - "Linux ARM64 (aarch64) Build"
+    types:
+      - completed
+
+concurrency:
+  group: updater-manifest-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
+jobs:
+  generate-manifest:
+    # Only run on successful tag-triggered builds (not manual dispatches)
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      startsWith(github.event.workflow_run.head_branch, 'v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout triggering release commit
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Resolve version from tag
+        id: version
+        # `head_branch` on a `workflow_run` event is attacker-controllable
+        # (an outside contributor could push a branch with an injection
+        # payload as its name). Route it through an env var and validate
+        # the shape before letting it flow into shell or $GITHUB_OUTPUT.
+        env:
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          if ! printf '%s' "$HEAD_BRANCH" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z][0-9A-Za-z.-]*)?$'; then
+            echo "::error::Rejected head_branch for manifest job: $HEAD_BRANCH"
+            exit 1
+          fi
+          TAG="$HEAD_BRANCH"
+          VERSION="${TAG#v}"
+          git fetch origin main --tags
+          if ! git show-ref --verify --quiet "refs/tags/${TAG}"; then
+            echo "::error::Release tag ${TAG} does not exist"
+            exit 1
+          fi
+          TAG_SHA="$(git rev-parse "refs/tags/${TAG}^{commit}")"
+          if [[ "$TAG_SHA" != "$HEAD_SHA" ]]; then
+            echo "::error::workflow_run SHA does not match ${TAG}"
+            exit 1
+          fi
+          if ! git merge-base --is-ancestor "$TAG_SHA" origin/main; then
+            echo "::error::${TAG} is not on main"
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for all platform builds to finish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          # Wait up to 20 minutes for .sig files from all platforms
+          REQUIRED_SIGS=(
+            "aarch64.app.tar.gz.sig"
+            "x64.app.tar.gz.sig"
+            "amd64.AppImage.sig"
+            "aarch64.AppImage.sig"
+          )
+          MAX_ATTEMPTS=40
+          SLEEP_SECONDS=30
+
+          for attempt in $(seq 1 $MAX_ATTEMPTS); do
+            ASSETS=$(gh release view "$TAG" --repo "${{ github.repository }}" --json assets -q '.assets[].name' 2>/dev/null || echo "")
+
+            FOUND_ALL=true
+            for sig_suffix in "${REQUIRED_SIGS[@]}"; do
+              if ! echo "$ASSETS" | grep -q "$sig_suffix"; then
+                FOUND_ALL=false
+                break
+              fi
+            done
+
+            if [ "$FOUND_ALL" = true ]; then
+              echo "All signature files found on attempt $attempt"
+              break
+            fi
+
+            if [ "$attempt" -eq "$MAX_ATTEMPTS" ]; then
+              echo "::error::Not all updater signatures appeared after $MAX_ATTEMPTS attempts; refusing to replace latest.json with a partial manifest."
+              exit 1
+            fi
+
+            echo "Attempt $attempt/$MAX_ATTEMPTS: waiting for all .sig files..."
+            sleep $SLEEP_SECONDS
+          done
+
+      - name: Generate latest.json
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          REPO="${{ github.repository }}"
+          RELEASE_URL="https://github.com/${REPO}/releases/download/${TAG}"
+
+          # Get release info
+          RELEASE_JSON=$(gh release view "$TAG" --repo "$REPO" --json body,publishedAt)
+          NOTES=$(echo "$RELEASE_JSON" | jq -r '.body // ""')
+          PUB_DATE=$(echo "$RELEASE_JSON" | jq -r '.publishedAt // ""')
+
+          # Download all .sig files
+          mkdir -p sigs
+          ASSETS=$(gh release view "$TAG" --repo "$REPO" --json assets -q '.assets[].name')
+
+          for asset in $ASSETS; do
+            if [[ "$asset" == *.sig ]]; then
+              gh release download "$TAG" --repo "$REPO" --pattern "$asset" --dir sigs
+            fi
+          done
+
+          ls -la sigs/
+
+          # Build platform entries
+          # Helper: read sig content for a glob pattern, return empty string if not found
+          read_sig() {
+            local sig_file
+            for pattern in "$@"; do
+              sig_file=$(find sigs -name "$pattern" -print -quit 2>/dev/null)
+              if [ -n "$sig_file" ] && [ -f "$sig_file" ]; then
+                cat "$sig_file"
+                return
+              fi
+            done
+            echo ""
+          }
+
+          # Find asset names matching patterns (extended regex)
+          find_asset() {
+            local pattern="$1"
+            echo "$ASSETS" | grep -E "$pattern" | head -1
+          }
+
+          # Build platforms JSON
+          PLATFORMS="{}"
+
+          # macOS aarch64 (.app.tar.gz for updater)
+          MACOS_ARM_TAR=$(find_asset "aarch64.app.tar.gz$")
+          MACOS_ARM_SIG=$(read_sig "*aarch64.app.tar.gz.sig")
+          if [ -n "$MACOS_ARM_TAR" ] && [ -n "$MACOS_ARM_SIG" ]; then
+            PLATFORMS=$(echo "$PLATFORMS" | jq --arg url "${RELEASE_URL}/${MACOS_ARM_TAR}" --arg sig "$MACOS_ARM_SIG" \
+              '. + {"darwin-aarch64": {"signature": $sig, "url": $url}}')
+          fi
+
+          # macOS x86_64 (.app.tar.gz for updater)
+          MACOS_X64_TAR=$(find_asset "(x64|x86_64).app.tar.gz$")
+          MACOS_X64_SIG=$(read_sig "*x64.app.tar.gz.sig" "*x86_64.app.tar.gz.sig")
+          if [ -n "$MACOS_X64_TAR" ] && [ -n "$MACOS_X64_SIG" ]; then
+            PLATFORMS=$(echo "$PLATFORMS" | jq --arg url "${RELEASE_URL}/${MACOS_X64_TAR}" --arg sig "$MACOS_X64_SIG" \
+              '. + {"darwin-x86_64": {"signature": $sig, "url": $url}}')
+          fi
+
+          # Linux x86_64 AppImage
+          LINUX_X64_APPIMAGE=$(find_asset "(amd64|x86_64).AppImage$")
+          LINUX_X64_SIG=$(read_sig "*amd64.AppImage.sig" "*x86_64.AppImage.sig")
+          if [ -n "$LINUX_X64_APPIMAGE" ] && [ -n "$LINUX_X64_SIG" ]; then
+            PLATFORMS=$(echo "$PLATFORMS" | jq --arg url "${RELEASE_URL}/${LINUX_X64_APPIMAGE}" --arg sig "$LINUX_X64_SIG" \
+              '. + {"linux-x86_64": {"signature": $sig, "url": $url}}')
+          fi
+
+          # Linux aarch64 AppImage
+          LINUX_ARM_APPIMAGE=$(find_asset "aarch64.AppImage$")
+          LINUX_ARM_SIG=$(read_sig "*aarch64.AppImage.sig")
+          if [ -n "$LINUX_ARM_APPIMAGE" ] && [ -n "$LINUX_ARM_SIG" ]; then
+            PLATFORMS=$(echo "$PLATFORMS" | jq --arg url "${RELEASE_URL}/${LINUX_ARM_APPIMAGE}" --arg sig "$LINUX_ARM_SIG" \
+              '. + {"linux-aarch64": {"signature": $sig, "url": $url}}')
+          fi
+
+          PLATFORM_COUNT=$(echo "$PLATFORMS" | jq 'length')
+          if [ "$PLATFORM_COUNT" -ne 4 ]; then
+            echo "::error::Expected four updater platforms, generated $PLATFORM_COUNT."
+            echo "$PLATFORMS" | jq .
+            exit 1
+          fi
+
+          # Assemble final latest.json
+          jq -n \
+            --arg version "$VERSION" \
+            --arg notes "$NOTES" \
+            --arg pub_date "$PUB_DATE" \
+            --argjson platforms "$PLATFORMS" \
+            '{version: $version, notes: $notes, pub_date: $pub_date, platforms: $platforms}' \
+            > latest.json
+
+          echo "Generated latest.json:"
+          cat latest.json
+
+      - name: Upload latest.json to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          gh release upload "$TAG" latest.json --repo "${{ github.repository }}" --clobber

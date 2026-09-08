@@ -1,0 +1,36 @@
+[package]
+name = "qbz-lyrics"
+version = "0.1.0"
+edition = "2021"
+description = "Lyrics engine for QBZ — Qobuz-first source chain, LRC parser/emitter, external providers, SQLite cache (headless, frontend-agnostic)"
+authors = ["blitzkriegfc"]
+
+[dependencies]
+# Shared QBZ crates (Qobuz lyrics endpoint + wire DTOs live in qbz-qobuz)
+qbz-qobuz = { path = "../qbz-qobuz" }
+
+# Database (same pin as every other QBZ crate)
+rusqlite = { version = "0.40", features = ["bundled"] }
+
+# HTTP (external fallback providers: LRCLIB, lyrics.ovh)
+reqwest = { workspace = true }
+urlencoding = "2"
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# LRC timestamp parsing
+regex = { workspace = true }
+
+# Async (service mutex/state + provider trait + in-flight dedupe)
+tokio = { workspace = true }
+async-trait = { workspace = true }
+futures-util = { workspace = true }
+
+# Logging
+log = { workspace = true }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt", "rt-multi-thread"] }
+tempfile = "3"

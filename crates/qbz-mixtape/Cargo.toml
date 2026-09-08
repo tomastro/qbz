@@ -1,0 +1,33 @@
+[package]
+name = "qbz-mixtape"
+version = "0.1.0"
+edition = "2021"
+description = "Mixtapes & Collections backend for QBZ — schema, repo, shuffle, enqueue (headless, frontend-agnostic)"
+authors = ["blitzkriegfc"]
+
+[dependencies]
+# Shared QBZ crates
+qbz-models = { path = "../qbz-models" }
+qbz-qobuz = { path = "../qbz-qobuz" }
+
+# Database
+rusqlite = { version = "0.40", features = ["bundled"] }
+
+# UUID generation
+uuid = { version = "1", features = ["v4"] }
+
+# Shuffle / DJ-mix
+rand = { workspace = true }
+strsim = { workspace = true }
+
+# Async resolver trait
+async-trait = { workspace = true }
+
+# Logging
+log = { workspace = true }
+
+# Serialization (models derive serde)
+serde = { workspace = true }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt", "rt-multi-thread"] }

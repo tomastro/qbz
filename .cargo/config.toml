@@ -1,0 +1,25 @@
+# NO global x86_64 target-feature flags — baseline x86-64 on purpose.
+#
+# History (#353 -> #343 -> #549): the binary once shipped with
+# `target-cpu=x86-64-v3`, which SIGILLed every pre-Haswell CPU at launch.
+# That was reduced to `target-feature=+aes,+ssse3` on the belief that the
+# `aes` crate's cpufeatures runtime check would keep CPUs without AES-NI on
+# the software path. That belief was WRONG: enabling a target feature at
+# COMPILE time makes cpufeatures compile its check to a constant `true`, so
+# the AES-NI intrinsics run unconditionally — every CPU without AES-NI
+# (Nehalem/Lynnfield i7-860, pre-2010 Intel Macs, AMD pre-Bulldozer) died
+# with SIGILL the moment AES ran (at LAUNCH: qbz-credentials decrypts with
+# AES-GCM during startup). `+ssse3` additionally let LLVM autovectorize
+# SSSE3 anywhere in the binary, killing AMD Phenom II (no SSSE3 until
+# Bulldozer, 2011). That is issue #549.
+#
+# The flags buy NOTHING on capable CPUs: with no compile-time forcing, the
+# `aes` crate does per-function `#[target_feature]` dispatch after a runtime
+# CPUID check. Measured on the qbz-cmaf hot path (ctr::Ctr128BE<Aes128>
+# apply_keystream, 256 MB, release): 2145 MB/s compiled-in vs 2162 MB/s
+# runtime-dispatched — identical. Old CPUs get the software fallback
+# (slower offline-cache decrypt) instead of a crash.
+#
+# If a future hot loop ever warrants AVX2/BMI2/etc., use per-function
+# `#[target_feature]` + `is_x86_feature_detected!` dispatch — never a
+# global feature/microarch bump.

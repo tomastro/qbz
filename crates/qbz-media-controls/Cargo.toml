@@ -1,0 +1,60 @@
+[package]
+name = "qbz-media-controls"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Frontend-agnostic system media controls: MPRIS (mpris-server) on Linux with a DesktopEntry so GNOME shows the app icon; SMTC/MediaRemote (souvlaki) on Windows/macOS"
+
+[dependencies]
+log = { workspace = true }
+# fs_url::local_path -- the ONE file-URL helper (W2). SMTC needs a native
+# Windows path where MPRIS needs a file:// URL, and hand-rolling that
+# conversion is exactly the bug class that helper exists to prevent.
+qbz-models = { path = "../qbz-models" }
+# Notifications (all platforms): the async entry point spawns the HTTP download
+# + image resize on `spawn_blocking`, so a tokio runtime must be present.
+tokio = { workspace = true }
+# Artwork download + cache + (Linux) resize for the notification icon. Matches
+# the Tauri notification helpers so output is identical.
+reqwest = { workspace = true, features = ["blocking"] }
+image = { version = "0.25", default-features = false, features = [
+    "png",
+    "jpeg",
+    "webp",
+] }
+dirs = "6"
+md-5 = { workspace = true }
+urlencoding = "2"
+
+# Linux: mpris-server publishes the full MPRIS interface INCLUDING the
+# org.mpris.MediaPlayer2.DesktopEntry property (RootInterface::desktop_entry),
+# which is the only way GNOME Shell resolves the app icon. souvlaki never sets
+# it. tokio feature so the server shares the app's tokio runtime.
+[target.'cfg(target_os = "windows")'.dependencies]
+# SetThreadExecutionState: keep the machine awake while a track plays.
+# 0.61 is already in the workspace lock.
+windows-sys = { version = "0.61", features = ["Win32_System_Power"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+mpris-server = "0.10"
+async-channel = "2"
+# XDG notification portal (goes over D-Bus). async-io, NOT tokio: zbus 5's
+# "tokio" feature unifies graph-wide and its executor then requires a tokio
+# reactor on EVERY thread that opens a zbus connection — accesskit_unix/atspi
+# (Slint accessibility) and ksni run theirs on plain threads and panicked at
+# startup ("there is no reactor running"). async-io futures still await fine
+# inside our tokio runtime. Keep in sync with qbz-credentials/Cargo.toml.
+ashpd = { version = "0.13", default-features = false, features = [
+    "async-io",
+    "notification",
+] }
+
+# macOS (MediaRemote / MPNowPlayingInfoCenter) + Windows (SMTC) via souvlaki —
+# there is no DesktopEntry concept there (macOS keys the icon off the app
+# bundle), so souvlaki stays the right tool off-Linux.
+[target.'cfg(any(target_os = "macos", target_os = "windows"))'.dependencies]
+souvlaki = "0.8"
+# macOS desktop notifications (NSUserNotification / UserNotifications). Windows
+# is a no-op for now (parity with Tauri, which never implemented it).
+notify-rust = "4"

@@ -1,0 +1,100 @@
+name: Platform triage
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Parse platform from issue body
+        id: platform
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const body = context.payload.issue.body || '';
+            // GitHub issue forms render dropdowns as "### Label\n\nValue"
+            const platformMatch = body.match(/### Platform\s*\n\n(.+)/);
+            const platform = platformMatch ? platformMatch[1].trim() : '';
+            core.setOutput('value', platform);
+
+      - name: Label and assign macOS issues
+        if: steps.platform.outputs.value == 'macOS'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const issue = context.payload.issue.number;
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue,
+              labels: ['platform:macos']
+            });
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue,
+              assignees: ['afonsojramos']
+            });
+
+      - name: Label Linux issues
+        if: steps.platform.outputs.value == 'Linux'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              labels: ['platform:linux']
+            });
+
+      - name: Welcome and label Windows reports
+        if: steps.platform.outputs.value == 'Windows'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const issue = context.payload.issue.number;
+            const label = 'platform:windows';
+
+            try {
+              await github.rest.issues.getLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: label
+              });
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: label,
+                color: '0078D4',
+                description: 'Issues specific to Windows'
+              });
+            }
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue,
+              labels: [label]
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue,
+              body: [
+                '<!-- qbz-windows-report-note -->',
+                'Thanks for reporting this on Windows — Windows reports are welcome.',
+                '',
+                'The Windows build comes from the same shared QBZ codebase, so it receives the features and fixes developed for the project as a whole. At the moment, however, Windows does not have a dedicated maintainer or regular testing coverage. Windows-specific problems may therefore take longer to reproduce and resolve.',
+                '',
+                'We are looking for someone who uses Windows regularly and would like to help test releases or maintain the platform. If that sounds like you, we would love to hear from you.'
+              ].join('\n')
+            });

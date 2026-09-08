@@ -1,0 +1,39 @@
+[package]
+name = "qbz-playlist-import"
+version = "0.1.0"
+edition = "2021"
+description = "Public-playlist import for QBZ — provider scrapers, Qobuz matcher, playlist creation (headless, frontend-agnostic)"
+authors = ["blitzkriegfc"]
+
+[dependencies]
+# Shared QBZ crates (the real models + client, not src-tauri shims)
+qbz-models = { path = "../qbz-models" }
+qbz-qobuz = { path = "../qbz-qobuz" }
+
+# HTTP (one shared client for all providers — see src/http.rs)
+reqwest = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+# Logging
+log = { workspace = true }
+
+# Playlist-FILE sources (2.0.3 expansion). Both were already resolved in the
+# workspace lock, so neither adds a download or a new compilation unit to the
+# tree — only an edge from this crate.
+#   roxmltree : XSPF. A read-only DOM walked by local element name is ~30 lines;
+#               quick-xml's event state machine only pays off for streaming,
+#               which the 16 MiB byte wall forecloses.
+#   encoding_rs: the utf8-then-Windows-1252 fallback for legacy .m3u / .pls,
+#               which is what keeps "Björk" and "Sigur Rós" matchable.
+roxmltree = "0.21"
+encoding_rs = "0.8"
+
+# Async runtime + concurrency
+tokio = { workspace = true }
+futures-util = { workspace = true }

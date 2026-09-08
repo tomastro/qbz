@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Monochrome Hi-Res Audio logo - optimized for small sizes -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" xml:space="preserve">
+
+<!-- White border/frame -->
+<rect fill="#FFFFFF" x="0" y="0" width="48" height="48" rx="3"/>
+
+<!-- Top section - white background -->
+<rect fill="#FFFFFF" x="2" y="2" width="44" height="20"/>
+
+<!-- Bottom section - dark background -->
+<rect fill="#1a1a1a" x="2" y="24" width="44" height="22"/>
+
+<!-- Divider line -->
+<rect fill="#444444" x="2" y="22" width="44" height="2"/>
+
+<!-- HI-RES text (bold, black on white) -->
+<g fill="#000000">
+	<!-- H -->
+	<rect x="4" y="6" width="2.5" height="14"/>
+	<rect x="4" y="11.5" width="7" height="3"/>
+	<rect x="8.5" y="6" width="2.5" height="14"/>
+	<!-- I -->
+	<rect x="13" y="6" width="2.5" height="14"/>
+	<!-- - -->
+	<rect x="17" y="11.5" width="3" height="3"/>
+	<!-- R -->
+	<rect x="22" y="6" width="2.5" height="14"/>
+	<rect x="22" y="6" width="7" height="2.5"/>
+	<rect x="26.5" y="6" width="2.5" height="6"/>
+	<rect x="22" y="10" width="7" height="2.5"/>
+	<polygon points="24.5,12.5 27,12.5 29,20 26.5,20"/>
+	<!-- E -->
+	<rect x="31" y="6" width="2.5" height="14"/>
+	<rect x="31" y="6" width="7" height="2.5"/>
+	<rect x="31" y="11.5" width="5.5" height="2.5"/>
+	<rect x="31" y="17.5" width="7" height="2.5"/>
+	<!-- S -->
+	<rect x="40" y="6" width="6" height="2.5"/>
+	<rect x="40" y="6" width="2.5" height="6"/>
+	<rect x="40" y="10" width="6" height="2.5"/>
+	<rect x="43.5" y="10" width="2.5" height="6"/>
+	<rect x="40" y="14" width="6" height="2.5"/>
+	<rect x="40" y="14" width="2.5" height="6"/>
+	<rect x="40" y="17.5" width="6" height="2.5"/>
+</g>
+
+<!-- AUDIO text (THIN, white on dark) -->
+<g fill="#FFFFFF">
+	<!-- A -->
+	<rect x="5" y="28" width="1.2" height="16"/>
+	<rect x="5" y="28" width="5" height="1.2"/>
+	<rect x="8.8" y="28" width="1.2" height="16"/>
+	<rect x="5" y="35" width="5" height="1.2"/>
+	<!-- U -->
+	<rect x="12" y="28" width="1.2" height="16"/>
+	<rect x="12" y="42.8" width="6" height="1.2"/>
+	<rect x="16.8" y="28" width="1.2" height="16"/>
+	<!-- D -->
+	<rect x="20" y="28" width="1.2" height="16"/>
+	<rect x="20" y="28" width="5" height="1.2"/>
+	<rect x="20" y="42.8" width="5" height="1.2"/>
+	<rect x="23.8" y="28" width="1.2" height="16"/>
+	<!-- I -->
+	<rect x="27" y="28" width="1.2" height="16"/>
+	<!-- O -->
+	<rect x="30" y="28" width="1.2" height="16"/>
+	<rect x="30" y="28" width="6" height="1.2"/>
+	<rect x="30" y="42.8" width="6" height="1.2"/>
+	<rect x="34.8" y="28" width="1.2" height="16"/>
+</g>
+</svg>

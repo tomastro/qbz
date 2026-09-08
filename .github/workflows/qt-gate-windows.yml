@@ -1,0 +1,212 @@
+# The Windows sibling of test-crates.yml's `qt-gate` job.
+#
+# Same five gates, same complaint regex, same "did it reach QbzCore" check, so
+# a Windows regression is caught by the same shape of evidence as a Linux one.
+#
+# ── TRIGGERS ──────────────────────────────────────────────────────────────
+#
+# The repository rule, and the same one every release-*.yml follows:
+# AUTOMATIC RUNS ON A TAG ONLY, and a manual dispatch is always available.
+# No branch pushes and no pull-request trigger.
+#
+# That also settles why this is not a job inside test-crates.yml, which runs on
+# every PR to pre-release: a Qt build on a Windows runner is roughly fifteen
+# minutes of a runner billing at twice the Linux rate, and Windows is
+# explicitly not a supported QBZ platform. Gating every Linux contributor's PR
+# on it would block work on a platform nobody promised.
+#
+# On a `v*` tag this runs beside release-windows.yml and answers a different
+# question: the release job proves the artifact BUILDS and boots, this one
+# proves the QML types resolve, the audits pass, the dependency graph is
+# Slint-free and the tests are green. A tag that fails here should not ship.
+#
+# ── WHAT THIS CATCHES THAT NOTHING ELSE DOES ──────────────────────────────
+#
+# `cargo check` sees nothing of QML: a wrong type name or a property that does
+# not exist compiles perfectly and fails at RUNTIME, and because the failing
+# component hangs off AppShell the whole shell fails to instantiate -- the app
+# opens to a GREY SCREEN. That happened during the port and reached the owner.
+# `qmllint` finds it in seconds. The shared qmllint_gate.sh now gives Linux and
+# Windows the same native-type metadata and import checks.
+name: qt-gate-windows
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Optional ref to gate (branch, tag or SHA). Empty = the default checkout."
+        required: false
+        type: string
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: qt-gate-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # The WINDOWS pin, which is ahead of the Linux floor on purpose: the port
+  # needs Qt 6.9's ExpandedClientAreaHint for the custom title bar.
+  QT_VERSION: ${{ vars.QT_VERSION_WINDOWS || '6.9.3' }}
+  CARGO_TERM_COLOR: always
+
+jobs:
+  qt-gate-windows:
+    name: qt gate (windows)
+    runs-on: windows-2022
+    timeout-minutes: 90
+    steps:
+      # cxx-qt deep-copies include trees and qmlcachegen writes ~340 .cpp files
+      # under OUT_DIR; the paths get long enough to hit MAX_PATH without this.
+      - name: Enable long paths
+        shell: pwsh
+        run: |
+          Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' `
+            -Name LongPathsEnabled -Value 1
+          git config --system core.longpaths true
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # Empty falls back to the default ref, which is what a tag push wants.
+          ref: ${{ inputs.ref || github.ref }}
+
+      - name: Install Qt ${{ env.QT_VERSION }}
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          modules: qtshadertools
+          cache: true
+
+      - name: MSVC dev environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      # Git for Windows also ships a POSIX `link.exe`; force rustc to use the
+      # MSVC linker selected above instead of trusting PATH ordering.
+      - name: Pin MSVC linker
+        shell: pwsh
+        run: |
+          $linker = Join-Path $env:VCToolsInstallDir "bin\Hostx64\x64\link.exe"
+          if (-not (Test-Path $linker)) { throw "MSVC linker not found at $linker" }
+          "CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER=$linker" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Cargo linker: $linker"
+
+      # aws-lc-sys (via rustls) ASSEMBLES on Windows x86_64. Its shipped
+      # prebuilt objects are used only when nasm is ABSENT, and without either
+      # the build fails hard with "Missing dependency: nasm" -- after the whole
+      # compile, which makes it an expensive way to find out.
+      - name: NASM (aws-lc-sys)
+        uses: ilammy/setup-nasm@v1
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crates -> target
+          shared-key: qt-gate-windows-${{ env.QT_VERSION }}
+          cache-on-failure: true
+          # Tags and the trusted integration branch may seed the cache. A
+          # manual dispatch on any feature/fork ref remains read-only.
+          save-if: ${{ startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/pre-release' }}
+
+      # QML is not compile-checked. A bad type name or property is a grey
+      # screen at runtime, not an error here, so this runs FIRST: it is the
+      # cheapest gate and it catches the most expensive failure.
+      - name: qmllint (QML type check)
+        shell: bash
+        run: scripts/qml-audits/qmllint_gate.sh "$QT_ROOT_DIR"
+
+      # The same five the Linux gate runs, and they need Qt's own
+      # plugins.qmltypes to resolve QtQuick types -- hence after the install.
+      - name: QML audits
+        shell: bash
+        env:
+          QBZ_QT_QML_DIR: ${{ env.QT_ROOT_DIR }}/qml
+        run: |
+          set -euo pipefail
+          for a in qml_resolution_audit qml_singleton_xref qml_eager_tab_audit qml_module_registration_audit qml_icon_bake_audit qml_on_prefixed_property_audit; do
+            echo "::group::$a"
+            python "scripts/qml-audits/$a.py" "$PWD/crates/qbz-qt"
+            echo "::endgroup::"
+          done
+
+      - name: Slint-free dep-graph gate (qbz-qt)
+        shell: bash
+        run: |
+          set -euo pipefail
+          hits=$(cargo tree --manifest-path crates/Cargo.toml -p qbz-qt -e normal \
+                 | grep -E '\b(slint|qbz-ui|qbz-slint-common|qbz-dac-wizard) v' || true)
+          [ -z "$hits" ] || { echo "::error::qbz-qt graph resolves Slint crates:"; echo "$hits"; exit 1; }
+          echo "dep graph is Slint-free"
+
+      - name: cargo test + build (qbz-qt)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/qt-cargo.py test --manifest-path crates/Cargo.toml -j 4 -p qbz-qt --no-fail-fast
+          python3 scripts/qt-cargo.py build --manifest-path crates/Cargo.toml -j 4 -p qbz-qt
+
+      # The Linux gate isolates with private XDG dirs and a private session
+      # bus. Windows needs neither a bus (the single instance is a named mutex)
+      # nor XDG, but it DOES need its own %APPDATA%/%LOCALAPPDATA%: every store
+      # QBZ opens is derived from them, and a smoke that writes into the
+      # runner's real profile is a smoke that can pass because of what a
+      # previous run left behind.
+      - name: Offscreen smoke
+        shell: pwsh
+        run: |
+          $iso = Join-Path $env:RUNNER_TEMP "qbz-smoke"
+          New-Item -ItemType Directory -Force -Path "$iso\roaming", "$iso\local" | Out-Null
+          $env:APPDATA = "$iso\roaming"
+          $env:LOCALAPPDATA = "$iso\local"
+          $env:QT_QPA_PLATFORM = "offscreen"
+          $env:RUST_LOG = "info"
+          $exe = "crates\target\debug\qbz.exe"
+          $p = Start-Process -FilePath $exe -RedirectStandardError smoke.log `
+                             -RedirectStandardOutput smoke.out -PassThru
+          if (-not $p.WaitForExit(75000)) { $p.Kill(); Start-Sleep -Seconds 2 }
+
+          $lines = (Get-Content smoke.log -ErrorAction SilentlyContinue | Measure-Object -Line).Lines
+          Write-Host "smoke log: $lines lines"
+          if ($lines -lt 10) {
+            Get-Content smoke.log -ErrorAction SilentlyContinue
+            Write-Host "::error::the app did not start"
+            exit 1
+          }
+
+          # The same complaint set the Linux gate uses, verbatim.
+          $pat = 'is not a type|unavailable|ReferenceError|TypeError|Cannot read|Unable to assign|Cannot open|no such method|non-existent property|failed to load component|is not installed'
+          $errs = Select-String -Path smoke.log -Pattern $pat |
+                  Where-Object { $_.Line -notmatch 'propertyCache' }
+          if ($errs) {
+            $errs | Select-Object -First 20 | ForEach-Object { $_.Line }
+            Write-Host "::error::$($errs.Count) QML complaint(s)"
+            exit 1
+          }
+
+          if (-not (Select-String -Path smoke.log -Pattern 'QbzCore initialized' -Quiet)) {
+            Get-Content smoke.log -Tail 20
+            Write-Host "::error::never reached QbzCore init"
+            exit 1
+          }
+          Write-Host "smoke OK (0 QML complaints, core initialized)"
+
+      - name: Upload the smoke log on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: smoke-log-windows
+          path: smoke.log
+          if-no-files-found: ignore
+          retention-days: 7

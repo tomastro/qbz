@@ -1,0 +1,2429 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: qbz-slint\n"
+"PO-Revision-Date: 2026-09-05 19:52-0600\n"
+"Last-Translator: QBZ contributors\n"
+"Language-Team: QBZ en translators\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# Slint polish batch (radio / playlist follow-copy / MusicBrainz / reco)
+msgid "QBZ Radio"
+msgstr "QBZ Radio"
+
+msgid "Qobuz Radio"
+msgstr "Qobuz Radio"
+
+msgid "Create QBZ radio"
+msgstr "Create QBZ radio"
+
+msgid "Create Qobuz radio"
+msgstr "Create Qobuz radio"
+
+msgid "Follow on Qobuz"
+msgstr "Follow on Qobuz"
+
+msgid "Following on Qobuz"
+msgstr "Following on Qobuz"
+
+msgid "Copy to your library"
+msgstr "Copy to your library"
+
+msgid "METADATA"
+msgstr "METADATA"
+
+msgid "MusicBrainz"
+msgstr "MusicBrainz"
+
+msgid "Enable artist relationships and enhanced metadata from MusicBrainz. No telemetry — it only matches releases to enrich artist pages and playlist song suggestions. Turn off to disable those sections."
+msgstr "Enable artist relationships and enhanced metadata from MusicBrainz. No telemetry — it only matches releases to enrich artist pages and playlist song suggestions. Turn off to disable those sections."
+
+msgid "No tracks to add"
+msgstr "No tracks to add"
+
+msgid "Failed to add tracks"
+msgstr "Failed to add tracks"
+
+msgid "Copied to your library"
+msgstr "Copied to your library"
+
+msgid "Failed to copy playlist"
+msgstr "Failed to copy playlist"
+
+msgid "Playlist has no tracks to copy"
+msgstr "Playlist has no tracks to copy"
+
+msgid "Added {} track"
+msgid_plural "Added {} tracks"
+msgstr[0] "Added {} track"
+msgstr[1] "Added {} tracks"
+
+msgid "Added {} track to {}"
+msgid_plural "Added {} tracks to {}"
+msgstr[0] "Added {} track to {}"
+msgstr[1] "Added {} tracks to {}"
+
+msgid "Added {} track to queue"
+msgid_plural "Added {} tracks to queue"
+msgstr[0] "Added {} track to queue"
+msgstr[1] "Added {} tracks to queue"
+
+msgid "Unfollow on Qobuz"
+msgstr "Unfollow on Qobuz"
+
+msgid "Extra large"
+msgstr "Extra large"
+
+msgid "INTERFACE"
+msgstr "INTERFACE"
+
+msgid "Interface size"
+msgstr "Interface size"
+
+msgid "Scales the whole interface, like browser zoom. Small fits more content on screen, Large and Extra large improve readability (requires restart)"
+msgstr "Scales the whole interface, like browser zoom. Small fits more content on screen, Large and Extra large improve readability (requires restart)"
+
+msgid "Interface size changed — restart QBZ to apply"
+msgstr "Interface size changed — restart QBZ to apply"
+
+msgid "Extra small"
+msgstr "Extra small"
+
+# Login-screen browser-flow narration (2026-07-02)
+msgid "Sign in with your browser"
+msgstr "Sign in with your browser"
+
+msgid "Continue in your web browser — QBZ is waiting for you to finish signing in."
+msgstr "Continue in your web browser — QBZ is waiting for you to finish signing in."
+
+msgid "The browser may open in the background without taking focus — check your other windows."
+msgstr "The browser may open in the background without taking focus — check your other windows."
+
+msgid "Signing you in…"
+msgstr "Signing you in…"
+
+msgid "Sign-in failed"
+msgstr "Sign-in failed"
+
+msgid "Date added"
+msgstr "Date added"
+
+msgid "Renderer setting reverted to Auto — the previous start didn't finish"
+msgstr "Renderer setting reverted to Auto — the previous start didn't finish"
+
+msgid "Renderer switched to GPU (compatibility) — the GPU renderer failed to start"
+msgstr "Renderer switched to GPU (compatibility) — the GPU renderer failed to start"
+
+msgid "Audio output error"
+msgstr "Audio output error"
+
+msgid "Direct ALSA device access is blocked inside Flatpak/Snap — switch the audio backend to PipeWire or System Default"
+msgstr "Direct ALSA device access is blocked inside Flatpak/Snap — switch the audio backend to PipeWire or System Default"
+
+msgid "Add to Library"
+msgstr "Add to Library"
+
+msgid "Remove from Library"
+msgstr "Remove from Library"
+
+msgid "Couldn't load your Library."
+msgstr "Couldn't load your Library."
+
+msgid "No tracks in your Library yet."
+msgstr "No tracks in your Library yet."
+
+msgid "No albums in your Library yet."
+msgstr "No albums in your Library yet."
+
+msgid "No artists in your Library yet."
+msgstr "No artists in your Library yet."
+
+msgid "No playlists in your Library yet."
+msgstr "No playlists in your Library yet."
+
+msgid "No labels in your Library yet."
+msgstr "No labels in your Library yet."
+
+msgid "Library Albums"
+msgstr "Library Albums"
+
+msgid "Auto theme generation failed"
+msgstr "Auto theme generation failed"
+
+msgid "Play all tracks"
+msgstr "Play all tracks"
+
+msgid "Shuffle all tracks"
+msgstr "Shuffle all tracks"
+
+msgid "Select multiple tracks"
+msgstr "Select multiple tracks"
+
+msgid "Play a random album"
+msgstr "Play a random album"
+
+msgid "Open a random artist"
+msgstr "Open a random artist"
+
+msgid "Play a random playlist"
+msgstr "Play a random playlist"
+
+msgid "Open a random label"
+msgstr "Open a random label"
+
+msgid "Start from current theme"
+msgstr "Start from current theme"
+
+msgid "Copy the colors of the currently applied theme into the editor as a starting point."
+msgstr "Copy the colors of the currently applied theme into the editor as a starting point."
+
+msgid "Use current colors"
+msgstr "Use current colors"
+
+msgid "Dark theme"
+msgstr "Dark theme"
+
+msgid "Set the overall light or dark polarity. Affects derived shades, borders and overlays."
+msgstr "Set the overall light or dark polarity. Affects derived shades, borders and overlays."
+
+msgid "SURFACES"
+msgstr "SURFACES"
+
+msgid "Background"
+msgstr "Background"
+
+msgid "Surface"
+msgstr "Surface"
+
+msgid "Elevated"
+msgstr "Elevated"
+
+msgid "TEXT"
+msgstr "TEXT"
+
+msgid "Text"
+msgstr "Text"
+
+msgid "Secondary text"
+msgstr "Secondary text"
+
+msgid "ACCENT"
+msgstr "ACCENT"
+
+msgid "Accent"
+msgstr "Accent"
+
+msgid "STATUS"
+msgstr "STATUS"
+
+msgid "Danger"
+msgstr "Danger"
+
+msgid "Warning"
+msgstr "Warning"
+
+msgid "Success"
+msgstr "Success"
+
+msgid "OTHER"
+msgstr "OTHER"
+
+msgid "Border"
+msgstr "Border"
+
+msgid "Favorite"
+msgstr "Favorite"
+
+# Always-visible log uploader entry (settings sub-nav footer)
+msgid "Share logs"
+msgstr "Share logs"
+# Guest local-only mode disclaimer line (login screen, #553)
+msgid "QBZ can be used as an offline player without a Qobuz™ account (no access to the Qobuz™ library)."
+msgstr "QBZ can be used as an offline player without a Qobuz™ account (no access to the Qobuz™ library)."
+# Renderer degradation ladder toast (generic: GL or software rung)
+msgid "Renderer switched automatically — the previous renderer failed to start"
+msgstr "Renderer switched automatically — the previous renderer failed to start"
+
+# QConnect startup behavior (Settings > Playback, ported from Tauri)
+msgid "Auto-connect Qobuz Connect on startup"
+msgstr "Auto-connect Qobuz Connect on startup"
+msgid "Choose whether Qobuz Connect activates automatically when QBZ launches."
+msgstr "Choose whether Qobuz Connect activates automatically when QBZ launches."
+msgid "Remember state"
+msgstr "Remember state"
+msgid "On by default"
+msgstr "On by default"
+msgid "Off by default"
+msgstr "Off by default"
+
+msgid "Remove album from collection"
+msgstr "Remove album from collection"
+
+msgid "QBZ recovered from repeated startup crashes — some restored state was reset"
+msgstr "QBZ recovered from repeated startup crashes — some restored state was reset"
+
+# QConnect device name (Settings > Playback, ported from Tauri)
+msgid "Qobuz Connect device name"
+msgstr "Qobuz Connect device name"
+
+msgid "The name other Qobuz Connect apps see for this device. Applies on the next connection."
+msgstr "The name other Qobuz Connect apps see for this device. Applies on the next connection."
+
+# Quality downgrade tooltip (#590 follow-up)
+msgid "Source: {}"
+msgstr "Source: {}"
+
+msgid "Output: {}"
+msgstr "Output: {}"
+
+# Local Library header Plex sync button (#573)
+msgid "Sync Plex library"
+msgstr "Sync Plex library"
+
+# Library Albums sort options (#566)
+msgid "Recently added"
+msgstr "Recently added"
+
+msgid "First added"
+msgstr "First added"
+
+msgid "Random"
+msgstr "Random"
+
+
+# Offline cache clear — communicate it does not remove downloads (#606)
+msgid "Frees up cached data. Your downloaded albums are kept — remove those from the offline manager above."
+msgstr "Frees up cached data. Your downloaded albums are kept — remove those from the offline manager above."
+
+msgid "Cache cleared"
+msgstr "Cache cleared"
+
+msgid "Couldn't clear the cache"
+msgstr "Couldn't clear the cache"
+
+
+# Task 18 — Settings > Developer > Export settings modal (daemon 04 §4.2)
+msgid "SETTINGS PORTABILITY"
+msgstr "SETTINGS PORTABILITY"
+
+msgid "Export settings…"
+msgstr "Export settings…"
+
+msgid "Save a portable bundle of your settings to move to another machine or the qbzd daemon."
+msgstr "Save a portable bundle of your settings to move to another machine or the qbzd daemon."
+
+msgid "Export…"
+msgstr "Export…"
+
+msgid "Export settings"
+msgstr "Export settings"
+
+msgid "Save your settings as a bundle to import on the qbzd daemon or another machine."
+msgstr "Save your settings as a bundle to import on the qbzd daemon or another machine."
+
+msgid "Include Qobuz login and integration tokens"
+msgstr "Include Qobuz login and integration tokens"
+
+msgid "Anyone with the file can use your accounts. It is saved readable only by you; delete it after importing."
+msgstr "Anyone with the file can use your accounts. It is saved readable only by you; delete it after importing."
+
+msgid "Export"
+msgstr "Export"
+
+msgid "Bundle saved. On the daemon box:"
+msgstr "Bundle saved. On the daemon box:"
+
+msgid "Could not export settings"
+msgstr "Could not export settings"
+
+# Pinned section (Home / For You mixed carousel)
+msgid "Pinned"
+msgstr "Pinned"
+
+# Pin/Unpin toggle on the detail views (playlist header, album/artist menus)
+msgid "Pin"
+msgstr "Pin"
+
+msgid "Unpin"
+msgstr "Unpin"
+
+# Queue footer count (filtered track list)
+msgid "Showing {} of {} track."
+msgid_plural "Showing {} of {} tracks."
+msgstr[0] "Showing {} of {} track."
+msgstr[1] "Showing {} of {} tracks."
+
+
+# Share menu Song.link/Album.link toasts (#514)
+msgid "Fetching Song.link..."
+msgstr "Fetching Song.link..."
+
+msgid "Fetching Album.link..."
+msgstr "Fetching Album.link..."
+
+msgid "Link copied"
+msgstr "Link copied"
+
+msgid "Failed to copy link"
+msgstr "Failed to copy link"
+
+# Dynamic app background (Appearance settings)
+msgid "Off"
+msgstr "Off"
+
+msgid "Ambient"
+msgstr "Ambient"
+
+msgid "Blurred art"
+msgstr "Blurred art"
+
+msgid "Dynamic background"
+msgstr "Dynamic background"
+
+msgid "Animated album-art background behind the whole app. High resource use — GPU accelerated."
+msgstr "Animated album-art background behind the whole app. High resource use — GPU accelerated."
+
+# Preferred GPU (Renderer settings)
+msgid "Preferred GPU"
+msgstr "Preferred GPU"
+
+msgid "Which GPU renders the app. On a hybrid laptop, picking the discrete GPU moves the dynamic-background load off the integrated one (cooler, but more power). Auto is recommended (requires restart)"
+msgstr "Which GPU renders the app. On a hybrid laptop, picking the discrete GPU moves the dynamic-background load off the integrated one (cooler, but more power). Auto is recommended (requires restart)"
+
+msgid "discrete"
+msgstr "discrete"
+
+msgid "integrated"
+msgstr "integrated"
+
+msgid "Preferred GPU changed — restart QBZ to apply"
+msgstr "Preferred GPU changed — restart QBZ to apply"
+
+msgid "Selected GPU is unavailable in this display session — using Auto"
+msgstr "Selected GPU is unavailable in this display session — using Auto"
+
+msgid "Search your library"
+msgstr "Search your library"
+
+msgid "From catalog"
+msgstr "From catalog"
+
+msgid "In library"
+msgstr "In library"
+
+# Issue #637: header action-button tooltips + 403 back-off toast
+msgid "Play"
+msgstr "Play"
+
+msgid "Shuffle"
+msgstr "Shuffle"
+
+msgid "Edit metadata"
+msgstr "Edit metadata"
+
+msgid "Add to favorites"
+msgstr "Add to favorites"
+
+msgid "Remove from favorites"
+msgstr "Remove from favorites"
+
+msgid "Start radio"
+msgstr "Start radio"
+
+msgid "Booklet"
+msgstr "Booklet"
+
+msgid "Add to Mixtape"
+msgstr "Add to Mixtape"
+
+msgid "Album info"
+msgstr "Album info"
+
+msgid "More options"
+msgstr "More options"
+
+msgid "Follow artist"
+msgstr "Follow artist"
+
+msgid "Unfollow"
+msgstr "Unfollow"
+
+msgid "Artist network"
+msgstr "Artist network"
+
+msgid "Make available offline"
+msgstr "Make available offline"
+
+msgid "Upload to Qobuz"
+msgstr "Upload to Qobuz"
+
+msgid "Edit playlist"
+msgstr "Edit playlist"
+
+msgid "Select tracks"
+msgstr "Select tracks"
+
+msgid "Qobuz is temporarily refusing requests — backing off. Try again shortly."
+msgstr "Qobuz is temporarily refusing requests — backing off. Try again shortly."
+
+
+msgid "Flatpak"
+msgstr "Flatpak"
+
+msgid "Snap"
+msgstr "Snap"
+
+msgid "FLATPAK SANDBOX"
+msgstr "FLATPAK SANDBOX"
+
+msgid "SNAP SANDBOX"
+msgstr "SNAP SANDBOX"
+
+msgid "QBZ is running inside a Flatpak sandbox. Some features need one-time permission grants — run the commands in a terminal, then restart QBZ. Grants persist across updates."
+msgstr "QBZ is running inside a Flatpak sandbox. Some features need one-time permission grants — run the commands in a terminal, then restart QBZ. Grants persist across updates."
+
+msgid "QBZ is running inside a Snap sandbox. Some audio interfaces need one-time connections — run these commands in a terminal, then restart QBZ."
+msgstr "QBZ is running inside a Snap sandbox. Some audio interfaces need one-time connections — run these commands in a terminal, then restart QBZ."
+
+msgid "Exclusive DAC access (bit-perfect)"
+msgstr "Exclusive DAC access (bit-perfect)"
+
+msgid "Recommended for exclusive mode: lets QBZ ask PipeWire to hand over the DAC cleanly (D-Bus device reservation). Without it, PipeWire keeps holding the DAC and other apps keep mixing through it even with ALSA + hw + Exclusive selected."
+msgstr "Recommended for exclusive mode: lets QBZ ask PipeWire to hand over the DAC cleanly (D-Bus device reservation). Without it, PipeWire keeps holding the DAC and other apps keep mixing through it even with ALSA + hw + Exclusive selected."
+
+msgid "Music on NAS or external drives"
+msgstr "Music on NAS or external drives"
+
+msgid "Grants access to a folder outside the sandbox. Repeat the command for each folder you need."
+msgstr "Grants access to a folder outside the sandbox. Repeat the command for each folder you need."
+
+msgid "Required audio connections"
+msgstr "Required audio connections"
+
+msgid "Optional — external drives & NAS"
+msgstr "Optional — external drives & NAS"
+
+msgid "Copy"
+msgstr "Copy"
+
+msgid "Copied!"
+msgstr "Copied!"
+
+msgid "Limited by your streaming quality setting"
+msgstr "Limited by your streaming quality setting"
+
+msgid "Qobuz has no higher quality for this track"
+msgstr "Qobuz has no higher quality for this track"
+
+msgid "offline copy — cap not applied"
+msgstr "offline copy — cap not applied"
+
+msgid "cached copy — cap not applied"
+msgstr "cached copy — cap not applied"
+
+msgid "Limited by your output device's limit"
+msgstr "Limited by your output device's limit"
+
+msgid "Cap the requested streaming quality at your output device's limit. Applies to local playback only, never to casting."
+msgstr "Cap the requested streaming quality at your output device's limit. Applies to local playback only, never to casting."
+
+msgid "Your device's exact limits could not be read on this system, so a common set is assumed. The cap still applies, but may not match your hardware exactly."
+msgstr "Your device's exact limits could not be read on this system, so a common set is assumed. The cap still applies, but may not match your hardware exactly."
+
+msgid "Detected device limit"
+msgstr "Detected device limit"
+
+msgid "Quality for this device"
+msgstr "Quality for this device"
+
+msgid "Follow app setting ({})"
+msgstr "Follow app setting ({})"
+
+msgid "Hi-Res — 24-bit, up to 96 kHz"
+msgstr "Hi-Res — 24-bit, up to 96 kHz"
+
+msgid "CD — 16-bit / 44.1 kHz"
+msgstr "CD — 16-bit / 44.1 kHz"
+
+msgid "MP3 320"
+msgstr "MP3 320"
+
+msgid "Qobuz only offers these tiers — there is no 48 kHz option. The step below Hi-Res is CD 44.1 kHz."
+msgstr "Qobuz only offers these tiers — there is no 48 kHz option. The step below Hi-Res is CD 44.1 kHz."
+
+msgid "Limited by the quality cap for {}"
+msgstr "Limited by the quality cap for {}"
+
+msgid "capped for this device"
+msgstr "capped for this device"
+
+msgid "Albums by folder"
+msgstr "Albums by folder"
+
+msgid "Albums by metadata"
+msgstr "Albums by metadata"
+
+msgid "ALBUMS VIEW"
+msgstr "ALBUMS VIEW"
+
+msgid "Album grouping"
+msgstr "Album grouping"
+
+msgid "Folders: one card per album folder — best for compilations and box sets. Metadata: split by album + artist tags."
+msgstr "Folders: one card per album folder — best for compilations and box sets. Metadata: split by album + artist tags."
+
+msgid "+{} more artists"
+msgstr "+{} more artists"
+
+msgid "Show less"
+msgstr "Show less"
+# Most Played Albums rail title
+msgid "Most Played Albums"
+msgstr "Most Played Albums"
+
+# Most Played Albums View-all — per-card play count
+msgid "{} plays"
+msgstr "{} plays"
+
+# Lyrics translation (Qobuz API v10) — floating-toggle tooltips, flyout row, error toast
+msgid "Show lyrics translation"
+msgstr "Show lyrics translation"
+
+msgid "Hide lyrics translation"
+msgstr "Hide lyrics translation"
+
+msgid "Translation language"
+msgstr "Translation language"
+
+msgid "Auto (account language)"
+msgstr "Auto (account language)"
+
+msgid "Translation is not available right now. Please try again later."
+msgstr "Translation is not available right now. Please try again later."
+# Discover Recommendations — Not interested (reco-scoped dismissals)
+
+msgid "Not interested"
+msgstr "Not interested"
+
+msgid "Dismissed artists only leave your Recommendations — they still appear in search and everywhere else."
+msgstr "Dismissed artists only leave your Recommendations — they still appear in search and everywhere else."
+
+msgid "No dismissed artists"
+msgstr "No dismissed artists"
+
+msgid "To stop seeing an artist in Recommendations, open its card menu and choose Not interested."
+msgstr "To stop seeing an artist in Recommendations, open its card menu and choose Not interested."
+
+msgid "{} won't appear in Recommendations anymore"
+msgstr "{} won't appear in Recommendations anymore"
+
+msgid "Artist dismissed from Recommendations"
+msgstr "Artist dismissed from Recommendations"
+
+msgid "{} restored to Recommendations"
+msgstr "{} restored to Recommendations"
+
+msgid "LIBRARY › ALL"
+msgstr "LIBRARY › ALL"
+
+msgid "Show local files & Plex"
+msgstr "Show local files & Plex"
+
+msgid "Include your favorited local files and Plex items in the Library All feed."
+msgstr "Include your favorited local files and Plex items in the Library All feed."
+
+msgid "Play indicator animation"
+msgstr "Play indicator animation"
+
+msgid "Animate the now-playing row with equalizer bars. Off (default) shows a static pause icon with an accent edge mark — lighter on CPU."
+msgstr "Animate the now-playing row with equalizer bars. Off (default) shows a static pause icon with an accent edge mark — lighter on CPU."
+
+msgid "Invert swipe navigation direction"
+msgstr "Invert swipe navigation direction"
+
+msgid "Swap the two-finger touchpad swipe: left goes back, right goes forward."
+msgstr "Swap the two-finger touchpad swipe: left goes back, right goes forward."
+
+msgid "Local items in Library All"
+msgstr "Local items in Library All"
+
+msgid "Favorited items only: what you hearted. Entire local library: every folder and Plex album, artist and track."
+msgstr "Favorited items only: what you hearted. Entire local library: every folder and Plex album, artist and track."
+
+msgid "Favorited items only"
+msgstr "Favorited items only"
+
+msgid "Entire local library"
+msgstr "Entire local library"
+
+msgid "Select multiple albums"
+msgstr "Select multiple albums"
+
+msgid "Play later"
+msgstr "Play later"
+
+msgid "Added to play later"
+msgstr "Added to play later"
+
+msgid "Next in queue"
+msgstr "Next in queue"
+
+msgid "Next up"
+msgstr "Next up"
+
+msgid "Removed {} tracks from favorites"
+msgstr "Removed {} tracks from favorites"
+
+msgid "Removing {} tracks from favorites…"
+msgstr "Removing {} tracks from favorites…"
+
+# Blacklist album-axis toasts (msgids from crates/qbz/src/blacklist_manager.rs:287-330)
+
+msgid "Album \"{}\" blocked"
+msgstr "Album \"{}\" blocked"
+
+msgid "Album \"{}\" unblocked"
+msgstr "Album \"{}\" unblocked"
+
+msgid "Failed to block album"
+msgstr "Failed to block album"
+
+msgid "Failed to unblock album"
+msgstr "Failed to unblock album"
+
+msgid "Failed to clear album blacklist"
+msgstr "Failed to clear album blacklist"
+
+msgid "Removed {} album from blacklist"
+msgid_plural "Removed {} albums from blacklist"
+msgstr[0] "Removed {} album from blacklist"
+msgstr[1] "Removed {} albums from blacklist"
+
+msgid "Playlist imported"
+msgstr "Playlist imported"
+
+msgid "Playlist import failed"
+msgstr "Playlist import failed"
+
+msgid "Not logged in to Qobuz"
+msgstr "Not logged in to Qobuz"
+
+# Qt playlist manager — folder modals (contract block 2)
+
+msgid "Delete folder"
+msgstr "Delete folder"
+
+msgid "Delete the folder “{}”? Its playlists move back to the root."
+msgstr "Delete the folder “{}”? Its playlists move back to the root."
+
+msgid "Choose a folder image"
+msgstr "Choose a folder image"
+
+msgid "Images"
+msgstr "Images"
+
+msgid "Failed to create folder"
+msgstr "Failed to create folder"
+
+msgid "Failed to save folder"
+msgstr "Failed to save folder"
+
+msgid "Failed to delete folder"
+msgstr "Failed to delete folder"
+
+msgid "Failed to rename playlist"
+msgstr "Failed to rename playlist"
+
+msgid "Failed to delete playlist"
+msgstr "Failed to delete playlist"
+
+msgid "Couldn't create the playlist"
+msgstr "Couldn't create the playlist"
+
+# My QBZ grid card — the heterogeneous grid mounts the standard AlbumCard,
+# whose first menu entry is "Open album"; a playlist cell overrides the NOUN.
+msgid "Open playlist"
+msgstr "Open playlist"
+
+# ArtistScene + MusicianPage (Qt port, 2026-08-14 contract §7). Copy is Tauri's
+# verbatim: ASCII "..." (not U+2026), U+00B7 in the hero subtitle, ASCII hyphen
+# in "(A-Z)". Reused rather than twinned — "Filter by genre", "Clear filter",
+# "No albums found", "Off", "Group: A-Z", "Group: Off", "Scene", "Appears On",
+# "Bands & Projects", "Load more", "Loading…", "Artist Scene",
+# "No artists found for this scene.", "No album appearances found." and
+# "Select an artist to see their albums." (period-only delta) already exist.
+# The {artist}/{genres}/{genre}/{name} placeholders are NAMED, per contract §7,
+# and are byte-identical in all eight locales. qbz_i18n::t_args CANNOT fill them
+# (substitute() at qbz-i18n/src/lib.rs:153-170 only matches a bare "{}") — every
+# call site substitutes explicitly, e.g. .replace("{artist}", name).
+
+msgid "Based on {artist} · {genres}"
+msgstr "Based on {artist} · {genres}"
+
+msgid "Searching MusicBrainz for {genre} artists..."
+msgstr "Searching MusicBrainz for {genre} artists..."
+
+msgid "Verifying availability on Qobuz..."
+msgstr "Verifying availability on Qobuz..."
+
+msgid "Preparing results..."
+msgstr "Preparing results..."
+
+msgid "No matching artists from this scene are currently available on Qobuz."
+msgstr "No matching artists from this scene are currently available on Qobuz."
+
+msgid "Loading albums..."
+msgstr "Loading albums..."
+
+msgid "Failed to load albums"
+msgstr "Failed to load albums"
+
+msgid "Failed to load appearances"
+msgstr "Failed to load appearances"
+
+msgid "Looking up {name}..."
+msgstr "Looking up {name}..."
+
+msgid "Failed to look up musician"
+msgstr "Failed to look up musician"
+
+msgid "Browse view"
+msgstr "Browse view"
+
+msgid "Grid view"
+msgstr "Grid view"
+
+msgid "Alphabetical (A-Z)"
+msgstr "Alphabetical (A-Z)"
+
+msgid "This musician appears in album credits but has limited catalog information available in Qobuz."
+msgstr "This musician appears in album credits but has limited catalog information available in Qobuz."
+
+msgid "Unable to verify this musician's catalog. The information shown is based on album credits."
+msgstr "Unable to verify this musician's catalog. The information shown is based on album credits."
+
+msgid "This musician appears in album credits."
+msgstr "This musician appears in album credits."
+
+msgid "Tunnel Flow"
+msgstr "Tunnel Flow"
+
+# --- Purchases (Slice 13, Qt port) ---
+msgid "Download goodies"
+msgstr "Download goodies"
+
+# --- Unavailable tracks + replacement search (Qt port, contract 2026-08-17
+# §8-6). "Unavailable" and "This track is no longer available" already
+# exist in this file and are REUSED by the render and the reactive skip toast
+# — nothing below twins them.
+#
+# The skipped-tracks toast is a plural PAIR, per the convention already set by
+# "Scan complete ({} file skipped)" and "{} duplicate skipped": the queue build
+# drops N rows at once, and a singular-only string reads wrong in every locale
+# with plural rules. Russian carries all three forms.
+#
+# "No longer on Qobuz — playing your downloaded copy" is the cached-but-pulled
+# state (contract §5.3/F5): the track left the catalogue but the user owns a
+# downloaded copy, so it still plays. It cannot fold into "This track is no
+# longer available" — that sentence would be a lie on a row playing right now.
+#
+# Em dash is U+2014 with spaces on both sides, as everywhere else in this file.
+# en is the source-language stub: msgstr == msgid, as every batch that
+# introduced a genuinely new msgid here has done.
+msgid "Find available version"
+msgstr "Find available version"
+
+msgid "Replace unavailable track"
+msgstr "Replace unavailable track"
+
+msgid "No available version found"
+msgstr "No available version found"
+
+msgid "Track replaced"
+msgstr "Track replaced"
+
+msgid "Could not replace the track"
+msgstr "Could not replace the track"
+
+msgid "The replacement was added at the end of the playlist"
+msgstr "The replacement was added at the end of the playlist"
+
+msgid "{} track skipped — no longer available"
+msgid_plural "{} tracks skipped — no longer available"
+msgstr[0] "{} track skipped — no longer available"
+msgstr[1] "{} tracks skipped — no longer available"
+
+msgid "No longer on Qobuz — playing your downloaded copy"
+msgstr "No longer on Qobuz — playing your downloaded copy"
+
+msgid "Exact match"
+msgstr "Exact match"
+
+msgid "Low confidence"
+msgstr "Low confidence"
+
+msgid "Replace"
+msgstr "Replace"
+
+msgid "Replacing..."
+msgstr "Replacing..."
+
+msgid "The replacement takes the unavailable track's place in the playlist."
+msgstr "The replacement takes the unavailable track's place in the playlist."
+
+# Discover configurator: items-per-carousel (Tauri parity recovery, 2026-08-19)
+msgid "Items per carousel"
+msgstr "Items per carousel"
+
+msgid "All"
+msgstr "All"
+
+# Discover: Recently Played Playlists rail (context-aware play history, 2026-08-19)
+msgid "Recently Played Playlists"
+msgstr "Recently Played Playlists"
+
+msgid "Playlists you play will appear here."
+msgstr "Playlists you play will appear here."
+
+# Applied-filters tooltip (2026-08-19)
+msgid "+{} more"
+msgstr "+{} more"
+
+msgid "+{} more filters"
+msgstr "+{} more filters"
+
+msgid "Applied filters"
+msgstr "Applied filters"
+
+# Applied-filters tooltip: group labels (2026-08-19)
+msgid "Category"
+msgstr "Category"
+
+# Applied-filters tooltip: Library source switches (2026-08-19)
+msgid "Favorites"
+msgstr "Favorites"
+
+# Discover configurator: Refresh content (2026-08-19)
+msgid "Refresh content"
+msgstr "Refresh content"
+
+# Appearance: click-on-section opens the first tab (2026-08-19)
+msgid "Click on menu item navigates to first tab"
+msgstr "Click on menu item navigates to first tab"
+
+msgid "Clicking a section in the sidebar or title bar opens it on its first tab — Discover on Home, Library on All — instead of only showing its menu"
+msgstr "Clicking a section in the sidebar or title bar opens it on its first tab — Discover on Home, Library on All — instead of only showing its menu"
+
+# Discover configurator: per-rail default item count (2026-08-19)
+msgid "Default ({})"
+msgstr "Default ({})"
+
+msgid "Default"
+msgstr "Default"
+
+msgid "Media"
+msgstr "Media"
+
+msgid "Open audio CD"
+msgstr "Open audio CD"
+
+msgid "Audio CD"
+msgstr "Audio CD"
+
+msgid "No optical drive found."
+msgstr "No optical drive found."
+
+msgid "No disc in the drive."
+msgstr "No disc in the drive."
+
+msgid "That disc has no audio tracks."
+msgstr "That disc has no audio tracks."
+
+msgid "Could not read the disc."
+msgstr "Could not read the disc."
+
+msgid "Track {}"
+msgstr "Track {}"
+
+msgid "Open SACD image…"
+msgstr "Open SACD image…"
+
+msgid "Choose a disc image"
+msgstr "Choose a disc image"
+
+msgid "That image has no stereo audio area."
+msgstr "That image has no stereo audio area."
+
+msgid "This disc is DST-compressed, which QBZ cannot play yet."
+msgstr "This disc is DST-compressed, which QBZ cannot play yet."
+
+msgid "That file is not a disc image."
+msgstr "That file is not a disc image."
+
+msgid "That file is not a SACD image."
+msgstr "That file is not a SACD image."
+
+msgid "That SACD image is damaged or unsupported."
+msgstr "That SACD image is damaged or unsupported."
+
+msgid "SACD"
+msgstr "SACD"
+
+msgid "Library Explorer"
+msgstr "Library Explorer"
+
+msgid "Listen list"
+msgstr "Listen list"
+
+msgid "Genres"
+msgstr "Genres"
+
+msgid "All genres"
+msgstr "All genres"
+
+msgid "All artists"
+msgstr "All artists"
+
+msgid "All albums"
+msgstr "All albums"
+
+msgid "No albums match these filters"
+msgstr "No albums match these filters"
+
+msgid "Try a different genre, artist, album, source or quality."
+msgstr "Try a different genre, artist, album, source or quality."
+
+msgid "Favorites only"
+msgstr "Favorites only"
+
+msgid "Where should the ripped album go?"
+msgstr "Where should the ripped album go?"
+
+msgid "Ripping"
+msgstr "Ripping"
+
+msgid "Nothing to rip."
+msgstr "Nothing to rip."
+
+msgid "Ripped {} track to your library"
+msgid_plural "Ripped {} tracks to your library"
+msgstr[0] "Ripped {} track to your library"
+msgstr[1] "Ripped {} tracks to your library"
+
+# Discs: rip wizard, metadata lookup and the disc tooltips (2026-08-21)
+
+msgid "Play a folder, CD or disc image without adding it to your library"
+msgstr "Play a folder, CD or disc image without adding it to your library"
+
+msgid "Reading the disc…"
+msgstr "Reading the disc…"
+
+msgid "Re-scan your folders and media servers for new music"
+msgstr "Re-scan your folders and media servers for new music"
+
+msgid "Manage the folders your library is built from"
+msgstr "Manage the folders your library is built from"
+
+msgid "Play the whole disc from the first track"
+msgstr "Play the whole disc from the first track"
+
+msgid "Play it in a shuffled order"
+msgstr "Play it in a shuffled order"
+
+msgid "Look this disc up and correct its details"
+msgstr "Look this disc up and correct its details"
+
+msgid "Copy this CD to your computer as FLAC files"
+msgstr "Copy this CD to your computer as FLAC files"
+
+msgid "Close this disc and go back to your library"
+msgstr "Close this disc and go back to your library"
+
+msgid "Correct disc details"
+msgstr "Correct disc details"
+
+msgid "SACD image"
+msgstr "SACD image"
+
+msgid "Close without changing anything"
+msgstr "Close without changing anything"
+
+msgid "Community database. Knows discs by their table of contents."
+msgstr "Community database. Knows discs by their table of contents."
+
+msgid "Collector database. Stronger on pressings, editions and catalogue numbers."
+msgstr "Collector database. Stronger on pressings, editions and catalogue numbers."
+
+msgid "Search this provider"
+msgstr "Search this provider"
+
+msgid "The provider is rate-limiting right now. Try again in a moment."
+msgstr "The provider is rate-limiting right now. Try again in a moment."
+
+msgid "No releases matched. Try fewer words, or the other provider."
+msgstr "No releases matched. Try fewer words, or the other provider."
+
+msgid "Search for the release this disc actually is."
+msgstr "Search for the release this disc actually is."
+
+msgid "Remove my correction"
+msgstr "Remove my correction"
+
+msgid "Forget the saved details for this disc and look it up fresh next time"
+msgstr "Forget the saved details for this disc and look it up fresh next time"
+
+msgid "Applying..."
+msgstr "Applying..."
+
+msgid "Use these details"
+msgstr "Use these details"
+
+msgid "Rename this disc and remember it for next time"
+msgstr "Rename this disc and remember it for next time"
+
+msgid "Rip this CD"
+msgstr "Rip this CD"
+
+msgid "What will happen"
+msgstr "What will happen"
+
+msgid "Track names"
+msgstr "Track names"
+
+msgid "Your library"
+msgstr "Your library"
+
+msgid "Every track on the disc is read and written as a FLAC file — one folder per album, one file per track, with tags."
+msgstr "Every track on the disc is read and written as a FLAC file — one folder per album, one file per track, with tags."
+
+msgid "Format: FLAC (lossless) — the only format QBZ writes"
+msgstr "Format: FLAC (lossless) — the only format QBZ writes"
+
+msgid "Album artist"
+msgstr "Album artist"
+
+msgid "Where the album goes"
+msgstr "Where the album goes"
+
+msgid "Choose folder…"
+msgstr "Choose folder…"
+
+msgid "Change…"
+msgstr "Change…"
+
+msgid "Pick the folder the album folder will be created in"
+msgstr "Pick the folder the album folder will be created in"
+
+msgid "Nothing chosen yet"
+msgstr "Nothing chosen yet"
+
+msgid "This folder is already part of your Local Library."
+msgstr "This folder is already part of your Local Library."
+
+msgid "This folder is outside your Local Library, so the album will not appear there on its own."
+msgstr "This folder is outside your Local Library, so the album will not appear there on its own."
+
+msgid "Choose a destination first and this step will know what to offer."
+msgstr "Choose a destination first and this step will know what to offer."
+
+msgid "Re-scan that folder when the rip finishes"
+msgstr "Re-scan that folder when the rip finishes"
+
+msgid "Only that folder, not your whole library."
+msgstr "Only that folder, not your whole library."
+
+msgid "Do nothing"
+msgstr "Do nothing"
+
+msgid "The album appears the next time you scan."
+msgstr "The album appears the next time you scan."
+
+msgid "Add this folder to Local Library and scan it"
+msgstr "Add this folder to Local Library and scan it"
+
+msgid "Future rips into the same folder will be picked up too."
+msgstr "Future rips into the same folder will be picked up too."
+
+msgid "The files are written; the library will not know about them."
+msgstr "The files are written; the library will not know about them."
+
+msgid "A simple ripper, made to get your CDs into the library quickly. For AccurateRip checks and advanced options, use a dedicated tool."
+msgstr "A simple ripper, made to get your CDs into the library quickly. For AccurateRip checks and advanced options, use a dedicated tool."
+
+msgid "Close without ripping anything"
+msgstr "Close without ripping anything"
+
+msgid "Go back a step"
+msgstr "Go back a step"
+
+msgid "Start ripping"
+msgstr "Start ripping"
+
+msgid "Go to the next step"
+msgstr "Go to the next step"
+
+msgid "Read the disc and write the FLAC files"
+msgstr "Read the disc and write the FLAC files"
+
+msgid "Choose a destination folder first"
+msgstr "Choose a destination folder first"
+
+msgid "No disc is open."
+msgstr "No disc is open."
+
+msgid "Couldn't load that release."
+msgstr "Couldn't load that release."
+
+msgid "Disc details updated"
+msgstr "Disc details updated"
+
+msgid "Correction removed. Re-open the disc to look it up again."
+msgstr "Correction removed. Re-open the disc to look it up again."
+
+msgid "Only a physical CD can be ripped."
+msgstr "Only a physical CD can be ripped."
+
+msgid "Choose where the album should go first."
+msgstr "Choose where the album should go first."
+
+msgid "Couldn't add that folder to the library"
+msgstr "Couldn't add that folder to the library"
+
+# Rip progress panel, cancel and partial rips (2026-08-21)
+
+msgid "Writing FLAC files to"
+msgstr "Writing FLAC files to"
+
+msgid "Hide this panel — the rip keeps going"
+msgstr "Hide this panel — the rip keeps going"
+
+msgid "Ripping — don't eject the disc until this finishes."
+msgstr "Ripping — don't eject the disc until this finishes."
+
+msgid "Track"
+msgstr "Track"
+
+msgid "Finished"
+msgstr "Finished"
+
+msgid "Files already written stay on disk. Delete them yourself if you don't want them."
+msgstr "Files already written stay on disk. Delete them yourself if you don't want them."
+
+msgid "Stop ripping"
+msgstr "Stop ripping"
+
+msgid "Stopping…"
+msgstr "Stopping…"
+
+msgid "Stop after the current track. Nothing is deleted."
+msgstr "Stop after the current track. Nothing is deleted."
+
+msgid "Rip stopped. The files already written are still there."
+msgstr "Rip stopped. The files already written are still there."
+
+msgid "See what the rip is doing, or stop it"
+msgstr "See what the rip is doing, or stop it"
+
+msgid "selected"
+msgstr "selected"
+
+msgid "Pick at least one track to rip."
+msgstr "Pick at least one track to rip."
+
+# Ephemeral pane: per-disc blocks and the track filter (2026-08-21)
+
+msgid "Disc {}"
+msgstr "Disc {}"
+
+msgid "Filter tracks"
+msgstr "Filter tracks"
+
+msgid "No track matches that."
+msgstr "No track matches that."
+
+msgid "Continuous playback"
+msgstr "Continuous playback"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Folder view"
+msgstr "Folder view"
+
+msgid "Open media"
+msgstr "Open media"
+
+msgid "Open folder…"
+msgstr "Open folder…"
+
+# Local Library tab order and logged-off landing (2026-08-24)
+msgid "LIBRARY TABS"
+msgstr "LIBRARY TABS"
+
+msgid "Tab order and default"
+msgstr "Tab order and default"
+
+msgid "Choose the order of Local Library tabs. The first one opens by default, including when QBZ starts without a Qobuz session."
+msgstr "Choose the order of Local Library tabs. The first one opens by default, including when QBZ starts without a Qobuz session."
+
+msgid "Customize"
+msgstr "Customize"
+
+msgid "Local Library tabs"
+msgstr "Local Library tabs"
+
+msgid "Reorder the Local Library tabs. The first tab opens by default and is shown when starting without a Qobuz session."
+msgstr "Reorder the Local Library tabs. The first tab opens by default and is shown when starting without a Qobuz session."
+
+msgid "Clicking a section in the sidebar or title bar opens its first tab — including your chosen Local Library default — instead of only showing its menu"
+msgstr "Clicking a section in the sidebar or title bar opens its first tab — including your chosen Local Library default — instead of only showing its menu"
+
+msgid "Reset to defaults"
+msgstr "Reset to defaults"
+
+# Local Library Genres filter placement (2026-08-24)
+msgid "GENRES VIEW"
+msgstr "GENRES VIEW"
+
+msgid "Genre filters position"
+msgstr "Genre filters position"
+
+msgid "Place the chained genre filters above, beside or below the album results."
+msgstr "Place the chained genre filters above, beside or below the album results."
+
+msgid "Top"
+msgstr "Top"
+
+msgid "Right"
+msgstr "Right"
+
+msgid "Left"
+msgstr "Left"
+
+msgid "Bottom"
+msgstr "Bottom"
+
+msgid "Album"
+msgstr "Album"
+
+msgid "Album metadata saved."
+msgstr "Album metadata saved."
+
+msgid "Album title"
+msgstr "Album title"
+
+msgid "Album title is required."
+msgstr "Album title is required."
+
+msgid "Apply to form"
+msgstr "Apply to form"
+
+msgid "CUE-based albums can only be edited with a sidecar."
+msgstr "CUE-based albums can only be edited with a sidecar."
+
+msgid "CUE-based albums use sidecar metadata."
+msgstr "CUE-based albums use sidecar metadata."
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Canonical"
+msgstr "Canonical"
+
+msgid "Catalog number"
+msgstr "Catalog number"
+
+msgid "Close without saving"
+msgstr "Close without saving"
+
+msgid "Couldn't inspect album metadata."
+msgstr "Couldn't inspect album metadata."
+
+msgid "Couldn't load that metadata result."
+msgstr "Couldn't load that metadata result."
+
+msgid "Couldn't open the metadata source."
+msgstr "Couldn't open the metadata source."
+
+msgid "Couldn't save metadata: {}"
+msgstr "Couldn't save metadata: {}"
+
+msgid "Detected"
+msgstr "Detected"
+
+msgid "Disc"
+msgstr "Disc"
+
+msgid "Disc number"
+msgstr "Disc number"
+
+msgid "Editing the selected physical version"
+msgstr "Editing the selected physical version"
+
+msgid "Enter an album title or artist to search."
+msgstr "Enter an album title or artist to search."
+
+msgid "Every track needs a title."
+msgstr "Every track needs a title."
+
+msgid "File names are shown for reference and cannot be changed here."
+msgstr "File names are shown for reference and cannot be changed here."
+
+msgid "Find metadata"
+msgstr "Find metadata"
+
+msgid "Genre"
+msgstr "Genre"
+
+msgid "ID3 writing"
+msgstr "ID3 writing"
+
+msgid "Metadata editing is available for local file versions only."
+msgstr "Metadata editing is available for local file versions only."
+
+msgid "Metadata search failed."
+msgstr "Metadata search failed."
+
+msgid "No local album version is selected."
+msgstr "No local album version is selected."
+
+msgid "None"
+msgstr "None"
+
+msgid "One or more audio files are unavailable."
+msgstr "One or more audio files are unavailable."
+
+msgid "Open source"
+msgstr "Open source"
+
+msgid "QBZ will preflight every file, update its canonical tag layer, then read it back to verify the change. Keep a backup if these files cannot be replaced."
+msgstr "QBZ will preflight every file, update its canonical tag layer, then read it back to verify the change. Keep a backup if these files cannot be replaced."
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Save changes to"
+msgstr "Save changes to"
+
+msgid "Saving…"
+msgstr "Saving…"
+
+msgid "Search"
+msgstr "Search"
+
+msgid "Searching…"
+msgstr "Searching…"
+
+msgid "Sidecar file (recommended)"
+msgstr "Sidecar file (recommended)"
+
+msgid "Some files contain conflicting tag layers. The canonical layer wins unless synchronization is enabled."
+msgstr "Some files contain conflicting tag layers. The canonical layer wins unless synchronization is enabled."
+
+msgid "Synchronize compatible tag layers"
+msgstr "Synchronize compatible tag layers"
+
+msgid "Tag layers"
+msgstr "Tag layers"
+
+msgid "The canonical tag is not writable for every file."
+msgstr "The canonical tag is not writable for every file."
+
+msgid "The metadata editor is no longer open."
+msgstr "The metadata editor is no longer open."
+
+msgid "The metadata form could not be read."
+msgstr "The metadata form could not be read."
+
+msgid "The track list changed; reopen the editor."
+msgstr "The track list changed; reopen the editor."
+
+msgid "The track list contains a duplicate row."
+msgstr "The track list contains a duplicate row."
+
+msgid "Track number"
+msgstr "Track number"
+
+msgid "Tracks"
+msgstr "Tracks"
+
+msgid "Unknown metadata persistence mode."
+msgstr "Unknown metadata persistence mode."
+
+msgid "Write and verify"
+msgstr "Write and verify"
+
+msgid "Write metadata into audio files?"
+msgstr "Write metadata into audio files?"
+
+msgid "Write to audio files"
+msgstr "Write to audio files"
+
+msgid "Writing"
+msgstr "Writing"
+
+msgid "Year"
+msgstr "Year"
+
+msgid "Year must be a valid number."
+msgstr "Year must be a valid number."
+
+msgid "tracks"
+msgstr "tracks"
+
+msgid "{} must be a positive number."
+msgstr "{} must be a positive number."
+
+msgid "The ephemeral session changed; reopen the metadata editor."
+msgstr "The ephemeral session changed; reopen the metadata editor."
+
+msgid "Album artists"
+msgstr "Album artists"
+
+msgid "Album artists (ordered; separate with semicolons)"
+msgstr "Album artists (ordered; separate with semicolons)"
+
+msgid "Artist credit"
+msgstr "Artist credit"
+
+msgid "Artists"
+msgstr "Artists"
+
+msgid "Artists (ordered; semicolon separated)"
+msgstr "Artists (ordered; semicolon separated)"
+
+msgid "Artwork is larger than 25 MiB."
+msgstr "Artwork is larger than 25 MiB."
+
+msgid "Artwork search failed."
+msgstr "Artwork search failed."
+
+msgid "Artwork source did not provide a secure URL."
+msgstr "Artwork source did not provide a secure URL."
+
+msgid "Choose album artwork"
+msgstr "Choose album artwork"
+
+msgid "Choose another file"
+msgstr "Choose another file"
+
+msgid "Choose file"
+msgstr "Choose file"
+
+msgid "Compilation / Various Artists"
+msgstr "Compilation / Various Artists"
+
+msgid "Composers"
+msgstr "Composers"
+
+msgid "Couldn't download that artwork."
+msgstr "Couldn't download that artwork."
+
+msgid "Couldn't stage artwork"
+msgstr "Couldn't stage artwork"
+
+msgid "Current artwork"
+msgstr "Current artwork"
+
+msgid "Discogs release ID"
+msgstr "Discogs release ID"
+
+msgid "Enter an album title to find artwork."
+msgstr "Enter an album title to find artwork."
+
+msgid "File"
+msgstr "File"
+
+msgid "Find artwork"
+msgstr "Find artwork"
+
+msgid "Local file"
+msgstr "Local file"
+
+msgid "MusicBrainz album artist IDs"
+msgstr "MusicBrainz album artist IDs"
+
+msgid "MusicBrainz artist IDs"
+msgstr "MusicBrainz artist IDs"
+
+msgid "MusicBrainz recording ID"
+msgstr "MusicBrainz recording ID"
+
+msgid "MusicBrainz release ID"
+msgstr "MusicBrainz release ID"
+
+msgid "MusicBrainz release-group ID"
+msgstr "MusicBrainz release-group ID"
+
+msgid "MusicBrainz track ID"
+msgstr "MusicBrainz track ID"
+
+msgid "Performers"
+msgstr "Performers"
+
+msgid "Revert selection"
+msgstr "Revert selection"
+
+msgid "Selected track details"
+msgstr "Selected track details"
+
+msgid "That artwork result is no longer available."
+msgstr "That artwork result is no longer available."
+
+msgid "The selected artwork changed; choose it again."
+msgstr "The selected artwork changed; choose it again."
+
+msgid "The selected artwork has unsupported dimensions."
+msgstr "The selected artwork has unsupported dimensions."
+
+msgid "The selected file is not a supported image."
+msgstr "The selected file is not a supported image."
+
+msgid "Title"
+msgstr "Title"
+
+msgid "Goniometer"
+msgstr "Goniometer"
+
+msgid "Oscilloscope"
+msgstr "Oscilloscope"
+
+msgid "Track waveform"
+msgstr "Track waveform"
+
+msgid "Show the full-track waveform in the player seek bar."
+msgstr "Show the full-track waveform in the player seek bar."
+
+msgid "The typeface used across the app. System follows your operating system; the other choices are bundled with QBZ (requires restart)"
+msgstr "The typeface used across the app. System follows your operating system; the other choices are bundled with QBZ (requires restart)"
+
+msgid "Compact header"
+msgstr "Compact header"
+
+msgid "Show less data in album headers."
+msgstr "Show less data in album headers."
+
+msgid "Show full album header"
+msgstr "Show full album header"
+
+msgid "Show compact album header"
+msgstr "Show compact album header"
+
+msgid "Immediate scrobbling"
+msgstr "Immediate scrobbling"
+
+msgid "Send scrobbles immediately while manual offline mode is enabled."
+msgstr "Send scrobbles immediately while manual offline mode is enabled."
+
+msgid "Accumulated scrobbling"
+msgstr "Accumulated scrobbling"
+
+msgid "Queue scrobbles while the network is unavailable and send them when it returns. Last.fm accepts scrobbles up to 2 weeks old."
+msgstr "Queue scrobbles while the network is unavailable and send them when it returns. Last.fm accepts scrobbles up to 2 weeks old."
+
+msgid "Scrobble while logged out"
+msgstr "Scrobble while logged out"
+
+msgid "Continue sending plays to connected scrobblers without a Qobuz session."
+msgstr "Continue sending plays to connected scrobblers without a Qobuz session."
+
+msgid "Focus on playing"
+msgstr "Focus on playing"
+
+msgid "Go to top"
+msgstr "Go to top"
+
+msgid "Quick view"
+msgstr "Quick view"
+
+msgid "Loading album…"
+msgstr "Loading album…"
+
+msgid "Could not load album"
+msgstr "Could not load album"
+
+msgid "This album has no tracks."
+msgstr "This album has no tracks."
+
+msgid "Reactive Rings"
+msgstr "Reactive Rings"
+
+msgid "Control volume through a mixer exposed by the selected ALSA device. If unavailable, direct playback stays fixed at 100%."
+msgstr "Control volume through a mixer exposed by the selected ALSA device. If unavailable, direct playback stays fixed at 100%."
+
+msgid "This ALSA device has no compatible hardware volume control. Direct playback remains fixed at 100%."
+msgstr "This ALSA device has no compatible hardware volume control. Direct playback remains fixed at 100%."
+
+msgid "QBZ could not fully release the previous audio device. See the audio log for details."
+msgstr "QBZ could not fully release the previous audio device. See the audio log for details."
+# Hotkeys: the Spotify-parity playback actions + the keymap preset picker
+
+msgid "Volume Up"
+msgstr "Volume Up"
+
+msgid "Volume Down"
+msgstr "Volume Down"
+
+msgid "Mute / Unmute"
+msgstr "Mute / Unmute"
+
+msgid "Toggle Shuffle"
+msgstr "Toggle Shuffle"
+
+msgid "Cycle Repeat"
+msgstr "Cycle Repeat"
+
+msgid "Like Track"
+msgstr "Like Track"
+
+msgid "Seek Forward"
+msgstr "Seek Forward"
+
+msgid "Seek Back"
+msgstr "Seek Back"
+
+msgid "Keymap"
+msgstr "Keymap"
+
+msgid "Vim"
+msgstr "Vim"
+
+# Local Library QoL: Explorer, scan progress, and per-track metadata editor
+msgid "All years"
+msgstr "All years"
+
+msgid "Explorer columns"
+msgstr "Explorer columns"
+
+msgid "Genre and year"
+msgstr "Genre and year"
+
+msgid "Years"
+msgstr "Years"
+
+msgid "Edit track metadata"
+msgstr "Edit track metadata"
+
+msgid "Building library index"
+msgstr "Building library index"
+
+msgid "Local folders"
+msgstr "Local folders"
+
+msgid "Next track"
+msgstr "Next track"
+
+msgid "Overall"
+msgstr "Overall"
+
+msgid "Previous track"
+msgstr "Previous track"
+
+msgid "Scanning library"
+msgstr "Scanning library"
+
+msgid "Source"
+msgstr "Source"
+
+msgid "The track is no longer in the library."
+msgstr "The track is no longer in the library."
+
+msgid "Updating library index"
+msgstr "Updating library index"
+
+msgid "Edit album"
+msgstr "Edit album"
+
+msgid "Editing a local metadata sidecar"
+msgstr "Editing a local metadata sidecar"
+
+msgid "Media-server metadata is stored in a local sidecar."
+msgstr "Media-server metadata is stored in a local sidecar."
+
+msgid "Media-server metadata can only be edited with a sidecar."
+msgstr "Media-server metadata can only be edited with a sidecar."
+
+msgid "Network file"
+msgstr "Network file"
+
+msgid "Offline download"
+msgstr "Offline download"
+
+msgid "File path"
+msgstr "File path"
+
+msgid "Containing folder"
+msgstr "Containing folder"
+
+msgid "Media item ID"
+msgstr "Media item ID"
+
+msgid "Album ID"
+msgstr "Album ID"
+
+msgid "Server"
+msgstr "Server"
+
+msgid "Duration"
+msgstr "Duration"
+
+msgid "Format"
+msgstr "Format"
+
+msgid "Quality"
+msgstr "Quality"
+
+msgid "Channels"
+msgstr "Channels"
+
+msgid "File size"
+msgstr "File size"
+
+msgid "Location"
+msgstr "Location"
+
+msgid "The media item is no longer available."
+msgstr "The media item is no longer available."
+
+msgid "The local album folder is not currently available."
+msgstr "The local album folder is not currently available."
+
+msgid "Everything is already available offline"
+msgstr "Everything is already available offline"
+
+msgid "Couldn't load that playlist"
+msgstr "Couldn't load that playlist"
+
+msgid "This playlist has no playable tracks"
+msgstr "This playlist has no playable tracks"
+
+msgid "Some tracks are already available offline"
+msgstr "Some tracks are already available offline"
+
+msgid "{} of {} tracks in “{}” are already available offline."
+msgstr "{} of {} tracks in “{}” are already available offline."
+
+msgid "Download the entire playlist again"
+msgstr "Download the entire playlist again"
+
+msgid "Download the entire album again"
+msgstr "Download the entire album again"
+
+msgid "Re-downloads every track and can repair corrupt offline copies."
+msgstr "Re-downloads every track and can repair corrupt offline copies."
+
+msgid "Only missing tracks"
+msgstr "Only missing tracks"
+
+msgid "Keeps existing offline copies and downloads tracks that are not available yet."
+msgstr "Keeps existing offline copies and downloads tracks that are not available yet."
+
+msgid "Send your plays to Last.fm and ListenBrainz. Works for Qobuz, local, and Plex tracks. This switch also decides whether Recommendations may read your listening history from those services."
+msgstr "Send your plays to Last.fm and ListenBrainz. Works for Qobuz, local, and Plex tracks. This switch also decides whether Recommendations may read your listening history from those services."
+
+msgid "PRIVACY"
+msgstr "PRIVACY"
+
+msgid "Listening history"
+msgstr "Listening history"
+
+msgid "Keep a local log of what you play: track, source, how much of it you heard and when. It stays on this machine, per account, and never leaves it unless you enable a scrobbler."
+msgstr "Keep a local log of what you play: track, source, how much of it you heard and when. It stays on this machine, per account, and never leaves it unless you enable a scrobbler."
+
+msgid "Clear listening history"
+msgstr "Clear listening history"
+
+msgid "Deletes every play recorded on this machine for this account. Scrobbles already sent are not affected."
+msgstr "Deletes every play recorded on this machine for this account. Scrobbles already sent are not affected."
+
+msgid "Listening history cleared."
+msgstr "Listening history cleared."
+
+msgid "Couldn't clear listening history."
+msgstr "Couldn't clear listening history."
+
+msgid "Checking ALSA mixer controls…"
+msgstr "Checking ALSA mixer controls…"
+
+msgid "This device exposes multiple playback controls. Choose which one QBZ should use."
+msgstr "This device exposes multiple playback controls. Choose which one QBZ should use."
+
+msgid "The saved mixer control is no longer available. Choose another control."
+msgstr "The saved mixer control is no longer available. Choose another control."
+
+msgid "QBZ does not have permission to read this device's ALSA mixer."
+msgstr "QBZ does not have permission to read this device's ALSA mixer."
+
+msgid "The ALSA mixer is busy. Close the app using it and try again."
+msgstr "The ALSA mixer is busy. Close the app using it and try again."
+
+msgid "The selected ALSA device is no longer available."
+msgstr "The selected ALSA device is no longer available."
+
+msgid "This ALSA device does not expose a mixer."
+msgstr "This ALSA device does not expose a mixer."
+
+msgid "QBZ could not write the selected ALSA mixer control. Direct playback remains fixed at 100%."
+msgstr "QBZ could not write the selected ALSA mixer control. Direct playback remains fixed at 100%."
+
+msgid "Selected mixer control"
+msgstr "Selected mixer control"
+
+msgid "Choose mixer control"
+msgstr "Choose mixer control"
+
+msgid "Change mixer control"
+msgstr "Change mixer control"
+
+msgid "Qobuz Connect could not shut down safely. Quit and reopen QBZ, then try logging out again."
+msgstr "Qobuz Connect could not shut down safely. Quit and reopen QBZ, then try logging out again."
+
+msgid "Show filter panels"
+msgstr "Show filter panels"
+
+msgid "Hide filter panels"
+msgstr "Hide filter panels"
+
+msgid "Already in"
+msgstr "Already in"
+
+msgid "Playlist index updating..."
+msgstr "Playlist index updating..."
+
+msgid "{} of {}"
+msgstr "{} of {}"
+
+msgid "Last playlist"
+msgstr "Last playlist"
+
+msgid "Qobuz Connect can't resolve local tracks. {} track was skipped and wasn't added to the queue. Turn off Qobuz Connect to play it."
+msgid_plural "Qobuz Connect can't resolve local tracks. {} tracks were skipped and weren't added to the queue. Turn off Qobuz Connect to play them."
+msgstr[0] "Qobuz Connect can't resolve local tracks. {} track was skipped and wasn't added to the queue. Turn off Qobuz Connect to play it."
+msgstr[1] "Qobuz Connect can't resolve local tracks. {} tracks were skipped and weren't added to the queue. Turn off Qobuz Connect to play them."
+
+msgid "Qobuz Connect device"
+msgstr "Qobuz Connect device"
+
+msgid "Continue playback on %1"
+msgstr "Continue playback on %1"
+
+msgid "Use the Qobuz Connect queue and keep that device active."
+msgstr "Use the Qobuz Connect queue and keep that device active."
+
+msgid "Continue playback on this device"
+msgstr "Continue playback on this device"
+
+msgid "Use the Qobuz Connect queue and replace the local queue."
+msgstr "Use the Qobuz Connect queue and replace the local queue."
+
+msgid "Continue this device's current playback"
+msgstr "Continue this device's current playback"
+
+msgid "Replace the Qobuz Connect queue and playback state with this device's current queue and position."
+msgstr "Replace the Qobuz Connect queue and playback state with this device's current queue and position."
+
+msgid "Cancel Qobuz Connect"
+msgstr "Cancel Qobuz Connect"
+
+msgid "Keep both queues unchanged and continue the current local playback."
+msgstr "Keep both queues unchanged and continue the current local playback."
+
+msgid "Choose how to continue"
+msgstr "Choose how to continue"
+
+msgid "This device and another Qobuz Connect renderer both have playback in progress. Choose which queue and device should continue."
+msgstr "This device and another Qobuz Connect renderer both have playback in progress. Choose which queue and device should continue."
+
+msgid "Ask every time"
+msgstr "Ask every time"
+
+msgid "Continue on the active renderer"
+msgstr "Continue on the active renderer"
+
+msgid "Continue here with the Qobuz Connect queue"
+msgstr "Continue here with the Qobuz Connect queue"
+
+msgid "Continue local playback and replace the Qobuz Connect queue"
+msgstr "Continue local playback and replace the Qobuz Connect queue"
+
+msgid "When playback conflicts"
+msgstr "When playback conflicts"
+
+msgid "Ask each time or automatically choose which queue and device should continue."
+msgstr "Ask each time or automatically choose which queue and device should continue."
+
+msgid "Import / Export"
+msgstr "Import / Export"
+
+msgid "This bundle holds the app's own settings: audio, playback, appearance, integrations. It does not contain your Qobuz favorites, playlists, blacklist or purchases."
+msgstr "This bundle holds the app's own settings: audio, playback, appearance, integrations. It does not contain your Qobuz favorites, playlists, blacklist or purchases."
+
+msgid "BLACKLIST"
+msgstr "BLACKLIST"
+
+msgid "Export blacklist…"
+msgstr "Export blacklist…"
+
+msgid "Save your blocked artists and albums as a file you can hand to another QBZ user."
+msgstr "Save your blocked artists and albums as a file you can hand to another QBZ user."
+
+msgid "Import blacklist…"
+msgstr "Import blacklist…"
+
+msgid "Add blocked artists and albums from a file. Nothing already on your blacklist is removed."
+msgstr "Add blocked artists and albums from a file. Nothing already on your blacklist is removed."
+
+msgid "Import…"
+msgstr "Import…"
+
+msgid "Import failed."
+msgstr "Import failed."
+
+msgid "Not a QBZ blacklist file."
+msgstr "Not a QBZ blacklist file."
+
+msgid "Choose a blacklist file"
+msgstr "Choose a blacklist file"
+
+msgid "Imported {} artists and {} albums ({} already blocked)."
+msgstr "Imported {} artists and {} albums ({} already blocked)."
+
+msgid "Member"
+msgstr "Member"
+
+msgid "QBZ requires a Qobuz™ account. Without an active subscription, playback is limited to 30-second previews; favorites, playlists and purchases still work. Your credentials are sent directly to Qobuz™."
+msgstr "QBZ requires a Qobuz™ account. Without an active subscription, playback is limited to 30-second previews; favorites, playlists and purchases still work. Your credentials are sent directly to Qobuz™."
+
+msgid "ACCOUNT MIGRATION"
+msgstr "ACCOUNT MIGRATION"
+
+msgid "Moves favorites, playlists and followed playlists from one Qobuz account into another, adding only what is missing and deleting nothing on either side. It does not move subscriptions or purchases: those stay with the Qobuz account that holds them."
+msgstr "Moves favorites, playlists and followed playlists from one Qobuz account into another, adding only what is missing and deleting nothing on either side. It does not move subscriptions or purchases: those stay with the Qobuz account that holds them."
+
+msgid "Create migration snapshot"
+msgstr "Create migration snapshot"
+
+msgid "Sign in with the account you are moving FROM, then save its favorites and playlists to a file in its QBZ profile."
+msgstr "Sign in with the account you are moving FROM, then save its favorites and playlists to a file in its QBZ profile."
+
+msgid "Create…"
+msgstr "Create…"
+
+msgid "Migrate into this account"
+msgstr "Migrate into this account"
+
+msgid "Sign in with the account you are moving TO, then pick a snapshot below. Safe to repeat: a second run adds nothing."
+msgstr "Sign in with the account you are moving TO, then pick a snapshot below. Safe to repeat: a second run adds nothing."
+
+msgid "No snapshots yet. Sign in with the old account and create one first."
+msgstr "No snapshots yet. Sign in with the old account and create one first."
+
+msgid "{} favorites · {} playlists · {} followed"
+msgstr "{} favorites · {} playlists · {} followed"
+
+msgid "this account"
+msgstr "this account"
+
+msgid "Migrate…"
+msgstr "Migrate…"
+
+msgid "Account {} · {}"
+msgstr "Account {} · {}"
+
+msgid "Reading favorites and playlists…"
+msgstr "Reading favorites and playlists…"
+
+msgid "Reading this account…"
+msgstr "Reading this account…"
+
+msgid "Adding favorites…"
+msgstr "Adding favorites…"
+
+msgid "Adding playlists…"
+msgstr "Adding playlists…"
+
+msgid "Following playlists…"
+msgstr "Following playlists…"
+
+msgid "{} / {} — {}"
+msgstr "{} / {} — {}"
+
+msgid "Snapshot failed."
+msgstr "Snapshot failed."
+
+msgid "Migration failed."
+msgstr "Migration failed."
+
+msgid "Saved {} favorites, {} playlists and {} followed playlists to {}"
+msgstr "Saved {} favorites, {} playlists and {} followed playlists to {}"
+
+msgid "That snapshot was taken from this same account."
+msgstr "That snapshot was taken from this same account."
+
+msgid "Nothing to migrate: everything is already in this account."
+msgstr "Nothing to migrate: everything is already in this account."
+
+msgid "Added {} favorites, {} playlists ({} tracks) and {} followed playlists; {} were already there."
+msgstr "Added {} favorites, {} playlists ({} tracks) and {} followed playlists; {} were already there."
+
+msgid "{} items failed; see the log."
+msgstr "{} items failed; see the log."
+
+msgid "Also copy the local profile"
+msgstr "Also copy the local profile"
+
+msgid "Library folders, playlist folders and order, pinned items, blacklist and preferences of the old account's QBZ profile on this computer."
+msgstr "Library folders, playlist folders and order, pinned items, blacklist and preferences of the old account's QBZ profile on this computer."
+
+msgid "Media server connections"
+msgstr "Media server connections"
+
+msgid "Plex, Jellyfin and Subsonic settings, including their credentials."
+msgstr "Plex, Jellyfin and Subsonic settings, including their credentials."
+
+msgid "Scrobbler accounts"
+msgstr "Scrobbler accounts"
+
+msgid "Last.fm and ListenBrainz settings, including their credentials."
+msgstr "Last.fm and ListenBrainz settings, including their credentials."
+
+msgid "The listen log and the events behind offline recommendations."
+msgstr "The listen log and the events behind offline recommendations."
+
+msgid "Local profile: {} rows copied; {} playlist rows had no match."
+msgstr "Local profile: {} rows copied; {} playlist rows had no match."
+
+msgid "The library already had folders: run a rescan to index the added ones."
+msgstr "The library already had folders: run a rescan to index the added ones."
+
+msgid "Restart QBZ to see the migrated local profile."
+msgstr "Restart QBZ to see the migrated local profile."
+
+msgid "The local profile could not be copied; see the log."
+msgstr "The local profile could not be copied; see the log."
+msgid "Delete…"
+msgstr "Delete…"
+
+msgid "Delete migration snapshot?"
+msgstr "Delete migration snapshot?"
+
+msgid "This removes only the migration bundle. The old account's QBZ profile and user data are kept."
+msgstr "This removes only the migration bundle. The old account's QBZ profile and user data are kept."
+
+msgid "Delete snapshot"
+msgstr "Delete snapshot"
+
+msgid "Migration snapshot deleted."
+msgstr "Migration snapshot deleted."
+
+msgid "Could not delete the migration snapshot."
+msgstr "Could not delete the migration snapshot."
+
+msgid "{} is refreshing its library ({} items scanned). Wait for it to finish, then sync again."
+msgstr "{} is refreshing its library ({} items scanned). Wait for it to finish, then sync again."
+
+msgid "No Plex, Jellyfin or Subsonic connection was stored in the source profile, so none could be copied."
+msgstr "No Plex, Jellyfin or Subsonic connection was stored in the source profile, so none could be copied."
+
+msgid "Media server connections copied: {} of {}."
+msgstr "Media server connections copied: {} of {}."
+
+msgid "Copying local profile…"
+msgstr "Copying local profile…"
+
+msgid "Refreshing migrated data…"
+msgstr "Refreshing migrated data…"
+
+msgid "This only happens once. Please wait for it to finish and do not close the window."
+msgstr "This only happens once. Please wait for it to finish and do not close the window."
+
+msgid "You can close this panel; the migration will continue in the background."
+msgstr "You can close this panel; the migration will continue in the background."
+
+msgid "From"
+msgstr "From"
+
+msgid "To"
+msgstr "To"
+
+msgid "Step {} of {}"
+msgstr "Step {} of {}"
+
+msgid "Elapsed: {}"
+msgstr "Elapsed: {}"
+
+msgid "Remaining: {}"
+msgstr "Remaining: {}"
+
+msgid "Review the saved source profiles, choose what to copy, and confirm the signed-in destination account."
+msgstr "Review the saved source profiles, choose what to copy, and confirm the signed-in destination account."
+
+msgid "Migrate account data"
+msgstr "Migrate account data"
+
+msgid "Start migration"
+msgstr "Start migration"
+
+msgid "What is a migration profile?"
+msgstr "What is a migration profile?"
+
+msgid "It is a one-time bundle created from the source account. It preserves that account's Qobuz favorites and playlists so they can be added to the account signed in now. Optional local data is copied directly from the old QBZ profile on this computer. Deleting the bundle does not delete the old profile or either account's data."
+msgstr "It is a one-time bundle created from the source account. It preserves that account's Qobuz favorites and playlists so they can be added to the account signed in now. Optional local data is copied directly from the old QBZ profile on this computer. Deleting the bundle does not delete the old profile or either account's data."
+
+msgid "SAVED SOURCE PROFILES"
+msgstr "SAVED SOURCE PROFILES"
+
+msgid "No saved migration profiles are available."
+msgstr "No saved migration profiles are available."
+
+msgid "Selected"
+msgstr "Selected"
+
+msgid "Select"
+msgstr "Select"
+
+msgid "MIGRATION DIRECTION"
+msgstr "MIGRATION DIRECTION"
+
+msgid "Select a source profile above"
+msgstr "Select a source profile above"
+
+msgid "Signed-in Qobuz account · ID {}"
+msgstr "Signed-in Qobuz account · ID {}"
+
+msgid "WHAT TO COPY"
+msgstr "WHAT TO COPY"
+
+msgid "Migration is additive: it does not remove favorites or playlists from either account."
+msgstr "Migration is additive: it does not remove favorites or playlists from either account."
+
+msgid "That library folder is disabled."
+msgstr "That library folder is disabled."
+
+msgid "That folder overlaps an existing library folder."
+msgstr "That folder overlaps an existing library folder."
+
+msgid "This purchase is not available for download."
+msgstr "This purchase is not available for download."
+
+msgid "Could not save playback preference."
+msgstr "Could not save playback preference."
+
+msgid "Qobuz · stream/offline copy"
+msgstr "Qobuz · stream/offline copy"
+
+msgid "Local purchase"
+msgstr "Local purchase"
+
+msgid "Play with"
+msgstr "Play with"
+
+msgid "Download purchase"
+msgstr "Download purchase"
+
+msgid "1 track purchased"
+msgstr "1 track purchased"
+
+msgid "{} tracks purchased"
+msgstr "{} tracks purchased"
+
+msgid "This copy cannot be continued right now."
+msgstr "This copy cannot be continued right now."
+
+msgid "Library folder refreshed."
+msgstr "Library folder refreshed."
+
+msgid "Download another copy"
+msgstr "Download another copy"
+
+msgid "Complete"
+msgstr "Complete"
+
+msgid "Partial"
+msgstr "Partial"
+
+msgid "Missing files"
+msgstr "Missing files"
+
+msgid "Changed files"
+msgstr "Changed files"
+
+msgid "Unreadable files"
+msgstr "Unreadable files"
+
+msgid "Local purchase copies"
+msgstr "Local purchase copies"
+
+msgid "{} of {} tracks"
+msgstr "{} of {} tracks"
+
+msgid "Continue copy"
+msgstr "Continue copy"
+
+msgid "Add to Local Library"
+msgstr "Add to Local Library"
+
+msgid "In Local Library"
+msgstr "In Local Library"
+
+msgid "{} of {} tracks available in this folder."
+msgstr "{} of {} tracks available in this folder."
+
+msgid "{} failed"
+msgstr "{} failed"
+
+msgid "{} cancelled"
+msgstr "{} cancelled"
+
+msgid "Download finished"
+msgstr "Download finished"
+
+msgid "Not now"
+msgstr "Not now"
+
+msgid "Show location"
+msgstr "Show location"
+
+msgid "Remove from Local Library"
+msgstr "Remove from Local Library"
+
+msgid "Forget download record"
+msgstr "Forget download record"
+
+msgid "Could not open that folder."
+msgstr "Could not open that folder."
+
+msgid "Could not remove that library folder."
+msgstr "Could not remove that library folder."
+
+msgid "Could not forget that download."
+msgstr "Could not forget that download."
+
+msgid "Shuffle: On"
+msgstr "Shuffle: On"
+
+msgid "Shuffle: Off"
+msgstr "Shuffle: Off"
+
+msgid "Repeat: Off"
+msgstr "Repeat: Off"
+
+msgid "Repeat: All"
+msgstr "Repeat: All"
+
+msgid "Repeat: One"
+msgstr "Repeat: One"
+
+msgid "Show album artwork in Queue track list"
+msgstr "Show album artwork in Queue track list"
+
+msgid "Replace queue track numbers with album cover thumbnails. Off by default."
+msgstr "Replace queue track numbers with album cover thumbnails. Off by default."
+
+msgid "Show album artwork in Library track list"
+msgstr "Show album artwork in Library track list"
+
+msgid "Display the album cover thumbnail between the track number and title. Off by default."
+msgstr "Display the album cover thumbnail between the track number and title. Off by default."
+
+msgid "Play random"
+msgstr "Play random"
+
+msgid "Play selected"
+msgstr "Play selected"
+
+msgid "Cancel selection"
+msgstr "Cancel selection"
+
+msgid "QOBUZ LINKS"
+msgstr "QOBUZ LINKS"
+
+msgid "Open Qobuz links in QBZ"
+msgstr "Open Qobuz links in QBZ"
+
+msgid "Make QBZ the handler for qobuzapp:// links from your browser. Off, the official Qobuz app keeps them; QBZ's own qbz:// links always open here."
+msgstr "Make QBZ the handler for qobuzapp:// links from your browser. Off, the official Qobuz app keeps them; QBZ's own qbz:// links always open here."
+
+msgid "Look for better replacement"
+msgstr "Look for better replacement"
+
+msgid "Remove all favorites from this release"
+msgstr "Remove all favorites from this release"
+
+msgid "Remove all favorites from this release?"
+msgstr "Remove all favorites from this release?"
+
+msgid "Remove the album and every track from this release from your Library?"
+msgstr "Remove the album and every track from this release from your Library?"
+
+msgid "No replacement releases found"
+msgstr "No replacement releases found"
+
+msgid "Choosing a result opens the release. Your existing favorites are not changed."
+msgstr "Choosing a result opens the release. Your existing favorites are not changed."
+
+msgid "No favorites from this release to remove"
+msgstr "No favorites from this release to remove"
+
+msgid "Favorites removed from this release"
+msgstr "Favorites removed from this release"
+
+msgid "Could not remove favorites from this release"
+msgstr "Could not remove favorites from this release"
+
+msgid "Some favorites could not be removed"
+msgstr "Some favorites could not be removed"
+
+msgid "Replace in Library"
+msgstr "Replace in Library"
+
+msgid "Replacing favorite..."
+msgstr "Replacing favorite..."
+
+msgid "The selected release replaces the unavailable album favorite."
+msgstr "The selected release replaces the unavailable album favorite."
+
+msgid "The matching track from the selected release replaces the unavailable favorite."
+msgstr "The matching track from the selected release replaces the unavailable favorite."
+
+msgid "Could not open the selected release"
+msgstr "Could not open the selected release"
+
+msgid "Could not find a matching track in this release"
+msgstr "Could not find a matching track in this release"
+
+msgid "Could not add the replacement favorite"
+msgstr "Could not add the replacement favorite"
+
+msgid "Favorite replaced"
+msgstr "Favorite replaced"
+
+msgid "The replacement was added, but the unavailable favorite could not be removed"
+msgstr "The replacement was added, but the unavailable favorite could not be removed"
+
+msgid "Failed to send playback to the selected device"
+msgstr "Failed to send playback to the selected device"
+
+msgid "Move up"
+msgstr "Move up"
+
+msgid "Move down"
+msgstr "Move down"
+
+msgid "Download"
+msgstr "Download"
+
+msgid "Edit"
+msgstr "Edit"
+
+msgid "Grid"
+msgstr "Grid"
+
+msgid "List"
+msgstr "List"
+
+msgid "Tree"
+msgstr "Tree"

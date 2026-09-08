@@ -1,0 +1,12 @@
+{
+  "albums": {
+    "offset": 0,
+    "limit": 500,
+    "total": 0,
+    "items": []
+  },
+  "user": {
+    "id": "<REDACTED>",
+    "login": "<REDACTED>"
+  }
+}

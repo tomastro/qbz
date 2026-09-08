@@ -1,0 +1,33 @@
+name: Redirect PRs to pre-release
+
+on:
+  # No contributor code is checked out or executed. pull_request_target gives
+  # this API-only workflow the write token it needs for PRs opened from forks;
+  # pull_request downgrades GITHUB_TOKEN to read-only for those PRs.
+  pull_request_target:
+    branches: [main]
+    types: [opened]
+
+jobs:
+  redirect:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+
+            // Change base branch from main to pre-release
+            await github.rest.pulls.update({
+              ...context.repo,
+              pull_number: pr.number,
+              base: 'pre-release'
+            });
+
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: pr.number,
+              body: `Base branch changed from \`main\` to \`pre-release\` automatically.\n\nIn this project, \`main\` is reserved for tagged releases. All PRs should target \`pre-release\` for integration testing first. Thanks!`
+            });

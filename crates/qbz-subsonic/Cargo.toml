@@ -1,0 +1,20 @@
+[package]
+name = "qbz-subsonic"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Subsonic / OpenSubsonic integration for QBZ: HTTP client, envelope parsing, bit-perfect stream URLs (frontend-agnostic)"
+
+[dependencies]
+reqwest = { workspace = true, features = ["json"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Subsonic token auth is md5(password + salt). Not a security choice of ours —
+# it is what the protocol specifies, and the alternative it replaces is sending
+# the password in clear text on every request.
+md-5 = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }
+rustls = { version = "0.23", features = ["aws_lc_rs"] }

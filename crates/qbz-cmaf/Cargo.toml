@@ -1,0 +1,17 @@
+[package]
+name = "qbz-cmaf"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "CMAF segment parsing and crypto for Qobuz streaming"
+
+[dependencies]
+aes = "0.8"
+cbc = "0.1"
+ctr = "0.9"
+hkdf = "0.12"
+sha2 = "0.10"
+base64 = { workspace = true }
+md-5 = { workspace = true }
+thiserror = { workspace = true }
+log = { workspace = true }

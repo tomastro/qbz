@@ -1,0 +1,11 @@
+[package]
+name = "qbz-text-utils"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Shared text/date utilities (HTML stripping, localized release dates) for the qbz frontend."
+
+[dependencies]
+chrono = { workspace = true, features = ["unstable-locales"] }
+qbz-i18n = { path = "../qbz-i18n" }

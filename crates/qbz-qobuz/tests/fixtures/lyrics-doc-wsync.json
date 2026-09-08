@@ -1,0 +1,89 @@
+{
+    "album_id": "gvcirtodd95kc",
+    "track_id": 266725027,
+    "translation_langs": [
+        "pt",
+        "de",
+        "fr",
+        "es",
+        "it"
+    ],
+    "publishers": [
+        {
+            "copyright": "Kobalt Music Publishing Ltd., Universal Music Publishing Group",
+            "zones": [
+                "WW"
+            ]
+        }
+    ],
+    "writers": "Billie EIlish O'Connell, Finneas O'Connell",
+    "original": {
+        "type": "wsync",
+        "lang": "en",
+        "lines": [
+            {
+                "line": "Oh, mm-mm",
+                "words": [
+                    {
+                        "word": "Oh,",
+                        "start": 1750,
+                        "end": 2480
+                    },
+                    {
+                        "word": "mm-mm",
+                        "start": 2480,
+                        "end": 4770
+                    }
+                ],
+                "start": 1750,
+                "end": 4770
+            },
+            {
+                "line": "",
+                "words": []
+            },
+            {
+                "line": "I could eat that girl for lunch",
+                "words": [
+                    {
+                        "word": "I",
+                        "start": 5320,
+                        "end": 5610
+                    },
+                    {
+                        "word": "could",
+                        "start": 5610,
+                        "end": 5950
+                    },
+                    {
+                        "word": "eat",
+                        "start": 5950,
+                        "end": 6170
+                    },
+                    {
+                        "word": "that",
+                        "start": 6170,
+                        "end": 6400
+                    },
+                    {
+                        "word": "girl",
+                        "start": 6400,
+                        "end": 6530
+                    },
+                    {
+                        "word": "for",
+                        "start": 6530,
+                        "end": 6700
+                    },
+                    {
+                        "word": "lunch",
+                        "start": 6700,
+                        "end": 6990
+                    }
+                ],
+                "start": 5320,
+                "end": 6990
+            }
+        ]
+    }
+}

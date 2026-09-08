@@ -1,0 +1,14 @@
+[package]
+name = "qbz-log"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Frontend-agnostic logging core for qbz: TeeLogger (stderr+ring+file), write-time secret redaction, and a GitHub-ready diagnostics bundle."
+
+[dependencies]
+log = { workspace = true }
+regex = { workspace = true }
+chrono = { workspace = true }
+env_logger = "0.11"
+dirs = "5"

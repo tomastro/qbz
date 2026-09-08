@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  QBZ Windows installer — WiX authoring (revised 2026-08-26, contract §10).
+  Destination in the repo: packaging/windows/qbz.wxs plus
+  packaging/icons/icon.ico.
+
+  Build (see release-windows.yml). NOTE the version pin: WiX 6+ binary
+  releases require accepting the OSMF EULA, so CI deliberately stays on the
+  last compatible pre-OSMF toolchain. Install wix globally at version 5.0.2,
+  then run:
+    wix build packaging/windows/qbz.wxs -arch x64 \
+      -d SourceDir=<abs Windows path to the windeployqt dir> \
+      -d ProductVersion=x.y.z -d FullVersion=x.y.z-rc.1 \
+      -d IconPath=<abs Windows path to icon.ico> -o QBZ_<ver>_x64.msi
+
+  This authoring is valid on WiX v5 (the v4 XML namespace is expected, and
+  <Files> exists since v5). Do not reach for Package/@Id (v6+) or
+  Scope="perMachineOrUser" (v7+).
+
+  Contract:
+    * per-user (no UAC) into %LOCALAPPDATA%\Programs\QBZ
+    * UpgradeCode is FIXED FOREVER — generated once below; changing it stops
+      upgrades from replacing older installs.
+    * the whole windeployqt directory is harvested (Files Include="**") —
+      subdirectories ARE recreated (verified in HarvestFilesAndPayloadsCommand.cs:
+      files are grouped by RecursiveDir and a Directory row is created per group),
+      so platforms\, qml\ and imageformats\ land correctly. Only qbz.exe is
+      authored explicitly (icon, shortcuts, AUMID, protocols).
+    * `-arch x64` is NOT optional: the harvester stamps Win64 on every
+      generated component from the build platform, and the CLI default is x86.
+    * AppUserModelID com.blitzfc.qbz on the Start-menu shortcut: required by
+      WinRT toasts (W21) and used by SMTC for the app identity (W11).
+      Needs InstallerVersion >= 500 (MsiShortcutProperty is MSI 5.0+).
+    * URL protocol qbz:// (the CFBundleURLSchemes analogue): inert until
+      single-instance + deep links land (W23/W24), harmless before.
+      qobuzapp:// is a runtime opt-in (Settings > Integrations,
+      src/link_handler_qt.rs), never an installer claim.
+    * LGPL notices: the workflow copies LICENSE + licenses\*.txt into
+      dist\qbz\ BEFORE this runs, so the harvest picks them up. No authoring
+      here. See research/04 §8.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+
+  <Package Name="QBZ"
+           Manufacturer="blitzfc"
+           Version="$(var.ProductVersion)"
+           UpgradeCode="CA953936-F2A6-430E-BC69-E582F5F0B8BD"
+           Scope="perUser"
+           Language="1033"
+           Codepage="65001"
+           InstallerVersion="500"
+           Compressed="yes">
+
+    <SummaryInformation Description="QBZ — Qobuz hi-res player" />
+
+    <MajorUpgrade AllowSameVersionUpgrades="yes"
+                  DowngradeErrorMessage="A newer version of QBZ is already installed." />
+
+    <!-- One embedded cab. The default MaximumUncompressedMediaSize is 200 MB
+         and the payload sits right on it; raising it avoids a pointless split. -->
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high"
+                   MaximumUncompressedMediaSize="800" />
+
+    <!-- Id carries .ico on purpose: it becomes the MSI stream name and the
+         name the shell extracts to. Without it the ARP icon may not render. -->
+    <Icon Id="QbzIcon.ico" SourceFile="$(var.IconPath)" />
+    <Property Id="ARPPRODUCTICON" Value="QbzIcon.ico" />
+    <Property Id="ARPCOMMENTS"
+              Value="QBZ $(var.FullVersion) — experimental, unsupported Windows build. WASAPI Exclusive supports bit-perfect output on compatible devices; System Default uses shared mode. https://github.com/vicrodh/qbz" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/vicrodh/qbz" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/vicrodh/qbz/issues" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+
+    <!-- WiX 5 does not expose PerUserProgramFilesFolder as a legal
+         StandardDirectory id. Author its documented filesystem equivalent
+         explicitly: %LOCALAPPDATA%\Programs\QBZ. -->
+    <StandardDirectory Id="LocalAppDataFolder">
+      <Directory Id="LocalProgramsFolder" Name="Programs">
+        <Directory Id="INSTALLFOLDER" Name="QBZ" />
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder" />
+
+    <Feature Id="Main" Title="QBZ" Level="1" AllowAbsent="no">
+      <ComponentGroupRef Id="AppFiles" />
+      <ComponentRef Id="MainExe" />
+      <ComponentRef Id="StartMenuShortcut" />
+      <ComponentRef Id="UrlProtocols" />
+    </Feature>
+
+    <!-- No UI extension on purpose: a per-user POC needs no dialog set —
+         msiexec shows its default progress UI. (Adding WixUI requires
+         `wix extension add WixToolset.UI.wixext/<version>` + `-ext` + a
+         license.rtf; none of that exists yet.) -->
+  </Package>
+
+  <Fragment>
+    <!-- Everything windeployqt produced, except the exe (authored below).
+         NOTE: these generated components use FILE keypaths under a per-user
+         directory, which is an ICE38 violation. WiX does NOT fix this for
+         Scope="perUser" — it is a documented limitation ("using Files in
+         per-user packages generates components and files that do not pass ICE
+         validation") and an open bug (wixtoolset/issues#8633). It does not
+         break the build because `wix build` does not run ICE validation
+         (only MSBuild/.wixproj does, or an explicit `wix msi validate`).
+         Do NOT "fix" it by switching to perUserOrMachine — that reintroduces
+         the elevation path the contract removed. Do NOT add `wix msi validate`
+         to the workflow: ~2000 components would fail it. -->
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Files Include="$(var.SourceDir)\**">
+        <Exclude Files="$(var.SourceDir)\qbz.exe" />
+      </Files>
+    </ComponentGroup>
+
+    <!-- Authored components DO get an HKCU keypath, since that part is free. -->
+    <!-- The fixed component GUID is required because this component contains
+         both a file and a registry keypath; WiX cannot derive `Guid="*"` for
+         that combination. Never change it after the first published MSI. -->
+    <Component Id="MainExe" Directory="INSTALLFOLDER"
+               Guid="D4C16DBE-8A42-46DC-9685-B08F93B058B0">
+      <File Id="QbzExe" Source="$(var.SourceDir)\qbz.exe" />
+      <RegistryValue Root="HKCU" Key="Software\blitzfc\QBZ" Name="InstallDir"
+                     Type="string" Value="[INSTALLFOLDER]" KeyPath="yes" />
+    </Component>
+
+    <Component Id="StartMenuShortcut" Directory="ProgramMenuFolder">
+      <Shortcut Id="QbzStartMenu" Name="QBZ" Description="Qobuz hi-res player"
+                Target="[INSTALLFOLDER]qbz.exe" WorkingDirectory="INSTALLFOLDER"
+                Icon="QbzIcon.ico">
+        <!-- AppUserModelID: toasts (W21) + SMTC identity (W11) -->
+        <ShortcutProperty Key="System.AppUserModel.ID" Value="com.blitzfc.qbz" />
+      </Shortcut>
+      <RemoveFolder Id="RemoveProgramMenu" On="uninstall" />
+      <!-- The SECOND half of the toast identity, and the reason it is here and
+           not only on the shortcut above: Windows resolves an unpackaged app's
+           AppUserModelID through either a Start-menu shortcut carrying the
+           property OR this registry key. The app READS this key at startup to
+           decide whether to offer the notifications setting at all, so a
+           portable unzip — which has no shortcut — tells the truth instead
+           of showing a switch that can never produce a toast. -->
+      <RegistryKey Root="HKCU" Key="Software\Classes\AppUserModelId\com.blitzfc.qbz">
+        <RegistryValue Name="DisplayName" Type="string" Value="QBZ" />
+        <RegistryValue Name="IconUri" Type="string" Value="[INSTALLFOLDER]qbz.exe" />
+      </RegistryKey>
+      <RegistryValue Root="HKCU" Key="Software\blitzfc\QBZ" Name="StartMenu"
+                     Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+
+    <!-- qbz:// — analogue of CFBundleURLSchemes in Info.plist -->
+    <Component Id="UrlProtocols" Directory="INSTALLFOLDER">
+      <RegistryKey Root="HKCU" Key="Software\Classes\qbz">
+        <RegistryValue Type="string" Value="URL:QBZ Protocol" />
+        <RegistryValue Name="URL Protocol" Type="string" Value="" />
+        <RegistryValue Key="DefaultIcon" Type="string" Value="&quot;[INSTALLFOLDER]qbz.exe&quot;,0" />
+        <RegistryValue Key="shell\open\command" Type="string" Value="&quot;[INSTALLFOLDER]qbz.exe&quot; &quot;%1&quot;" />
+      </RegistryKey>
+      <!-- qobuzapp:// (the official client's scheme) is NOT registered by the
+           installer: it is a user choice — Settings > Integrations > "Open
+           Qobuz links in QBZ" (src/link_handler_qt.rs) writes and removes the
+           same shape of key at runtime. -->
+      <RegistryValue Root="HKCU" Key="Software\blitzfc\QBZ" Name="Protocols"
+                     Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+  </Fragment>
+</Wix>

@@ -1,0 +1,21 @@
+[package]
+name = "qbz-cache"
+version = "0.1.0"
+edition = "2021"
+description = "Audio caching system for QBZ - L1 memory + L2 disk caches"
+authors = ["blitzkriegfc"]
+
+[dependencies]
+# Logging
+log = "0.4"
+
+# Serialization (for stats)
+serde = { version = "1", features = ["derive"] }
+
+# File system utilities
+dirs = "6"
+filetime = "0.2"
+
+# Image cache index + URL hashing
+rusqlite = { version = "0.40", features = ["bundled"] }
+md-5 = "0.10"
