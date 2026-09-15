@@ -253,8 +253,9 @@ Rectangle {
         anchors.bottom: parent.bottom
         // Mode-aware height (AppShell.slint:396): Small collapses to one
         // header-tall row; New/Classic/Large keep the full 112px.
-        height: (QbzShell.npbMode === 2 ? theme.npbSmallHeight : theme.npbLargeHeight) + root.bottomSafeInset
+        height: (root.isMobile ? 60 : (QbzShell.npbMode === 2 ? theme.npbSmallHeight : theme.npbLargeHeight)) + root.bottomSafeInset
         bottomSafeInset: root.bottomSafeInset
+        isMobile: root.isMobile
         // The shared hover-tooltip overlay (declared further down — id
         // references resolve at completion). All four modes consume it for
         // Shuffle/Repeat state; the full bar also uses it for Qobuz Connect.

@@ -1,4 +1,4 @@
-// NowPlayingBar SHELL — the mode seam (NowPlayingBar.slint, phase 18):
+﻿// NowPlayingBar SHELL — the mode seam (NowPlayingBar.slint, phase 18):
 // mounts NowPlayingBarSmall for mode 2 (Small) and the full PlayerBar for
 // modes 0 (New) / 1 (Classic) / 3 (Large). AppShell pins the height
 // mode-aware (42px Small / 112px otherwise).
@@ -16,6 +16,7 @@ Rectangle {
     // Shuffle/Repeat state, and the full bar also uses it for Qobuz Connect.
     property Item tooltip: null
     property real bottomSafeInset: 0
+    property bool isMobile: false
 
     QbzTheme { id: theme }
     color: theme.surfaceCard
@@ -27,7 +28,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.bottomMargin: root.bottomSafeInset
-        source: QbzShell.npbMode === 2 ? "NowPlayingBarSmall.qml" : "PlayerBar.qml"
+        source: root.isMobile ? "NowPlayingBarMobile.qml" : (QbzShell.npbMode === 2 ? "NowPlayingBarSmall.qml" : "PlayerBar.qml")
     }
 
     // Same shape as AppShell's viewLoader "kind" Binding: applies the moment

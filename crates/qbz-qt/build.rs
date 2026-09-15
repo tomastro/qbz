@@ -1,4 +1,4 @@
-use std::path::Path;
+﻿use std::path::Path;
 
 use cxx_qt_build::{CxxQtBuilder, QmlModule};
 
@@ -649,6 +649,7 @@ fn main() {
                 "qml/shell/LyricsPanel.qml",
                 "qml/shell/NowPlayingBar.qml",
                 "qml/shell/NowPlayingBarSmall.qml",
+                "qml/shell/NowPlayingBarMobile.qml",
                 "qml/shell/PlayerBar.qml",
                 "qml/shell/QueuePanel.qml",
                 // Kiosk shell (2026-08-02 kiosk-port contract). The router is
