@@ -44,6 +44,8 @@
 //! menus away worked fine. Fixed 2026-08-21, on the owner's Mac mini. A stale
 //! note is not a comment; it is a downgrade with an excuse attached.
 
+#[cfg(target_os = "android")]
+use crate::android_rfd as rfd;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, LazyLock};

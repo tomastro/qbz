@@ -16,6 +16,9 @@
 //! flip its glyph live; views also seed from `offline_qt::is_cached` at
 //! document build time.
 
+#[cfg(target_os = "android")]
+use crate::android_open as open;
+
 use std::collections::{HashMap, HashSet};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, OnceLock};

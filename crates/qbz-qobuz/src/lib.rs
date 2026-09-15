@@ -35,6 +35,7 @@ pub mod bundle;
 pub mod client;
 pub mod cmaf;
 pub mod delegated;
+pub mod dns;
 pub mod endpoints;
 pub mod error;
 pub mod forbidden_breaker;

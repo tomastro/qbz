@@ -11,6 +11,15 @@ license.workspace = true
 name = "qbz"
 path = "src/main.rs"
 
+[lib]
+# Qt for Android loads the application entry point from a shared object.  Keep
+# the desktop binary above and compile the exact same crate root as a cdylib;
+# the Android-only exported `main` shim at the bottom of main.rs is what
+# QtActivity invokes.
+name = "qbz_qt_android"
+path = "src/main.rs"
+crate-type = ["cdylib"]
+
 [dependencies]
 cxx = "1"
 cxx-qt = "0.7"
@@ -47,8 +56,6 @@ dirs = "5"
 # protocols (GNOME/KDE/sway/niri/Hyprland), falling back to X11 when Wayland
 # is absent (#514 — without it arboard is X11-only and every copy fails on
 # Wayland-only sessions).
-arboard = { version = "3", features = ["wayland-data-control"] }
-
 qbz-core = { path = "../qbz-core" }
 qbz-app = { path = "../qbz-app" }
 qbz-audio = { path = "../qbz-audio" }
@@ -140,7 +147,16 @@ image = { version = "0.25", default-features = false, features = ["jpeg", "png"]
 # rfd's "tokio" feature: it would switch the shared zbus 5 executor choice.
 # `default-features = false` keeps the GTK3 backend out; the xdg-portal path
 # is the Wayland-correct one and needs no extra system libs.
+
+[target.'cfg(not(target_os = "android"))'.dependencies]
+arboard = { version = "3", features = ["wayland-data-control"] }
 rfd = { version = "0.17", default-features = false, features = ["xdg-portal"] }
+
+[target.'cfg(target_os = "android")'.dependencies]
+jni = "0.21"
+jni22 = { package = "jni", version = "0.22" }
+rustls = { version = "0.23", features = ["aws_lc_rs"] }
+rustls-platform-verifier = "0.7"
 
 # Linux system tray via StatusNotifierItem (src/tray_linux.rs). macOS and
 # Windows use their native implementations in src/tray_macos.rs and

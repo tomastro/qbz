@@ -1,4 +1,4 @@
-// Top header bar — QML port of crates/qbz-ui/ui/shell/HeaderBar.slint.
+﻿// Top header bar — QML port of crates/qbz-ui/ui/shell/HeaderBar.slint.
 //
 // Left: the three "sacred" nav buttons (sidebar cycle, back, forward) and,
 // after them, the section nav in whichever form the placement prefs ask for
@@ -68,6 +68,8 @@ Rectangle {
 
     // The host ApplicationWindow (custom chrome); null in previews.
     property var hostWindow: null
+    property real topSafeInset: 0
+    property bool isMobile: false
 
     QbzTheme { id: theme }
 
@@ -200,10 +202,10 @@ Rectangle {
 
     // Which of the two header forms is mounted (mutually exclusive, and both
     // off while the nav lives in the sidebar and the sidebar is not closed).
-    readonly property bool headerTabsOn: !QbzShell.navInSidebar
+    readonly property bool headerTabsOn: !root.isMobile && !QbzShell.navInSidebar
         && QbzShell.sidebarState !== 2 && !QbzShell.navHeaderCompact
-    readonly property bool headerCompactOn: QbzShell.sidebarState === 2
-        || (!QbzShell.navInSidebar && QbzShell.navHeaderCompact)
+    readonly property bool headerCompactOn: !root.isMobile && (QbzShell.sidebarState === 2
+        || (!QbzShell.navInSidebar && QbzShell.navHeaderCompact))
 
     // Purchases downloading now (see Sidebar.qml's twin block).
     readonly property var activeDownloads: {
@@ -406,14 +408,22 @@ Rectangle {
         // HeaderBar.slint:825 — `Spacing.md + chrome-left-inset`, so the nav
         // clears the traffic lights (macOS) or the left-placed cluster.
         x: theme.spacingMd + root.chromeLeftInset
-        y: (root.height - height) / 2
+        y: root.topSafeInset + (theme.headerHeight - height) / 2
         height: 36
         spacing: 6
 
         QbzNavButton {
             name: "panel-left"
+            width: root.isMobile ? 32 : 28
+            height: root.isMobile ? 32 : 28
             anchors.verticalCenter: parent.verticalCenter
-            onClicked: QbzShell.cycleSidebar()
+            onClicked: {
+                if (root.isMobile) {
+                    QbzShell.sidebarState = (QbzShell.sidebarState === 2 ? 0 : 2)
+                } else {
+                    QbzShell.cycleSidebar()
+                }
+            }
         }
         QbzNavButton {
             name: "chevron-left"
@@ -852,12 +862,12 @@ Rectangle {
 
     Rectangle {
         id: searchBox
-        x: (root.width - width) / 2
-        y: (root.height - height) / 2
+        x: root.isMobile ? (leftControls.x + leftControls.width + 8) : ((root.width - width) / 2)
+        y: root.topSafeInset + (theme.headerHeight - height) / 2
         // 80% of the prior search width; gives up 60px to the section nav
         // whenever that nav lives in the header (HeaderBar.slint:569). The
         // width animates and `x` re-centers with it.
-        width: (root.width < 960 ? 179 : 256) - (QbzShell.navInSidebar ? 0 : 60)
+        width: root.isMobile ? Math.max(80, rightControls.x - leftControls.x - leftControls.width - 16) : ((root.width < 960 ? 179 : 256) - (QbzShell.navInSidebar ? 0 : 60))
         height: 32
         Behavior on width {
             NumberAnimation { duration: 220; easing.type: Easing.InOutQuad }
@@ -1066,7 +1076,7 @@ Rectangle {
         // (KioskShell.slint:245-248).
         x: root.width - width - theme.spacingMd + 2
            - (root.chromeControls && !root.wcOnLeft ? 110 : 0)
-        y: (root.height - height) / 2
+        y: root.topSafeInset + (theme.headerHeight - height) / 2
         height: 36
         spacing: 4
 
@@ -1247,7 +1257,7 @@ Rectangle {
         visible: root.chromeControls
         layoutDirection: root.wcOnLeft ? Qt.RightToLeft : Qt.LeftToRight
         x: root.wcOnLeft ? 8 : root.width - width - 8
-        y: (root.height - height) / 2
+        y: root.topSafeInset + (theme.headerHeight - height) / 2
         height: 26
         spacing: 2
         Rectangle {
@@ -1328,15 +1338,20 @@ Rectangle {
     // Documentation + What's New + About QBZ + Log Out + Close) ------------
     Popup {
         id: appMenu
-        x: root.width - 234 - theme.spacingMd
-        y: theme.headerHeight - 4
-        width: 234
+        x: root.isMobile ? Math.max(12, root.width - width - 12) : (root.width - 234 - theme.spacingMd)
+        y: root.isMobile ? (root.height + 4) : (root.height - 4)
+        width: root.isMobile ? Math.min(280, root.width - 24) : 234
         padding: 0
-        closePolicy: Popup.CloseOnPressOutside
+        modal: root.isMobile
+        dim: root.isMobile
+        Overlay.modal: Rectangle {
+            color: Qt.rgba(0, 0, 0, 0.5)
+        }
+        closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
 
         background: Rectangle {
             color: theme.surfaceMain
-            radius: theme.radiusSm
+            radius: root.isMobile ? theme.radiusMd : theme.radiusSm
             border.width: 1
             border.color: theme.borderMuted
         }
@@ -1378,7 +1393,7 @@ Rectangle {
                 signal clicked()
 
                 width: parent ? parent.width : 0
-                height: 34
+                height: root.isMobile ? 44 : 34
                 color: miArea.containsMouse ? theme.surfaceHover : "transparent"
                 Row {
                     anchors.fill: parent
@@ -1387,8 +1402,8 @@ Rectangle {
                     spacing: 10
                     QbzIcon {
                         name: parent.parent.name
-                        width: 15
-                        height: 15
+                        width: root.isMobile ? 18 : 15
+                        height: root.isMobile ? 18 : 15
                         anchors.verticalCenter: parent.verticalCenter
                         tintName: "secondary"
                     }
@@ -1397,12 +1412,12 @@ Rectangle {
                         height: parent.height
                         text: parent.parent.label
                         color: theme.textSecondary
-                        font.pixelSize: 13
+                        font.pixelSize: root.isMobile ? 14 : 13
                         verticalAlignment: Text.AlignVCenter
                     }
                     Item {
                         visible: parent.parent.checkedItem
-                        width: visible ? parent.width - 15 - miLabel.implicitWidth - 14 - 2 * parent.spacing : 0
+                        width: visible ? parent.width - (root.isMobile ? 18 : 15) - miLabel.implicitWidth - 14 - 2 * parent.spacing : 0
                         height: 1
                     }
                     QbzIcon {
@@ -1446,6 +1461,8 @@ Rectangle {
                 }
             }
             AppMenuItem {
+                visible: !root.isMobile
+                height: visible ? (root.isMobile ? 44 : 34) : 0
                 name: "keyboard"
                 label: QbzSession.tr("Keyboard Shortcuts", QbzSession.trRev)
                 onClicked: {
@@ -1506,6 +1523,8 @@ Rectangle {
                 }
             }
             AppMenuItem {
+                visible: !root.isMobile
+                height: visible ? (root.isMobile ? 44 : 34) : 0
                 name: "x"
                 label: QbzSession.tr("Close", QbzSession.trRev)
                 // The same ONE close choreography as the drawn X above

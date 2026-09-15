@@ -23,6 +23,8 @@
 //! the three recommendation carousels. Multi-select, offline actions, the
 //! header atmosphere and the Last.fm similar-albums row are all live.
 
+#[cfg(target_os = "android")]
+use crate::android_rfd as rfd;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;

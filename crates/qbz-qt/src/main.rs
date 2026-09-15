@@ -1,4 +1,4 @@
-// No console window beside the GUI on Windows (W4). The file logger
+﻿// No console window beside the GUI on Windows (W4). The file logger
 // (`qbz_log::install`) is unaffected; only the inherited stdio console goes.
 // If the offscreen smoke ever comes back with an empty log because of this,
 // the fix is AttachConsole(ATTACH_PARENT_PROCESS), not reverting this.
@@ -13,6 +13,12 @@
 //! async work; results hop back to Qt through the bridge's `CxxQtThread`.
 
 mod auth_qt;
+#[cfg(target_os = "android")]
+mod android_rfd;
+#[cfg(target_os = "android")]
+mod android_usb_qt;
+#[cfg(target_os = "android")]
+mod android_open;
 #[cfg(test)]
 #[path = "../build_support.rs"]
 mod build_support;
@@ -3772,6 +3778,8 @@ pub(crate) fn arm_hard_exit_watchdog(source: &'static str) {
 }
 
 fn main() {
+    #[cfg(target_os = "android")]
+    init_android_qt_env();
     qbz_log::install("info");
     // Declared first so normal/early returns flush after all later destructors,
     // including the final summary of a consecutive logging burst.
@@ -4000,6 +4008,9 @@ fn main() {
     #[cfg(target_os = "windows")]
     cxx_qt_lib::QQuickStyle::set_style(&QString::from("Basic"));
 
+    #[cfg(target_os = "android")]
+    init_android_qt_env();
+
     let mut app = QGuiApplication::new();
     renderer_qt::apply_gpu_preference();
 
@@ -4025,6 +4036,23 @@ fn main() {
     #[cfg(target_os = "windows")]
     win_shell::install_hittest_filter();
     let mut engine = QQmlApplicationEngine::new();
+    #[cfg(target_os = "android")]
+    {
+        if let Some(mut eng) = engine.as_mut() {
+            let qrc_imports = cxx_qt_lib::QString::from("qrc:/qt-project.org/imports");
+            let qrc_qml = cxx_qt_lib::QString::from("qrc:/qt/qml");
+            let assets = cxx_qt_lib::QString::from("assets:/");
+            eng.as_mut().add_import_path(&qrc_imports);
+            eng.as_mut().add_import_path(&qrc_qml);
+            eng.as_mut().add_import_path(&assets);
+            eng.as_mut().add_plugin_path(&qrc_imports);
+            eng.as_mut().add_plugin_path(&qrc_qml);
+            unsafe {
+                let ptr = std::pin::Pin::into_inner_unchecked(eng) as *mut cxx_qt_lib::QQmlApplicationEngine as *mut std::ffi::c_void;
+                qbz_qt_android_configure_qml_engine(ptr);
+            }
+        }
+    }
 
     // ── THE APP TYPEFACE, AND WHY IT IS SET RIGHT HERE ────────────────────
     //
@@ -4179,4 +4207,38 @@ fn main() {
     log::info!("[shutdown] engine down; dropping QGuiApplication");
     drop(app);
     log::info!("[shutdown] QGuiApplication down; returning from main");
+}
+
+/// Entry point discovered by QtActivity after it loads the Android application
+/// shared object.  The ordinary Rust `fn main()` remains the single owner of
+/// startup and teardown so the desktop and Android builds cannot drift.
+#[cfg(target_os = "android")]
+extern "C" {
+    fn qbz_qt_android_init_platform_plugin_path(path_utf8: *const std::ffi::c_char);
+    fn qbz_qt_android_configure_qml_engine(engine_ptr: *mut std::ffi::c_void);
+}
+
+#[cfg(target_os = "android")]
+fn init_android_qt_env() {
+    std::env::set_var("QT_QPA_PLATFORM", "android");
+    std::env::set_var("QT_DEBUG_PLUGINS", "1");
+    std::env::set_var("QML_IMPORT_TRACE", "1");
+    std::env::set_var("QT_LOGGING_RULES", "qt.qml.import*=true;qt.core.plugin*=true;qt.qml.import.debug=true");
+    unsafe {
+        qbz_qt_android_init_platform_plugin_path(std::ptr::null());
+    }
+}
+
+/// Entry point discovered by QtActivity after it loads the Android application
+/// shared object.  The ordinary Rust n main() remains the single owner of
+/// startup and teardown so the desktop and Android builds cannot drift.
+#[cfg(target_os = "android")]
+#[export_name = "main"]
+pub extern "C" fn qbz_android_main(
+    _argc: std::ffi::c_int,
+    _argv: *mut *mut std::ffi::c_char,
+) -> std::ffi::c_int {
+    init_android_qt_env();
+    main();
+    0
 }

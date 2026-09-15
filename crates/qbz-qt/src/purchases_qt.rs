@@ -56,6 +56,10 @@
 //! tokio runtime, which owns its own `LibraryDatabase`. That also gives the
 //! required strictly-sequential execution for free.
 
+#[cfg(target_os = "android")]
+use crate::android_rfd as rfd;
+#[cfg(target_os = "android")]
+use crate::android_open as open;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU64, Ordering};

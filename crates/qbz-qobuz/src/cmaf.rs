@@ -380,8 +380,15 @@ pub async fn download_raw_with_progress(
 /// surfaces a cert issue, adding the `native-tls` feature to qbz-qobuz is
 /// the escape hatch.
 fn build_cdn_client() -> std::result::Result<reqwest::Client, String> {
+    let mut certs = Vec::new();
+    for cert in webpki_root_certs::TLS_SERVER_ROOT_CERTS {
+        if let Ok(c) = reqwest::Certificate::from_der(cert) {
+            certs.push(c);
+        }
+    }
     reqwest::Client::builder()
         .connect_timeout(std::time::Duration::from_secs(10))
+        .tls_certs_only(certs)
         .build()
         .map_err(|e| format!("CMAF client error: {}", e))
 }

@@ -20,6 +20,8 @@
 //! ([`pick_and_add_folder`]). Kept as a record because the note was load
 //! bearing: it justified a downgrade for weeks after its premise expired.
 
+#[cfg(target_os = "android")]
+use crate::android_rfd as rfd;
 use std::sync::atomic::{AtomicBool, AtomicI64, AtomicU32, Ordering};
 use std::sync::{LazyLock, Mutex};
 

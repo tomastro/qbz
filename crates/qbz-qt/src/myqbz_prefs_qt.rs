@@ -54,6 +54,8 @@
 //! because nothing ever opened it every `save_view_prefs` call returned early —
 //! the per-collection prefs were never written at all.
 
+#[cfg(target_os = "android")]
+use crate::android_rfd as rfd;
 use std::path::{Path, PathBuf};
 use std::sync::{LazyLock, Mutex};
 

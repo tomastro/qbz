@@ -1,4 +1,4 @@
-// Settings — the QML port of crates/qbz-ui/ui/settings/SettingsView.slint:
+﻿// Settings — the QML port of crates/qbz-ui/ui/settings/SettingsView.slint:
 // a 92px title header, a 232px left sub-navigation, and the active panel in
 // a touch-draggable Flickable with a ListScrollbar replica.
 //
@@ -48,6 +48,11 @@ Item {
     property bool kioskHost: false
 
     id: root
+
+    readonly property bool isMobile: (root.Window && root.Window.window && root.Window.window.isAndroid)
+        || Qt.platform.os === "android"
+        || (root.width > 0 && root.width < 600)
+    readonly property bool compactMode: root.kioskHost || root.isMobile
 
     QbzTheme { id: theme }
 
@@ -112,14 +117,14 @@ Item {
         // --- Header (92px; NavButtons is a 0px placeholder in this port) --
         Item {
             width: parent.width
-            height: root.kioskHost ? 64 : 92
+            height: root.compactMode ? 64 : 92
             Text {
-                x: root.kioskHost ? 16 : 32
+                x: root.compactMode ? 16 : 32
                 // padding-top 11 + 12px gap below the (0px) NavButtons row.
-                y: root.kioskHost ? (64 - height) / 2 : 23
+                y: root.compactMode ? (64 - height) / 2 : 23
                 text: QbzSession.tr("Settings", QbzSession.trRev)
                 color: theme.textPrimary
-                font.pixelSize: root.kioskHost ? (theme.fontTitle) * 1.2 : (theme.fontTitle)
+                font.pixelSize: root.compactMode ? (theme.fontTitle) * 1.2 : (theme.fontTitle)
                 font.weight: theme.weightBold
             }
             // The kiosk section selector. The "Share logs" icon button that
@@ -127,12 +132,12 @@ Item {
             // whose viewer modal is mounted by the desktop AppShell only, so
             // on the kiosk it was a dead control (owner report 2026-09-07).
             QbzSelect {
-                visible: root.kioskHost
-                kioskHost: true
+                visible: root.compactMode
+                kioskHost: root.compactMode
                 anchors.right: parent.right
                 anchors.rightMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
-                menuWidth: Math.max(180, Math.min(300, parent.width - 270))
+                menuWidth: Math.max(160, Math.min(220, parent.width - 140))
                 searchable: options.length > 8
                 options: root.kioskSections.map(function (s) { return s.label })
                 currentIndex: root.kioskSections.findIndex(function (s) { return s.section === root.section })
@@ -146,13 +151,13 @@ Item {
         // --- Sub-nav + active panel ---------------------------------------
         Row {
             width: parent.width
-            height: parent.height - (root.kioskHost ? 64 : 92)
+            height: parent.height - (root.compactMode ? 64 : 92)
 
             // Left sub-navigation (232px).
             Item {
                 id: subNav
-                visible: !root.kioskHost
-                width: root.kioskHost ? 0 : 232
+                visible: !root.compactMode
+                width: root.compactMode ? 0 : 232
                 height: parent.height
 
                 component SubNavItem: Rectangle {
@@ -362,9 +367,9 @@ Item {
 
                     Column {
                         id: panelCol
-                        x: root.kioskHost ? 16 : 20
+                        x: root.compactMode ? 16 : 20
                         y: 4
-                        width: flick.width - (root.kioskHost ? 32 : 60) // 20 left + 40 right padding
+                        width: flick.width - (root.compactMode ? 32 : 60) // 20 left + 40 right padding
                         spacing: 4
 
                         // ── ONE PANEL IS BUILT, NOT NINE ──────────────
@@ -402,7 +407,7 @@ Item {
                         Panel {
                             panelIndex: 0
                             sourceComponent: Component {
-                                AudioSettings { kioskHost: root.kioskHost;
+                                AudioSettings { kioskHost: root.compactMode;
                                     width: parent.width
                                     doc: root.doc
                                 }
@@ -411,7 +416,7 @@ Item {
                         Panel {
                             panelIndex: 1
                             sourceComponent: Component {
-                                PlaybackSettings { kioskHost: root.kioskHost;
+                                PlaybackSettings { kioskHost: root.compactMode;
                                     width: parent.width
                                     doc: root.doc
                                 }
@@ -420,7 +425,7 @@ Item {
                         Panel {
                             panelIndex: 2
                             sourceComponent: Component {
-                                AppearanceSettings { kioskHost: root.kioskHost;
+                                AppearanceSettings { kioskHost: root.compactMode;
                                     width: parent.width
                                     doc: root.doc
                                 }
@@ -429,7 +434,7 @@ Item {
                         Panel {
                             panelIndex: 3
                             sourceComponent: Component {
-                                OfflineSettings { kioskHost: root.kioskHost;
+                                OfflineSettings { kioskHost: root.compactMode;
                                     width: parent.width
                                     doc: root.doc
                                     confirmHost: settingsConfirmHost
@@ -439,7 +444,7 @@ Item {
                         Panel {
                             panelIndex: 4
                             sourceComponent: Component {
-                                LocalLibrarySettings { kioskHost: root.kioskHost;
+                                LocalLibrarySettings { kioskHost: root.compactMode;
                                     width: parent.width
                                     doc: root.doc
                                     confirmHost: settingsConfirmHost
@@ -450,7 +455,7 @@ Item {
                         Panel {
                             panelIndex: 5
                             sourceComponent: Component {
-                                BlacklistSettings { kioskHost: root.kioskHost;
+                                BlacklistSettings { kioskHost: root.compactMode;
                                     width: parent.width
                                     doc: root.doc
                                 }
@@ -459,7 +464,7 @@ Item {
                         Panel {
                             panelIndex: 6
                             sourceComponent: Component {
-                                IntegrationsSettings { kioskHost: root.kioskHost;
+                                IntegrationsSettings { kioskHost: root.compactMode;
                                     width: parent.width
                                     doc: root.doc
                                     confirmHost: settingsConfirmHost
@@ -469,7 +474,7 @@ Item {
                         Panel {
                             panelIndex: 9
                             sourceComponent: Component {
-                                ImportExportSettings { kioskHost: root.kioskHost;
+                                ImportExportSettings { kioskHost: root.compactMode;
                                     width: parent.width
                                     doc: root.doc
                                     migrationSetupModal: migrationSetupOverlay
@@ -479,7 +484,7 @@ Item {
                         Panel {
                             panelIndex: 7
                             sourceComponent: Component {
-                                DeveloperSettings { kioskHost: root.kioskHost;
+                                DeveloperSettings { kioskHost: root.compactMode;
                                     width: parent.width
                                     doc: root.doc
                                 }
@@ -489,7 +494,7 @@ Item {
                             panelIndex: 8
                             active: root.section === 8 && root.sandboxed
                             sourceComponent: Component {
-                                SandboxSettings { kioskHost: root.kioskHost;
+                                SandboxSettings { kioskHost: root.compactMode;
                                     width: parent.width
                                     doc: root.doc
                                 }
@@ -517,11 +522,11 @@ Item {
     // declaration order alone puts it over every panel and the sub-nav.
     // Panels that need it are handed the reference (see LocalLibrarySettings
     // / PlexSettings `confirmHost`).
-    SettingsConfirmHost { kioskHost: root.kioskHost; id: settingsConfirmHost }
+    SettingsConfirmHost { kioskHost: root.compactMode; id: settingsConfirmHost }
 
     // App-wide Local Library order. Mounted at the view root so its scrim
     // covers the sub-navigation and the scrolled panel alike.
-    LocalTabsConfigModal { kioskHost: root.kioskHost;
+    LocalTabsConfigModal { kioskHost: root.compactMode;
         id: localTabsConfigModal
         anchors.fill: parent
     }
@@ -530,7 +535,7 @@ Item {
     // must overlay the whole view, so it cannot live inside the scrolled
     // panel that opens it. The reference mounts its counterpart at the
     // AppShell root for exactly the same reason (LibFolderEditModal.slint:5-8).
-    LibFolderEditModal { kioskHost: root.kioskHost; doc: root.doc }
+    LibFolderEditModal { kioskHost: root.compactMode; doc: root.doc }
 
     // The HiFi Wizard, opened from Settings > Audio. Mounted here for the same
     // reason as the two above — a modal inside the scrolled panel would be
@@ -540,9 +545,9 @@ Item {
     // It fills the view rather than the window: Settings is the full content
     // area, and the reference is an overlay inside the app shell too, not a
     // separate window (DacWizardModal.slint:8-9).
-    DacWizardModal { kioskHost: root.kioskHost; }
+    DacWizardModal { kioskHost: root.compactMode; }
 
-    MigrationSetupModal { kioskHost: root.kioskHost;
+    MigrationSetupModal { kioskHost: root.compactMode;
         id: migrationSetupOverlay
         anchors.fill: parent
         doc: root.doc
@@ -551,7 +556,7 @@ Item {
 
     // Mounted last so a long account migration has one unmistakable progress
     // surface over every Settings section. Closing it never cancels the task.
-    MigrationProgressModal { kioskHost: root.kioskHost;
+    MigrationProgressModal { kioskHost: root.compactMode;
         anchors.fill: parent
         doc: root.doc
     }

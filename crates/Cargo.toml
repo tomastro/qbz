@@ -6,6 +6,10 @@ members = [
     "qbz-theme",
     "qbz-models",
     "qbz-audio",
+    # Android USB Host bit-perfect transport primitives. Kept independent of
+    # the desktop backends so packet/PCM logic can be tested on every host.
+    "qbz-usb-direct",
+    "qbz-android",
     "qbz-player",
     "qbz-qobuz",
     "qbz-radio",
@@ -82,7 +86,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
 # HTTP
-reqwest = { version = "0.13", default-features = false, features = ["json", "query", "form", "rustls-no-provider", "cookies", "stream"] }
+reqwest = { version = "0.13", default-features = false, features = ["json", "query", "form", "rustls", "cookies", "stream"] }
 
 # Logging
 log = "0.4"

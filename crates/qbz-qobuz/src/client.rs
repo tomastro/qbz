@@ -136,13 +136,25 @@ impl QobuzClient {
     }
 
     fn build(bundle_cache_dir: Option<PathBuf>) -> Result<Self> {
+        let mut certs = Vec::new();
+        for cert in webpki_root_certs::TLS_SERVER_ROOT_CERTS {
+            if let Ok(c) = reqwest::Certificate::from_der(cert) {
+                certs.push(c);
+            }
+        }
+
         let http = Client::builder()
             .user_agent(USER_AGENT)
             .cookie_store(true)
+            .no_proxy()
+            .dns_resolver(Arc::new(crate::dns::QbzDnsResolver))
+            .http1_only()
+            .tcp_keepalive(std::time::Duration::from_secs(30))
             // Bound the TCP connect phase so a dead route (e.g. a stale CDN
             // address) can't hang startup. Does not affect body-read time, so
             // long streaming reads are unaffected.
             .connect_timeout(std::time::Duration::from_secs(10))
+            .tls_certs_only(certs)
             .build()?;
 
         Ok(Self {
@@ -286,6 +298,11 @@ impl QobuzClient {
     /// Get HTTP client reference (public for catalog search)
     pub fn get_http(&self) -> &Client {
         &self.http
+    }
+
+    /// Check if user session is active
+    pub async fn has_session(&self) -> bool {
+        self.session.read().await.is_some()
     }
 
     /// The single offline choke point (D3): every Qobuz SERVICE request flows
@@ -524,20 +541,44 @@ impl QobuzClient {
             HeaderValue::from_str(&app_id).map_err(|_| ApiError::InvalidAppId)?,
         );
 
-        log::info!("[OAuth] Exchanging code for token via /oauth/callback");
-        // Auth exemption: raw client, bypasses the offline gate (sign-in is
-        // explicit user intent to reach Qobuz; the gate governs services).
-        let callback_response = self
-            .http
-            .get(&callback_url)
-            .headers(headers)
-            .query(&[
-                ("code", code),
-                ("private_key", &private_key),
-                ("app_id", &app_id),
-            ])
-            .send()
-            .await?;
+        let mut last_err = None;
+        let mut callback_response = None;
+        for attempt in 1..=3 {
+            log::info!("[OAuth] Exchanging code for token via /oauth/callback (attempt {attempt}): url={}, app_id={}", callback_url, app_id);
+            match self
+                .http
+                .get(&callback_url)
+                .headers(headers.clone())
+                .query(&[
+                    ("code", code),
+                    ("private_key", &private_key),
+                    ("app_id", &app_id),
+                ])
+                .send()
+                .await
+            {
+                Ok(resp) => {
+                    callback_response = Some(resp);
+                    break;
+                }
+                Err(e) => {
+                    let mut dbg = format!("[OAuth Debug attempt {attempt}] callback request failed: {:?}", e);
+                    let mut curr: Option<&dyn std::error::Error> = std::error::Error::source(&e);
+                    while let Some(src) = curr {
+                        dbg.push_str(&format!(" -> {}", src));
+                        curr = src.source();
+                    }
+                    log::error!("{}", dbg);
+                    last_err = Some(dbg);
+                    tokio::time::sleep(std::time::Duration::from_millis(300)).await;
+                }
+            }
+        }
+
+        let callback_response = match callback_response {
+            Some(resp) => resp,
+            None => return Err(ApiError::ApiResponse(last_err.unwrap_or_default())),
+        };
 
         if !callback_response.status().is_success() {
             return Err(ApiError::ApiResponse(format!(
@@ -580,15 +621,40 @@ impl QobuzClient {
                 .map_err(|_| ApiError::AuthenticationError("Invalid OAuth token format".into()))?,
         );
 
-        // Auth exemption: raw client (see /oauth/callback step above).
-        let login_response = self
-            .http
-            .post(&user_login_url)
-            .headers(auth_headers)
-            .header("Content-Type", "text/plain;charset=UTF-8")
-            .body("extra=partner")
-            .send()
-            .await?;
+        let mut last_login_err = None;
+        let mut login_response = None;
+        for attempt in 1..=3 {
+            match self
+                .http
+                .post(&user_login_url)
+                .headers(auth_headers.clone())
+                .header("Content-Type", "text/plain;charset=UTF-8")
+                .body("extra=partner")
+                .send()
+                .await
+            {
+                Ok(resp) => {
+                    login_response = Some(resp);
+                    break;
+                }
+                Err(e) => {
+                    let mut dbg = format!("[OAuth login attempt {attempt}] user/login request failed: {:?}", e);
+                    let mut curr: Option<&dyn std::error::Error> = std::error::Error::source(&e);
+                    while let Some(src) = curr {
+                        dbg.push_str(&format!(" -> {}", src));
+                        curr = src.source();
+                    }
+                    log::error!("{}", dbg);
+                    last_login_err = Some(dbg);
+                    tokio::time::sleep(std::time::Duration::from_millis(300)).await;
+                }
+            }
+        }
+
+        let login_response = match login_response {
+            Some(resp) => resp,
+            None => return Err(ApiError::ApiResponse(last_login_err.unwrap_or_default())),
+        };
 
         match login_response.status() {
             StatusCode::OK => {

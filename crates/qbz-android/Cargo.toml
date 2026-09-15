@@ -1,0 +1,25 @@
+[package]
+name = "qbz-android"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Native Android shell for QBZ with USB Audio direct output"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+qbz-models = { path = "../qbz-models" }
+qbz-qobuz = { path = "../qbz-qobuz" }
+qbz-usb-direct = { path = "../qbz-usb-direct" }
+qbz-credentials = { path = "../qbz-credentials" }
+jni = "0.21"
+jni22 = { package = "jni", version = "0.22" }
+serde_json = { workspace = true }
+symphonia = { workspace = true }
+tokio = { workspace = true }
+rustls = { version = "0.23", features = ["aws_lc_rs"] }
+rustls-platform-verifier = "0.7"
+log = { workspace = true }
+rand = { workspace = true }
+urlencoding = "2"

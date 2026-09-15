@@ -4,6 +4,11 @@
 //! DTO and returns row ids only; paths are always resolved against this Rust
 //! snapshot before sidecar or embedded-tag writes.
 
+#[cfg(target_os = "android")]
+use crate::android_rfd as rfd;
+#[cfg(target_os = "android")]
+use crate::android_open as open;
+
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 use std::sync::atomic::{AtomicBool, AtomicI32, AtomicU64, Ordering};

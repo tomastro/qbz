@@ -19,6 +19,8 @@
 //! "Failed to upload cover" toast. That is the reference's behaviour — do not
 //! "fix" it (spec 02 §2.2).
 
+#[cfg(target_os = "android")]
+use crate::android_rfd as rfd;
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 

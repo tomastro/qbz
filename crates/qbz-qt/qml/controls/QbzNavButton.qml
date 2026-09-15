@@ -100,7 +100,7 @@ Rectangle {
 
     width: 28
     height: 28
-    radius: 14
+    radius: width / 2
     opacity: btnEnabled ? 1.0 : 0.4
     // surface-elevated, at app-background-surface-alpha when the wash is up.
     // `with-alpha` on an opaque token is a plain alpha set, and

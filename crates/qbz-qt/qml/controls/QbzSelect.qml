@@ -89,7 +89,13 @@ Rectangle {
     // The three `popupWidth` callers (AudioSettings 480, CastPicker 260,
     // LyricsControlsFlyout 178) are all non-`sm`, where width === menuWidth and
     // popupWidth wins anyway, so none of them moves.
-    readonly property int listWidth: Math.max(popupWidth, selectRoot.width)
+    readonly property int listWidth: {
+        var desired = Math.max(popupWidth, selectRoot.width)
+        if (selectRoot.Window.window && selectRoot.Window.window.width > 0) {
+            return Math.min(desired, Math.max(120, selectRoot.Window.window.width - 24))
+        }
+        return desired
+    }
     readonly property int rowHeight: kioskHost ? 44 : 32
     readonly property int headerHeight: 24
     readonly property int searchHeight: searchable ? (kioskHost ? 44 : 42) : 0
@@ -126,11 +132,35 @@ Rectangle {
         }
         return -1
     }
+    function updatePopupPosition() {
+        if (selectRoot.popupPlacement === "left") {
+            popup.x = -selectRoot.listWidth - 4
+            popup.y = selectRoot.height - popup.height
+            return
+        }
+        popup.y = selectRoot.height + 4
+        if (!selectRoot.Window.window || selectRoot.Window.window.width <= 0) {
+            popup.x = selectRoot.width - selectRoot.listWidth
+            return
+        }
+        var winW = selectRoot.Window.window.width
+        var pt = selectRoot.mapToItem(null, 0, 0)
+        var targetWinX = pt.x + selectRoot.width - selectRoot.listWidth
+        if (targetWinX < 12) {
+            targetWinX = 12
+        }
+        if (targetWinX + selectRoot.listWidth > winW - 12) {
+            targetWinX = Math.max(12, winW - 12 - selectRoot.listWidth)
+        }
+        popup.x = targetWinX - pt.x
+    }
+
     function openPopup() {
         if (!selectRoot.enabled || selectRoot.options.length === 0)
             return
         selectRoot.filter = ""
         listContent.currentIndex = selectRoot.currentIndex
+        selectRoot.updatePopupPosition()
         popup.open()
         if (selectRoot.searchable)
             searchInput.forceActiveFocus()
@@ -241,6 +271,7 @@ Rectangle {
         height: selectRoot.searchHeight + Math.min(listContent.contentHeight, selectRoot.maxListHeight) + 10
         padding: 0
         closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
+        onAboutToShow: selectRoot.updatePopupPosition()
 
         background: Rectangle {
             color: theme.surfaceMain

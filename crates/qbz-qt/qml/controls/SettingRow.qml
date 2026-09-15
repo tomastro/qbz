@@ -1,4 +1,4 @@
-// SettingRow (settings/SettingRow.slint) — extracted from SettingsView.qml
+﻿// SettingRow (settings/SettingRow.slint) — extracted from SettingsView.qml
 // in phase 19. 52px (64 with a description); label 15 medium + description
 // 12 muted on the left (opacity .45 when disabled), the control flush right.
 
@@ -19,7 +19,7 @@ Item {
     QbzTheme { id: theme }
 
     width: parent ? parent.width : 0
-    height: kioskHost ? labelColumn.height + controlHost.height + 24 : (description === "" ? 52 : 64)
+    height: kioskHost ? labelColumn.height + controlHost.height + 24 : Math.max(description === "" ? 52 : 64, labelColumn.height + 16)
 
     Column {
         id: labelColumn

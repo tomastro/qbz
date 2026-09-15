@@ -48,6 +48,8 @@
 //! log, the per-chunk adding log, the summary block, the `parts_line` reuse and
 //! the fixed en-US thousands grouping — is 1:1.
 
+#[cfg(target_os = "android")]
+use crate::android_rfd as rfd;
 use std::sync::atomic::{AtomicBool, AtomicI64, AtomicU64, Ordering};
 use std::sync::{Arc, LazyLock, Mutex};
 

@@ -17,6 +17,9 @@
 //! restore semantics (explicit auth rejection clears the token,
 //! network-class failure keeps it).
 
+#[cfg(target_os = "android")]
+use crate::android_open as open;
+
 use std::sync::Arc;
 use std::time::Duration;
 

@@ -9,6 +9,8 @@
 //! Each block writes its own status line; the panel renders them from the
 //! settings document (`importExport`). Files are written to the Downloads
 //! folder (home as the fallback), like the settings bundle always was.
+#[cfg(target_os = "android")]
+use crate::android_rfd as rfd;
 
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::{LazyLock, Mutex};

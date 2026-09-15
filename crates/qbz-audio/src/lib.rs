@@ -31,6 +31,8 @@ pub mod alsa_backend;
 pub mod alsa_direct;
 pub mod alsa_hardware_volume;
 pub mod wasapi_direct;
+#[cfg(target_os = "android")]
+pub mod android_usb_direct;
 /// Endpoint capabilities: the exclusive-mode rate sweep and the hotplug watch.
 #[cfg(windows)]
 pub mod wasapi_backend;

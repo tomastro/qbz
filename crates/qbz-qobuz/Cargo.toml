@@ -15,6 +15,8 @@ futures-util = { workspace = true }
 
 # HTTP
 reqwest = { workspace = true }
+webpki-root-certs = "0.26"
+libc = "0.2"
 
 # Serialization
 serde = { workspace = true }

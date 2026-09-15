@@ -5,6 +5,9 @@
 //! fires crate::on_boot once), the login/logout flow, and `tr` (the one
 //! i18n lookup every QML string binds to, with the trRev dependency arg).
 
+#[cfg(target_os = "android")]
+use crate::android_open as open;
+
 use std::pin::Pin;
 use std::sync::OnceLock;
 

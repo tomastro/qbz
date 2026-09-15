@@ -70,6 +70,7 @@ pub(crate) fn qobuz_label_url(label_id: &str) -> String {
 /// This is the #514 fix, verbatim from `share.rs:32-41` — it is NOT
 /// boilerplate to be simplified into a local. A create-per-copy port would
 /// pass every test run on KDE and lose the text everywhere else.
+#[cfg(not(target_os = "android"))]
 static CLIPBOARD: std::sync::OnceLock<std::sync::Mutex<Option<arboard::Clipboard>>> =
     std::sync::OnceLock::new();
 
@@ -87,6 +88,7 @@ static CLIPBOARD: std::sync::OnceLock<std::sync::Mutex<Option<arboard::Clipboard
 /// Fire-and-forget by design: the caller never learns whether the copy
 /// worked, which is why the toast at the call site is unconditional
 /// (`main.rs:12758-12761` does the same).
+#[cfg(not(target_os = "android"))]
 pub(crate) fn copy_to_clipboard(text: String) {
     crate::spawn(async move {
         let _ = tokio::task::spawn_blocking(move || {
@@ -115,6 +117,14 @@ pub(crate) fn copy_to_clipboard(text: String) {
         })
         .await;
     });
+}
+
+/// Android clipboard integration is supplied by the thin Android package.
+/// Until its QJniObject bridge is attached, keep share actions non-fatal and
+/// avoid pulling the desktop-only `arboard` backend into the mobile target.
+#[cfg(target_os = "android")]
+pub(crate) fn copy_to_clipboard(_text: String) {
+    log::warn!("[qbz-qt] Android clipboard bridge is not attached yet");
 }
 
 /// Artist header ⋯ → Share. `artist/ArtistPageView.slint:530-538` fires

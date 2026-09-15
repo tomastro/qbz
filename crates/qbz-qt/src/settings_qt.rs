@@ -22,6 +22,8 @@
 //!   implementation; device-name edits also update the live service cache and
 //!   take effect on the next connection, like upstream.
 
+#[cfg(target_os = "android")]
+use crate::android_rfd as rfd;
 use std::sync::{Arc, Mutex, OnceLock};
 use std::time::{Duration, Instant};
 
@@ -1381,7 +1383,39 @@ fn local_landing_tab_from(order: &[String], kiosk: bool) -> String {
 /// seeding this one boot-critical key prevents a default-order flash and makes
 /// the logged-off landing deterministic on the first frame.
 pub(crate) fn settings_seed_json() -> String {
-    serde_json::json!({ "localTabOrder": local_tab_order() }).to_string()
+    let streaming_labels: Vec<String> = STREAMING_QUALITY_LABELS
+        .iter()
+        .map(|l| qbz_i18n::t(l))
+        .collect();
+    #[cfg(target_os = "android")]
+    let backends = vec![qbz_i18n::t("Auto"), "USB Direct (Bit-Perfect)".to_string()];
+    #[cfg(not(target_os = "android"))]
+    let backends = vec![qbz_i18n::t("Auto"), qbz_i18n::t("System default")];
+    #[cfg(target_os = "android")]
+    let devices = vec![DeviceOption {
+        label: "Panasonic USB Audio 2 (UsbManager)".to_string(),
+        bp: true,
+        group: String::new(),
+    }];
+    #[cfg(not(target_os = "android"))]
+    let devices = vec![DeviceOption {
+        label: qbz_i18n::t("System default"),
+        bp: false,
+        group: String::new(),
+    }];
+
+    serde_json::json!({
+        "localTabOrder": local_tab_order(),
+        "streamingQualities": streaming_labels,
+        "streamingQualityIndex": 3,
+        "backends": backends,
+        "backendIndex": 1,
+        "devices": devices,
+        "deviceIndex": 0,
+        "allowQualityFallback": true,
+        "syncAudioOnStartup": true,
+    })
+    .to_string()
 }
 
 fn save_local_tab_order_payload(raw: &str) -> bool {
@@ -2329,72 +2363,89 @@ fn device_is_bit_perfect(backend: AudioBackendType, device: &qbz_audio::AudioDev
 /// with the ALSA regrouping). Blocking — call off the async executor's
 /// fast path (runs inside spawn_blocking by the caller).
 fn enumerate_devices(backend: AudioBackendType) -> (Vec<DeviceOption>, Vec<String>) {
-    let mut rows = vec![DeviceOption {
-        label: qbz_i18n::t("System default"),
-        bp: false,
-        group: String::new(),
-    }];
-    let mut ids = vec![String::new()];
-    match BackendManager::create_backend(backend).and_then(|b| b.enumerate_devices()) {
-        Ok(devices) => {
-            for d in devices {
-                let label = match d.description.as_deref() {
-                    Some(desc) if !desc.is_empty() => desc.to_string(),
-                    _ => d.name.clone(),
-                };
-                ids.push(d.id.clone());
-                rows.push(DeviceOption {
-                    bp: device_is_bit_perfect(backend, &d),
-                    label,
-                    group: String::new(),
-                });
-            }
-        }
-        Err(e) => log::warn!("[qbz-qt] device enumeration failed: {e}"),
+    #[cfg(target_os = "android")]
+    {
+        let _ = backend;
+        let dac_name = crate::android_usb_qt::connected_dac_name()
+            .unwrap_or_else(|| "Panasonic USB Audio 2 (UsbManager)".to_string());
+        (
+            vec![DeviceOption {
+                label: dac_name,
+                bp: true,
+                group: String::new(),
+            }],
+            vec!["usb_direct".to_string()],
+        )
     }
-
-    if backend == AudioBackendType::Alsa {
-        // Stable sort by section; the section header lands on each section's
-        // first row (settings.rs `group_alsa_devices`). rows[i] aligns with
-        // ids[i] (both lead with the synthetic "System default"/"" entry).
-        let section_labels = [
-            qbz_i18n::t("Defaults"),
-            qbz_i18n::t("Bit-perfect (Hardware / Digital)"),
-            qbz_i18n::t("Plugin Hardware"),
-            qbz_i18n::t("Other Outputs"),
-        ];
-        let mut indexed: Vec<(usize, DeviceOption, String)> = rows
-            .into_iter()
-            .zip(ids.iter().cloned())
-            .enumerate()
-            .map(|(i, (row, id))| (alsa_section(&id, i == 0, &row.label), row, id))
-            .collect();
-        indexed.sort_by_key(|(section, _, _)| *section);
-        // Rebuild ids in the SAME order (they're the index map).
-        let mut out_rows = Vec::with_capacity(indexed.len());
-        let mut out_ids = Vec::with_capacity(indexed.len());
-        let mut prev: Option<usize> = None;
-        for (section, mut row, id) in indexed {
-            if prev != Some(section) {
-                prev = Some(section);
-                row.group = section_labels[section].clone();
+    #[cfg(not(target_os = "android"))]
+    {
+        let mut rows = vec![DeviceOption {
+            label: qbz_i18n::t("System default"),
+            bp: false,
+            group: String::new(),
+        }];
+        let mut ids = vec![String::new()];
+        match BackendManager::create_backend(backend).and_then(|b| b.enumerate_devices()) {
+            Ok(devices) => {
+                for d in devices {
+                    let label = match d.description.as_deref() {
+                        Some(desc) if !desc.is_empty() => desc.to_string(),
+                        _ => d.name.clone(),
+                    };
+                    ids.push(d.id.clone());
+                    rows.push(DeviceOption {
+                        bp: device_is_bit_perfect(backend, &d),
+                        label,
+                        group: String::new(),
+                    });
+                }
             }
-            out_rows.push(row);
-            out_ids.push(id);
+            Err(e) => log::warn!("[qbz-qt] device enumeration failed: {e}"),
         }
-        (out_rows, out_ids)
-    } else {
-        (rows, ids)
+
+        if backend == AudioBackendType::Alsa {
+            let section_labels = [
+                qbz_i18n::t("Defaults"),
+                qbz_i18n::t("Bit-perfect (Hardware / Digital)"),
+                qbz_i18n::t("Plugin Hardware"),
+                qbz_i18n::t("Other Outputs"),
+            ];
+            let mut indexed: Vec<(usize, DeviceOption, String)> = rows
+                .into_iter()
+                .zip(ids.iter().cloned())
+                .enumerate()
+                .map(|(i, (row, id))| (alsa_section(&id, i == 0, &row.label), row, id))
+                .collect();
+            indexed.sort_by_key(|(section, _, _)| *section);
+            let mut out_rows = Vec::with_capacity(indexed.len());
+            let mut out_ids = Vec::with_capacity(indexed.len());
+            let mut prev: Option<usize> = None;
+            for (section, mut row, id) in indexed {
+                if prev != Some(section) {
+                    prev = Some(section);
+                    row.group = section_labels[section].clone();
+                }
+                out_rows.push(row);
+                out_ids.push(id);
+            }
+            (out_rows, out_ids)
+        } else {
+            (rows, ids)
+        }
     }
 }
 
-/// The ACTIVE backend's display label, for anything outside this module that
-/// needs to name it in prose (the log viewer's diagnostics bundle header).
 pub fn current_backend_label() -> String {
     backend_label(audio_settings().backend_type.unwrap_or_default())
 }
 
 fn backend_label(t: AudioBackendType) -> String {
+    #[cfg(target_os = "android")]
+    {
+        let _ = t;
+        return "USB Direct (Bit-Perfect)".to_string();
+    }
+    #[cfg(not(target_os = "android"))]
     match t {
         AudioBackendType::PipeWire => "PipeWire".to_string(),
         AudioBackendType::Alsa => "ALSA".to_string(),
@@ -2424,7 +2475,7 @@ pub async fn publish_snapshot() {
     // (`refresh_device_cap`). This is two uncontended lock reads.
     let (device_cap_summary, device_cap_detected) = qbz_app::device_cap::summary();
 
-    let doc = tokio::task::spawn_blocking(move || {
+    let doc_result = tokio::task::spawn_blocking(move || {
         let backend_types = BackendManager::available_backends();
         let current_backend = audio_settings.backend_type.unwrap_or_default();
         let backend_index = backend_types
@@ -2733,8 +2784,22 @@ pub async fn publish_snapshot() {
             import_export: import_export::snapshot(),
         }
     })
-    .await
-    .unwrap_or_default();
+    .await;
+
+    let doc = match doc_result {
+        Ok(d) => d,
+        Err(e) => {
+            log::error!("[settings_qt] publish_snapshot spawn_blocking failed: {e}");
+            SettingsDoc::default()
+        }
+    };
+
+    log::info!(
+        "[settings_qt] published snapshot: streamingQualities={}, backends={}, devices={}",
+        doc.streaming_qualities.len(),
+        doc.backends.len(),
+        doc.devices.len()
+    );
 
     let json = serde_json::to_string(&doc).unwrap_or_else(|_| "{}".into());
     crate::ui(move |mut b| {

@@ -14,6 +14,9 @@
 //! - The settings export keeps the reference's include-auth gate, defaulting
 //!   to OFF, as an inline toggle instead of a separate modal.
 
+#[cfg(target_os = "android")]
+use crate::android_open as open;
+
 use serde::Serialize;
 use std::sync::{LazyLock, Mutex};
 

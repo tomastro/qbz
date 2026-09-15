@@ -44,3 +44,9 @@ keyring = { version = "3", default-features = false, features = ["apple-native"]
 
 [target.'cfg(target_os = "windows")'.dependencies]
 keyring = { version = "3", default-features = false, features = ["windows-native"] }
+
+[target.'cfg(target_os = "android")'.dependencies]
+# Android callers use the explicit file-only `_at` API. Linking keyring without
+# an OS backend keeps the shared crate buildable while never storing app tokens
+# in the process-local mock backend.
+keyring = { version = "3", default-features = false }

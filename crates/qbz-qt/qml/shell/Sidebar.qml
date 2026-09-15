@@ -82,7 +82,10 @@ import "../theme"
 Rectangle {
     id: root
 
-    property bool mini: QbzShell.sidebarState === 1
+    property bool mini: !root.isMobile && QbzShell.sidebarState === 1
+    property real topSafeInset: 0
+    property real bottomSafeInset: 0
+    property bool isMobile: false
 
     // Purchases downloading now — `QbzPurchases.activeDownloadsJson`, parsed
     // once per publish (guarded: "[]" on the pre-boot frame).
@@ -364,8 +367,11 @@ Rectangle {
     }
 
     width: QbzShell.sidebarState === 2 ? 0
-         : QbzShell.sidebarState === 1 ? theme.sidebarMiniWidth
-         : theme.sidebarOpenWidth
+         : (root.isMobile
+            ? Math.min(280, (root.parent ? root.parent.width * 0.8 : 280))
+            : (QbzShell.sidebarState === 1 ? theme.sidebarMiniWidth : theme.sidebarOpenWidth))
+
+
     // surface-card @ 0.5 while the ambient background is active (phase 14).
     color: ambientOn ? theme.surfaceCardA50 : theme.surfaceCard
     readonly property bool ambientOn: theme.ambientOn
@@ -535,11 +541,11 @@ Rectangle {
         // rail competes with it vertically).
         anchors.leftMargin: root.mini ? root.miniPadLeft : theme.spacingMd
         anchors.rightMargin: root.mini ? root.miniPadRight : theme.spacingMd
-        anchors.topMargin: root.mini ? 8 : theme.spacingMd
+        anchors.topMargin: (root.mini ? 8 : theme.spacingMd) + root.topSafeInset
         // Per-side padding so Large can zero ONLY the bottom (Sidebar.slint:719):
         // the reserved dock band then reaches the true window bottom-left and the
         // cover sits flush (the L corner). Left/right/top are unchanged.
-        anchors.bottomMargin: root.largeDockActive ? 0 : (root.mini ? 8 : theme.spacingMd)
+        anchors.bottomMargin: (root.largeDockActive ? 0 : (root.mini ? 8 : theme.spacingMd)) + root.bottomSafeInset
         spacing: theme.spacingMd
 
         // ---- Section nav -------------------------------------------

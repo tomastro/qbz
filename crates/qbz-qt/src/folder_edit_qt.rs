@@ -48,6 +48,8 @@
 //! call opens the DB, so none of them may run on the Qt thread. An invokable
 //! only mutates a `Mutex`, publishes, and `crate::spawn`s the rest.
 
+#[cfg(target_os = "android")]
+use crate::android_rfd as rfd;
 use std::sync::{LazyLock, Mutex};
 
 use cxx_qt_lib::QString;

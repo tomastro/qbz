@@ -17,6 +17,10 @@ import "theme"
 
 ApplicationWindow {
     id: window
+    // Android's QtActivity owns the physical window.  Desktop restore values
+    // are deliberately ignored there: on the S24 the stored 1180px desktop
+    // width became a 3540px surface and left most of the UI off-screen.
+    readonly property bool isAndroid: Qt.platform.os === "android"
     // Geometry is RESTORED, not hardcoded (crates/qbz/src/main.rs:8211-8282 is
     // the Slint restore; :1399-1435 is its save). The bridge seeds these at
     // CONSTRUCTION from the shared ui_prefs.json, so the very first frame is
@@ -52,12 +56,16 @@ ApplicationWindow {
     // Slint skips the clamp on exactly that condition instead of fighting the
     // WM over an impossible minimum. A screen we cannot resolve degrades to
     // "no clamp", like Slint's monitor query returning None.
-    width: window.bootScreenWidth >= window.minimumWidth
+    width: window.isAndroid
+           ? window.bootScreenWidth
+           : (window.bootScreenWidth >= window.minimumWidth
            ? Math.min(QbzShell.windowWidth, window.bootScreenWidth)
-           : QbzShell.windowWidth
-    height: window.bootScreenHeight >= window.minimumHeight
+           : QbzShell.windowWidth)
+    height: window.isAndroid
+            ? window.bootScreenHeight
+            : (window.bootScreenHeight >= window.minimumHeight
             ? Math.min(QbzShell.windowHeight, window.bootScreenHeight)
-            : QbzShell.windowHeight
+            : QbzShell.windowHeight)
     // Screen metrics for that clamp, read from `window.screen` (the window's
     // OWN screen; the attached `Screen` wants an Item). Frozen in
     // Component.onCompleted — see the freeze there for why they must stop
@@ -67,8 +75,8 @@ ApplicationWindow {
     // app.slint:52-53 (`min-width: 940px / UiScale.factor`), carried through the
     // bridge. The old 800x600 let the window go below Slint's floor, which is
     // exactly where the responsive tiers stop being comparable.
-    minimumWidth: QbzShell.kioskProfile ? 800 : QbzShell.windowMinWidth
-    minimumHeight: QbzShell.kioskProfile ? 480 : QbzShell.windowMinHeight
+    minimumWidth: window.isAndroid ? 0 : (QbzShell.kioskProfile ? 800 : QbzShell.windowMinWidth)
+    minimumHeight: window.isAndroid ? 0 : (QbzShell.kioskProfile ? 480 : QbzShell.windowMinHeight)
     visible: true
     // Last session's maximized state, applied DECLARATIVELY so it is part of
     // the first mapped frame: QQuickWindowQmlImpl defers the show until
@@ -92,9 +100,11 @@ ApplicationWindow {
     // the maximized arm is: QQuickWindowQmlImpl defers the show until
     // componentComplete, so this is part of the first mapped frame instead of
     // a visible jump afterwards.
-    visibility: QbzShell.kioskFullscreenBoot
+    visibility: window.isAndroid
+                ? Window.Windowed
+                : (QbzShell.kioskFullscreenBoot
                 ? Window.FullScreen
-                : (QbzShell.windowMaximized ? Window.Maximized : Window.Windowed)
+                : (QbzShell.windowMaximized ? Window.Maximized : Window.Windowed))
     // "Show track in window title" (Appearance). 1:1 with app.slint:44 —
     // FIXED format, no template, and it falls back to the plain app name
     // whenever the setting is off or nothing is loaded. Reactive: the
@@ -171,7 +181,9 @@ ApplicationWindow {
     // issues SC_MOVE, and SC_MOVE drags DO snap. The eight QML resize grips
     // stay enabled too and do not fight the native edges -- Qt answers
     // WM_NCHITTEST first, so a press on the border never reaches QML.
-    flags: QbzShell.systemTitleBar
+    flags: window.isAndroid
+        ? Qt.Window
+        : (QbzShell.systemTitleBar
         ? Qt.Window
         : (QbzShell.isMacos
             ? (Qt.Window | Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint)
@@ -200,7 +212,7 @@ ApplicationWindow {
                 // not have in either arrangement.
                 ? (Qt.Window | Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint
                    | Qt.CustomizeWindowHint)
-                : (Qt.Window | Qt.FramelessWindowHint)))
+                : (Qt.Window | Qt.FramelessWindowHint))))
 
     // THE OTHER HALF OF ExpandedClientAreaHint, and the piece that made the
     // flag look broken when it was not.
@@ -1075,7 +1087,12 @@ ApplicationWindow {
                 : (QbzSession.screen === "shell" ? "shell/AppShell.qml"
                    : (QbzSession.screen === "kiosk" ? "shell/KioskShell.qml" : ""))
         // Hand the host window down for drag/maximize/resize (custom chrome).
-        onLoaded: if (screenLoader.item) screenLoader.item.hostWindow = window
+        onLoaded: {
+            if (screenLoader.item) {
+                screenLoader.item.hostWindow = window
+                if (window.isAndroid) QbzShell.sidebarState = 2
+            }
+        }
     }
 
     // The appliance login opts into compact scrollable layout at construction.

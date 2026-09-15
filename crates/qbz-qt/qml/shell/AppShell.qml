@@ -220,13 +220,26 @@ Rectangle {
     }
 
     QbzTheme { id: theme }
+    // Mobile layout & safe areas
+    readonly property bool isMobile: (hostWindow && hostWindow.isAndroid) || Qt.platform.os === "android" || (root.width > 0 && root.width < 600)
+    readonly property real topSafeInset: (Qt.platform.os === "android" || (hostWindow && hostWindow.isAndroid)) ? 36 : 0
+    readonly property real bottomSafeInset: (Qt.platform.os === "android" || (hostWindow && hostWindow.isAndroid)) ? 16 : 0
+
+    Connections {
+        target: QbzShell
+        function onCurrentViewChanged() {
+            if (root.isMobile) QbzShell.sidebarState = 2
+        }
+    }
 
     HeaderBar {
         id: header
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        height: theme.headerHeight
+        height: theme.headerHeight + root.topSafeInset
+        topSafeInset: root.topSafeInset
+        isMobile: root.isMobile
         hostWindow: root.hostWindow
         onReportIssueRequested: reportIssueModal.open = true
         // Square corners (phase 12: the window is opaque; any rounding is
@@ -240,18 +253,38 @@ Rectangle {
         anchors.bottom: parent.bottom
         // Mode-aware height (AppShell.slint:396): Small collapses to one
         // header-tall row; New/Classic/Large keep the full 112px.
-        height: QbzShell.npbMode === 2 ? theme.npbSmallHeight : theme.npbLargeHeight
+        height: (QbzShell.npbMode === 2 ? theme.npbSmallHeight : theme.npbLargeHeight) + root.bottomSafeInset
+        bottomSafeInset: root.bottomSafeInset
         // The shared hover-tooltip overlay (declared further down — id
         // references resolve at completion). All four modes consume it for
         // Shuffle/Repeat state; the full bar also uses it for Qobuz Connect.
         tooltip: tooltipOverlay
     }
 
+    // Drawer backdrop scrim for mobile
+    Rectangle {
+        id: drawerScrim
+        anchors.fill: parent
+        visible: root.isMobile && QbzShell.sidebarState !== 2
+        color: "#000000"
+        opacity: visible ? 0.55 : 0.0
+        Behavior on opacity { NumberAnimation { duration: 160 } }
+        z: 990
+        MouseArea {
+            anchors.fill: parent
+            onClicked: { QbzShell.sidebarState = 2 }
+        }
+    }
+
     Sidebar {
         id: sidebar
         anchors.left: parent.left
-        anchors.top: header.bottom
-        anchors.bottom: npb.top
+        anchors.top: root.isMobile ? parent.top : header.bottom
+        anchors.bottom: root.isMobile ? parent.bottom : npb.top
+        topSafeInset: root.isMobile ? root.topSafeInset : 0
+        bottomSafeInset: root.isMobile ? root.bottomSafeInset : 0
+        isMobile: root.isMobile
+        z: root.isMobile ? 1000 : 1
         // The shared hover-tooltip overlay (declared last, below). The sidebar
         // clips its own overflow, so the collapsed rail's name bubble HAS to be
         // rendered out here — same reason Slint mounts SidebarTooltip at the
@@ -274,10 +307,11 @@ Rectangle {
     Rectangle {
         id: queueColumn
         anchors.right: parent.right
-        anchors.top: header.bottom
-        anchors.bottom: npb.top
+        anchors.top: root.isMobile ? parent.top : header.bottom
+        anchors.bottom: root.isMobile ? parent.bottom : npb.top
+        z: root.isMobile ? 1000 : 1
         width: (root.queueSidebarVisible || QbzShell.lyricsOpen)
-            ? theme.queuePanelWidth : 0
+            ? (root.isMobile ? Math.min(theme.queuePanelWidth, root.width * 0.85) : theme.queuePanelWidth) : 0
         clip: true
         color: root.ambientOn ? theme.surfaceCardA50 : theme.surfaceCard
 
@@ -339,8 +373,8 @@ Rectangle {
     // what shipped before.
     Rectangle {
         id: contentFrame
-        anchors.left: sidebar.right
-        anchors.right: queueColumn.left
+        anchors.left: root.isMobile ? parent.left : sidebar.right
+        anchors.right: root.isMobile ? parent.right : queueColumn.left
         anchors.top: header.bottom
         anchors.bottom: npb.top
         color: root.ambientOn ? theme.surfaceCardA50 : theme.surfaceCard
@@ -351,15 +385,15 @@ Rectangle {
         Rectangle {
             id: contentPane
             anchors.fill: parent
-            anchors.leftMargin: 8
-            anchors.rightMargin: 8
-            anchors.bottomMargin: 8
-            radius: theme.radiusMd
+            anchors.leftMargin: root.isMobile ? 0 : 8
+            anchors.rightMargin: root.isMobile ? 0 : 8
+            anchors.bottomMargin: root.isMobile ? 0 : 8
+            radius: root.isMobile ? 0 : theme.radiusMd
             // Frosted content panel while the ambient background is active
             // (AppShell.slint: surface-main @ 0.22 + 1px #ffffff@0.10
             // hairline), over the frame's card @ 0.5.
             color: root.ambientOn ? theme.surfaceMainA22 : theme.surfaceMain
-            border.width: root.ambientOn ? 1 : 0
+            border.width: (root.ambientOn && !root.isMobile) ? 1 : 0
             border.color: theme.frostBorder
             clip: true
             // QBZ_PANE_LAYER: collapse the pane into one cached texture instead
@@ -482,17 +516,17 @@ Rectangle {
     readonly property real _paneY: contentFrame.y + contentPane.y
 
     BezelCorner { corner: 0; fill: contentFrame.color; r: contentPane.radius
-                  visible: !root.ambientOn
+                  visible: !root.ambientOn && !root.isMobile
                   x: root._paneX; y: root._paneY }
     BezelCorner { corner: 1; fill: contentFrame.color; r: contentPane.radius
-                  visible: !root.ambientOn
+                  visible: !root.ambientOn && !root.isMobile
                   x: root._paneX + contentPane.width - width; y: root._paneY }
     BezelCorner { corner: 2; fill: contentFrame.color; r: contentPane.radius
-                  visible: !root.ambientOn
+                  visible: !root.ambientOn && !root.isMobile
                   x: root._paneX + contentPane.width - width
                   y: root._paneY + contentPane.height - height }
     BezelCorner { corner: 3; fill: contentFrame.color; r: contentPane.radius
-                  visible: !root.ambientOn
+                  visible: !root.ambientOn && !root.isMobile
                   x: root._paneX
                   y: root._paneY + contentPane.height - height }
 

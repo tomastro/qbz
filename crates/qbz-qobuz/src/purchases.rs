@@ -609,9 +609,16 @@ impl QobuzClient {
         use std::io::Write;
         use std::time::Duration;
 
+        let mut certs = Vec::new();
+        for cert in webpki_root_certs::TLS_SERVER_ROOT_CERTS {
+            if let Ok(c) = reqwest::Certificate::from_der(cert) {
+                certs.push(c);
+            }
+        }
         let client = reqwest::Client::builder()
             .connect_timeout(Duration::from_secs(10))
             .http1_only()
+            .tls_certs_only(certs)
             .build()
             .map_err(|e| format!("Failed to create HTTP client: {}", e))?;
 

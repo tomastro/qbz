@@ -27,6 +27,9 @@
 //! playback track-change + play/pause edges. See the "GLUE" notes on those
 //! functions.
 
+#[cfg(target_os = "android")]
+use crate::android_open as open;
+
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, OnceLock};

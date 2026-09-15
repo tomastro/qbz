@@ -17,6 +17,9 @@
 //! shows at most 500, so filtering QML-side would ship the whole history
 //! across the bridge on every keystroke.
 
+#[cfg(target_os = "android")]
+use crate::android_open as open;
+
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{LazyLock, Mutex};
 

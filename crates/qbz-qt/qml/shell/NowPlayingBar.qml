@@ -5,8 +5,9 @@
 
 import QtQuick
 import com.blitzfc.qbz
+import "../theme"
 
-Item {
+Rectangle {
     id: root
 
     // The shell's shared hover-tooltip overlay (controls/QbzTooltip.qml),
@@ -14,10 +15,18 @@ Item {
     // whichever mode is loaded below: all four modes use it for dynamic
     // Shuffle/Repeat state, and the full bar also uses it for Qobuz Connect.
     property Item tooltip: null
+    property real bottomSafeInset: 0
+
+    QbzTheme { id: theme }
+    color: theme.surfaceCard
 
     Loader {
         id: barLoader
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: root.bottomSafeInset
         source: QbzShell.npbMode === 2 ? "NowPlayingBarSmall.qml" : "PlayerBar.qml"
     }
 

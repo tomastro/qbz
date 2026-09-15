@@ -2,6 +2,16 @@
 
 use thiserror::Error;
 
+fn format_reqwest_err(e: &reqwest::Error) -> String {
+    let mut msg = e.to_string();
+    let mut curr: Option<&dyn std::error::Error> = std::error::Error::source(e);
+    while let Some(src) = curr {
+        msg.push_str(&format!(" -> {}", src));
+        curr = src.source();
+    }
+    msg
+}
+
 #[derive(Error, Debug)]
 pub enum ApiError {
     #[error("Authentication failed: {0}")]

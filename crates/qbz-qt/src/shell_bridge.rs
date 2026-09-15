@@ -5,6 +5,9 @@
 //! Invokables: the shell actions (sidebar cycle, nav, npb mode, theme,
 //! sidebar tree, drag & drop) — one-line forwards into the crate handlers.
 
+#[cfg(target_os = "android")]
+use crate::android_open as open;
+
 use std::pin::Pin;
 use std::sync::OnceLock;
 

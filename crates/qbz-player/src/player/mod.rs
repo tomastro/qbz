@@ -48,10 +48,12 @@ use symphonia::default::{get_codecs, get_probe};
 use playback_engine::PlaybackEngine;
 use qbz_audio::{
     calculate_gain_factor, db_to_linear, extract_replaygain, AnalyzerMessage, AnalyzerTap,
-    AnalyzerWaveformTrack, AudioBackendType, AudioDiagnostic, AudioSettings, BackendConfig,
-    BackendManager, BitPerfectMode, DiagnosticSource, DynamicAmplify, LoudnessAnalyzer,
+    AnalyzerWaveformTrack, AudioBackendType, AudioDiagnostic, AudioSettings, BitPerfectMode,
+    DiagnosticSource, DynamicAmplify, LoudnessAnalyzer,
     LoudnessCache, TappedSource, VisualizerTap,
 };
+#[cfg(not(target_os = "android"))]
+use qbz_audio::{BackendConfig, BackendManager};
 use qbz_models::{AssetOrigin, ExternalStreamAsset, Quality, StreamQualityInfo};
 use qbz_qobuz::QobuzClient;
 
@@ -966,6 +968,36 @@ fn compute_needs_new_stream(
 /// Returns None if backend system is not configured (backend_type = None)
 ///
 /// For ALSA backend with hw: devices, may return AlsaDirect instead of Rodio stream.
+#[cfg(target_os = "android")]
+fn try_init_stream_with_backend(
+    _audio_settings: &AudioSettings,
+    sample_rate: u32,
+    channels: u16,
+    state: &SharedState,
+) -> Option<Result<StreamType, String>> {
+    // Android never enters AudioTrack/AAudio here.  The Qt shell installs a
+    // UsbManager-backed factory which selects an alternate setting, programs
+    // and reads back the DAC clock for THIS track, then hands usbfs to the
+    // shared direct writer.  Returning the error is intentional: silently
+    // falling back would route through AudioFlinger/Dolby and invalidate the
+    // bit-perfect claim.
+    let bit_depth = state.get_bit_depth().max(16);
+    let stream = qbz_audio::android_usb_direct::open(sample_rate, channels, bit_depth).map(
+        |stream| {
+            log::info!(
+                "[Android USB Direct] stream open: {} Hz, {}-bit, {} channels",
+                sample_rate,
+                bit_depth,
+                channels
+            );
+            state.set_bit_perfect_mode(Some(BitPerfectMode::DirectHardware));
+            StreamType::Direct(stream)
+        },
+    );
+    Some(stream)
+}
+
+#[cfg(not(target_os = "android"))]
 fn try_init_stream_with_backend(
     audio_settings: &AudioSettings,
     sample_rate: u32,
@@ -4531,14 +4563,20 @@ impl Player {
                                 }
                             };
 
-                            // Verify format compatibility (same sample rate and channels)
+                            // Verify wire-format compatibility. Android USB Direct selects
+                            // distinct 16-bit and 24-bit alternate settings, so a same-rate
+                            // bit-depth change must use the normal next-track reopen path.
                             if let (Some(cur_sr), Some(cur_ch)) =
                                 (*current_track_sample_rate, *current_track_channels)
                             {
-                                if sample_rate != cur_sr || channels != cur_ch {
+                                let cur_bits = thread_state.get_bit_depth();
+                                if sample_rate != cur_sr
+                                    || channels != cur_ch
+                                    || (cfg!(target_os = "android") && bit_depth != cur_bits)
+                                {
                                     log::info!(
-                                    "Gapless: format mismatch (current {}Hz/{}ch vs next {}Hz/{}ch), ignoring PlayNext for track {}",
-                                    cur_sr, cur_ch, sample_rate, channels, track_id
+                                    "Gapless: format mismatch (current {}Hz/{}bit/{}ch vs next {}Hz/{}bit/{}ch), ignoring PlayNext for track {}",
+                                    cur_sr, cur_bits, cur_ch, sample_rate, bit_depth, channels, track_id
                                 );
                                     thread_state.set_gapless_ready(false);
                                     return;
@@ -4682,12 +4720,18 @@ impl Player {
                             if let (Some(cur_sr), Some(cur_ch)) =
                                 (*current_track_sample_rate, *current_track_channels)
                             {
-                                if sample_rate != cur_sr || channels != cur_ch {
+                                let cur_bits = thread_state.get_bit_depth();
+                                if sample_rate != cur_sr
+                                    || channels != cur_ch
+                                    || (cfg!(target_os = "android") && bit_depth != cur_bits)
+                                {
                                     log::info!(
-                                        "Gapless stream: format mismatch (current {}Hz/{}ch vs next {}Hz/{}ch), ignoring track {}",
+                                        "Gapless stream: format mismatch (current {}Hz/{}bit/{}ch vs next {}Hz/{}bit/{}ch), ignoring track {}",
                                         cur_sr,
+                                        cur_bits,
                                         cur_ch,
                                         sample_rate,
+                                        bit_depth,
                                         channels,
                                         track_id
                                     );

@@ -22,7 +22,9 @@
 //! onto `NowPlayingState` alongside `SettingsState`.
 
 use cxx_qt_lib::QString;
-use qbz_audio::backend::{AlsaPlugin, AudioBackendType};
+use qbz_audio::backend::AudioBackendType;
+#[cfg(not(target_os = "android"))]
+use qbz_audio::backend::AlsaPlugin;
 use qbz_audio::settings::AudioSettings;
 use std::sync::{LazyLock, Mutex};
 
@@ -65,6 +67,18 @@ impl Default for OutputLabels {
 /// `settings.rs::output_labels`, ported verbatim — this mapping IS the
 /// contract for the two LEDs; do not "improve" it.
 pub fn output_labels(audio: &AudioSettings) -> OutputLabels {
+    #[cfg(target_os = "android")]
+    {
+        let _ = audio;
+        return OutputLabels {
+            backend: "USB",
+            mode: "DIRECT",
+            backend_active: true,
+            mode_active: true,
+        };
+    }
+
+    #[cfg(not(target_os = "android"))]
     let (backend, backend_active) = match audio.backend_type {
         Some(AudioBackendType::PipeWire) => ("PIPEWIRE", true),
         Some(AudioBackendType::Alsa) => ("ALSA", true),
@@ -74,6 +88,7 @@ pub fn output_labels(audio: &AudioSettings) -> OutputLabels {
         Some(AudioBackendType::SystemDefault) => ("SYST", false),
         None => ("AUTO", false),
     };
+    #[cfg(not(target_os = "android"))]
     let (mode, mode_active) = match audio.backend_type {
         Some(AudioBackendType::PipeWire) => {
             if audio.dac_passthrough {
@@ -114,6 +129,7 @@ pub fn output_labels(audio: &AudioSettings) -> OutputLabels {
         }
         Some(AudioBackendType::SystemDefault) | None => ("DEFAULT", false),
     };
+    #[cfg(not(target_os = "android"))]
     OutputLabels {
         backend,
         mode,
@@ -135,11 +151,20 @@ pub fn output_labels(audio: &AudioSettings) -> OutputLabels {
 /// READ-ONLY derivation from the persisted `AudioSettings` — no audio
 /// behaviour is changed anywhere by this, the UI just stops lying about it.
 pub fn volume_locked(audio: &AudioSettings) -> bool {
+    #[cfg(target_os = "android")]
+    {
+        let _ = audio;
+        return true;
+    }
+
+    #[cfg(not(target_os = "android"))]
     let alsa_direct =
         qbz_audio::alsa_direct::uses_alsa_direct_route(audio) && !audio.alsa_hardware_volume;
+    #[cfg(not(target_os = "android"))]
     let wasapi_exclusive = audio.backend_type == Some(AudioBackendType::WasapiExclusive)
         && audio.output_device.is_some();
-    alsa_direct || wasapi_exclusive
+    #[cfg(not(target_os = "android"))]
+    return alsa_direct || wasapi_exclusive;
 }
 
 /// Derive + push the four LED values (and the volume-lock flag) onto the
@@ -147,6 +172,14 @@ pub fn volume_locked(audio: &AudioSettings) -> bool {
 /// AND from the track/stream edges, so the labels follow the settings without
 /// a poll of their own.
 fn cached_device_label(audio: &AudioSettings) -> String {
+    #[cfg(target_os = "android")]
+    {
+        let _ = audio;
+        return crate::android_usb_qt::connected_dac_name()
+            .unwrap_or_else(|| "Panasonic USB Audio 2 (UsbManager)".to_string());
+    }
+
+    #[cfg(not(target_os = "android"))]
     DEVICE_LABEL
         .lock()
         .ok()

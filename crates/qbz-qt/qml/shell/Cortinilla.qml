@@ -156,8 +156,9 @@ Item {
     // sections make it scroll.
     readonly property int npbHeight:
         QbzShell.npbMode === 2 ? theme.npbSmallHeight : theme.npbLargeHeight
+    readonly property real headerH: root.headerBar ? root.headerBar.height : theme.headerHeight
     readonly property int scrollCap:
-        root.height - theme.headerHeight - 6 - root.npbHeight - 16 - 12
+        root.height - root.headerH - 6 - root.npbHeight - 16 - 12
 
     // --- Focus-driven lifetime (QoL round, replaces the Slint idle timer) --
     // The 4.5s/30s idle countdown was inherited from Slint, which could not
@@ -208,9 +209,9 @@ Item {
     MouseArea {
         visible: root.visible
         x: 0
-        y: theme.headerHeight
+        y: root.headerH
         width: root.width
-        height: root.height - theme.headerHeight
+        height: root.height - root.headerH
         onClicked: root.dismissOutside()
     }
     // 2) header strip LEFT of the search box.
@@ -219,7 +220,7 @@ Item {
         x: 0
         y: 0
         width: (root.width - root.searchBoxWidth) / 2
-        height: theme.headerHeight
+        height: root.headerH
         onClicked: root.dismissOutside()
     }
     // 3) header strip RIGHT of the search box.
@@ -228,7 +229,7 @@ Item {
         x: (root.width + root.searchBoxWidth) / 2
         y: 0
         width: root.width - x
-        height: theme.headerHeight
+        height: root.headerH
         onClicked: root.dismissOutside()
     }
 
@@ -263,7 +264,7 @@ Item {
     Rectangle {
         id: panel
         x: (root.width - root.panelWidth) / 2
-        y: theme.headerHeight + 6
+        y: root.headerH + 6
         width: root.panelWidth
         height: Math.min(bodyColumn.height + 12, root.scrollCap + 12)
         radius: theme.radiusSm

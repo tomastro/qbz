@@ -17,6 +17,8 @@
 //! id-keying would stop the file round-tripping with the shipping Slint build,
 //! which is the entire point of sharing it.
 
+#[cfg(target_os = "android")]
+use crate::android_rfd as rfd;
 use std::collections::HashMap;
 use std::path::PathBuf;
 

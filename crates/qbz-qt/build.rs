@@ -399,6 +399,10 @@ fn build_rhi_items() {
     cc.file("cxx/qt_vulkan_probe.cpp");
     println!("cargo:rerun-if-changed=cxx/win_shell.cpp");
     cc.file("cxx/win_shell.cpp");
+    // Cross-platform system URL/file opener. On Android the `open` crate has
+    // no desktop launcher, while QDesktopServices delegates through QtActivity.
+    println!("cargo:rerun-if-changed=cxx/platform_open.cpp");
+    cc.file("cxx/platform_open.cpp");
     // Shell_NotifyIconW tray. No Q_OBJECT, so no moc; the body is inside
     // `#ifdef _WIN32` and compiles to nothing on Linux and macOS.
     println!("cargo:rerun-if-changed=cxx/win_tray.cpp");
@@ -987,6 +991,17 @@ fn main() {
 /// `../../packaging`.
 #[cfg(windows)]
 fn embed_windows_resources() {
+    // A build script is compiled for the host, so `cfg(windows)` is also true
+    // when a Windows workstation cross-compiles QBZ for Android. PE resources
+    // only belong in an actual Windows target; winresource correctly rejects
+    // Android's target environment.
+    // `TARGET` is the authoritative Cargo target triple here.  In practice
+    // `CARGO_CFG_TARGET_OS` can still describe the Windows host for this
+    // cxx-qt build script, which made Android cross-builds reach winresource.
+    let target = std::env::var("TARGET").unwrap_or_default();
+    if !target.contains("windows") {
+        return;
+    }
     println!("cargo:rerun-if-changed=../../packaging/icons/icon.ico");
     println!("cargo:rerun-if-changed=../../packaging/windows/qbz.exe.manifest");
     let mut res = winresource::WindowsResource::new();
