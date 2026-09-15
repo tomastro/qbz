@@ -75,7 +75,7 @@ import "../theme"
 
 Rectangle {
     property bool kioskHost: false
-
+    readonly property bool isMobile: Qt.platform.os === "android" || (root.width > 0 && root.width < 600)
     id: root
 
     property var item: ({})
@@ -452,7 +452,7 @@ Rectangle {
         ? theme.alphaTier(10) : (theme.isDark ? "#1affffff" : "#1a000000")
 
     width: parent ? parent.width : 0
-    height: kioskHost ? (showReorder ? 88 : 64) : 50
+    height: root.isMobile ? 56 : (kioskHost ? (showReorder ? 88 : 64) : 50)
     radius: 8
     // Hover fill is OFF on a dead row (views/purchases/PurchaseListRow.qml
     // does the same on its unavailable rows): a row that lights up under the
@@ -525,7 +525,7 @@ Rectangle {
     // these rows lines up with them by construction. The title column's
     // arithmetic lives there too (`titleWidth`) — the header asks the same
     // function the same question and gets the same answer.
-    TrackCols { id: cols; kioskHost: root.kioskHost }
+    TrackCols { id: cols; kioskHost: root.kioskHost; isMobile: root.isMobile }
 
     /// One chevron of the reorder gutter. Declared at the file's top level
     /// (an inline component must be — the same rule TrackListHeader's
@@ -965,33 +965,52 @@ Rectangle {
                     }
                 }
             }
-            Text {
+            Row {
                 width: parent.width
-                visible: (root.item.artist || "") !== ""
-                text: root.item.artist || ""
-                color: root.artistLink && root.item.artistId && artistLinkArea.containsMouse
-                    ? theme.textPrimary : theme.textMuted
-                font.pixelSize: 12
-                elide: Text.ElideRight
-                MouseArea {
-                    id: artistLinkArea
-                    anchors.fill: parent
-                    enabled: root.artistLink && !!root.item.artistId
-                    hoverEnabled: true
-                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    // Same routing as the menu's "Go to artist" — Slint drives
-                    // both through one handler, so gating only the menu would
-                    // leave the LINK navigating to the track's own artist.
-                    onClicked: {
-                        if (root.routeGoToExternally) root.goToRequested("artist")
-                        else QbzArtist.openArtist(root.item.artistId)
+                spacing: 6
+                Text {
+                    id: trArtistTxt
+                    width: Math.min(implicitWidth, parent.width - (trQualityTag.visible ? trQualityTag.width + 6 : 0))
+                    visible: (root.item.artist || "") !== ""
+                    text: root.item.artist || ""
+                    color: root.artistLink && root.item.artistId && artistLinkArea.containsMouse
+                        ? theme.textPrimary : theme.textMuted
+                    font.pixelSize: 12
+                    elide: Text.ElideRight
+                    MouseArea {
+                        id: artistLinkArea
+                        anchors.fill: parent
+                        enabled: root.artistLink && !!root.item.artistId
+                        hoverEnabled: true
+                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        onClicked: {
+                            if (root.routeGoToExternally) root.goToRequested("artist")
+                            else QbzArtist.openArtist(root.item.artistId)
+                        }
+                    }
+                }
+                Rectangle {
+                    id: trQualityTag
+                    visible: root.isMobile && (root.item.qualityTier || "") !== ""
+                    width: trQTxt.implicitWidth + 8
+                    height: 14
+                    radius: 3
+                    color: theme.surfaceElevated
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        id: trQTxt
+                        anchors.centerIn: parent
+                        text: (root.item.qualityTier || "").toUpperCase()
+                        color: theme.accent
+                        font.pixelSize: 9
+                        font.weight: theme.weightBold
                     }
                 }
             }
         }
         // Album (link) column (showAlbum arm).
         Text {
-            visible: root.showAlbum
+            visible: !root.isMobile && root.showAlbum
             width: cols.colAlbum
             anchors.verticalCenter: parent.verticalCenter
             text: root.item.album || ""
@@ -1024,26 +1043,9 @@ Rectangle {
                 height: 13
                 tintName: "accent"
             }
-        // Quality (92px) — the BARE badge, 1:1 with primitives/TrackRow.slint
-        // 578-592: a 92px cell, `alignment: center` on both axes, holding a
-        // QualityBadgeFull with `show-icon: false` + `bare: true`. That is the
-        // tier label ("CD"/"HI-RES"/"MP3"/"LOSSLESS") stacked over the exact
-        // bit-depth / sample-rate line, with no chip background or border, so
-        // it blends into the row instead of reading as a contained badge.
-        // The .slint has ONE form here — no icon variant, no bare-text
-        // variant — which is why `qualityStyle` above is inert.
-        //
-        // The cell keeps its FIXED 92px. That number is a term of
-        // `cellsRight`, which is what sizes the title column, so a wider badge
-        // MUST NOT widen the cell or the title would be pushed into the
-        // trailing controls. The badge is centred and the cell clips; at 8/9px
-        // the longest real detail ("24-bit / 352.8 kHz") measures ~80px, so
-        // the clip is a guard, never the normal path.
-        //
-        // Cheaper than what it replaces, too: QualityMini resolves to
-        // QualityBadge, which carries a ToolTip popup and a hover MouseArea
-        // per row; this one is two Texts.
+        // Quality (92px)
         Item {
+            visible: !root.isMobile
             width: cols.colQuality
             height: parent.height
             // No `clip: true`: a clip is an unconditional batch root
@@ -1062,7 +1064,7 @@ Rectangle {
         }
         // Favorite (showFavorite arm).
         Rectangle {
-            visible: root.showFavorite
+            visible: !root.isMobile && root.showFavorite
             width: cols.colFavorite
             height: cols.colFavorite
             radius: theme.radiusSm

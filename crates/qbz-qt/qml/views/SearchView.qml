@@ -60,6 +60,7 @@ Rectangle {
     color: ambientOn ? "transparent" : theme.surfaceMain
     readonly property bool ambientOn: theme.ambientOn
     radius: 12
+    readonly property bool isMobile: Qt.platform.os === "android" || (root.width > 0 && root.width < 600)
 
     QbzTheme { id: theme }
 
@@ -462,7 +463,7 @@ Rectangle {
         Component.onCompleted: opacity = 1
         menuShowFavorite: false
         showArtwork: true
-        showAlbum: true
+        showAlbum: !root.isMobile
         artistLink: true
         onPlayRequested: QbzPlayer.playTrack(item.id)
         onEnqueueRequested: function (m) { QbzPlayer.enqueueTrack(item.id, m) }
@@ -656,6 +657,7 @@ Rectangle {
             }
 
             Text {
+                visible: !root.isMobile
                 x: 32
                 anchors.verticalCenter: parent.verticalCenter
                 text: QbzSession.tr("Search", QbzSession.trRev)
@@ -663,31 +665,43 @@ Rectangle {
                 font.pixelSize: theme.fontSection
                 font.weight: theme.weightBold
             }
-            Row {
+            Flickable {
                 visible: root.hasResults
+                anchors.left: root.isMobile ? parent.left : undefined
+                anchors.leftMargin: root.isMobile ? 16 : 0
                 anchors.right: parent.right
-                anchors.rightMargin: 32
+                anchors.rightMargin: root.isMobile ? 16 : 32
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 16
-                FilterRadio { label: QbzSession.tr("Main Artist", QbzSession.trRev); selected: root.filterIndex === 1; onPicked: QbzSearch.searchFilterChanged(1) }
-                FilterRadio { label: QbzSession.tr("Performer", QbzSession.trRev); selected: root.filterIndex === 2; onPicked: QbzSearch.searchFilterChanged(2) }
-                FilterRadio { label: QbzSession.tr("Composer", QbzSession.trRev); selected: root.filterIndex === 3; onPicked: QbzSearch.searchFilterChanged(3) }
-                FilterRadio { label: QbzSession.tr("Label", QbzSession.trRev); selected: root.filterIndex === 4; onPicked: QbzSearch.searchFilterChanged(4) }
-                FilterRadio { label: QbzSession.tr("Release Name", QbzSession.trRev); selected: root.filterIndex === 5; onPicked: QbzSearch.searchFilterChanged(5) }
-                Rectangle {
-                    visible: root.filterIndex !== 0
-                    width: 24
-                    height: 24
-                    radius: 12
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: clrArea.containsMouse ? theme.surfaceHover : theme.surfaceElevated
-                    QbzIcon { name: "x"; width: 13; height: 13; anchors.centerIn: parent; tintName: clrArea.containsMouse ? "textPrimary" : "muted" }
-                    MouseArea {
-                        id: clrArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: QbzSearch.searchFilterChanged(0)
+                height: 32
+                width: root.isMobile ? parent.width - 32 : filterRow.width
+                contentWidth: filterRow.width
+                contentHeight: height
+                flickableDirection: Flickable.HorizontalFlick
+                boundsBehavior: Flickable.StopAtBounds
+                clip: true
+                Row {
+                    id: filterRow
+                    spacing: 16
+                    FilterRadio { label: QbzSession.tr("Main Artist", QbzSession.trRev); selected: root.filterIndex === 1; onPicked: QbzSearch.searchFilterChanged(1) }
+                    FilterRadio { label: QbzSession.tr("Performer", QbzSession.trRev); selected: root.filterIndex === 2; onPicked: QbzSearch.searchFilterChanged(2) }
+                    FilterRadio { label: QbzSession.tr("Composer", QbzSession.trRev); selected: root.filterIndex === 3; onPicked: QbzSearch.searchFilterChanged(3) }
+                    FilterRadio { label: QbzSession.tr("Label", QbzSession.trRev); selected: root.filterIndex === 4; onPicked: QbzSearch.searchFilterChanged(4) }
+                    FilterRadio { label: QbzSession.tr("Release Name", QbzSession.trRev); selected: root.filterIndex === 5; onPicked: QbzSearch.searchFilterChanged(5) }
+                    Rectangle {
+                        visible: root.filterIndex !== 0
+                        width: 24
+                        height: 24
+                        radius: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: clrArea.containsMouse ? theme.surfaceHover : theme.surfaceElevated
+                        QbzIcon { name: "x"; width: 13; height: 13; anchors.centerIn: parent; tintName: clrArea.containsMouse ? "textPrimary" : "muted" }
+                        MouseArea {
+                            id: clrArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: QbzSearch.searchFilterChanged(0)
+                        }
                     }
                 }
             }
@@ -699,7 +713,7 @@ Rectangle {
             width: parent.width
             height: 40
             Row {
-                x: 32
+                x: root.isMobile ? 16 : 32
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 8
                 spacing: 22
@@ -756,8 +770,8 @@ Rectangle {
 
                 Column {
                     id: bodyCol
-                    x: 32
-                    width: bodyFlick.width - 64
+                    x: root.isMobile ? 16 : 32
+                    width: root.isMobile ? bodyFlick.width - 32 : bodyFlick.width - 64
                     spacing: 28
 
                     // Fade in once the search completes (SearchResultsView).
@@ -765,8 +779,96 @@ Rectangle {
                     Behavior on opacity { NumberAnimation { duration: 280; easing.type: Easing.InOutQuad } }
 
                     // ---- Most popular + Artists (All tab) ------------------
+                    Column {
+                        visible: root.tab === 0 && (root.mp.kind || "") !== "" && root.isMobile
+                        width: parent.width
+                        spacing: 24
+                        Column {
+                            width: parent.width
+                            spacing: 12
+                            Row {
+                                spacing: 8
+                                QbzIcon { name: "crown"; width: 18; height: 18; tintName: "warning" }
+                                Text {
+                                    text: QbzSession.tr("Most popular", QbzSession.trRev)
+                                    color: theme.textPrimary
+                                    font.pixelSize: theme.fontSection
+                                    font.weight: theme.weightSemibold
+                                }
+                            }
+                            Item {
+                                width: 200
+                                height: 246
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                ArtistCard {
+                                    visible: root.mp.kind === "artist"
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    item: root.mp.artist || ({})
+                                    artSource: (root.mp.artist || ({})).artPath || ""
+                                    isPinned: (root.mp.artist || ({})).isPinned === true
+                                    artworkUrl: (root.mp.artist || ({})).artUrl || ""
+                                }
+                                AlbumCard {
+                                    visible: root.mp.kind === "album"
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    albumId: (root.mp.album || ({})).id || ""
+                                    title: (root.mp.album || ({})).title || ""
+                                    artist: (root.mp.album || ({})).artist || ""
+                                    artistId: (root.mp.album || ({})).artistId || ""
+                                    genre: (root.mp.album || ({})).genre || ""
+                                    year: (root.mp.album || ({})).year || ""
+                                    qualityTier: (root.mp.album || ({})).qualityTier || ""
+                                    qualityDetail: (root.mp.album || ({})).qualityDetail || ""
+                                    artSource: (root.mp.album || ({})).artPath || ""
+                                    isFavorite: (root.mp.album || ({})).isFavorite === true
+                                    isPinned: (root.mp.album || ({})).isPinned === true
+                                    artworkUrl: (root.mp.album || ({})).artUrl || ""
+                                }
+                                SearchTrackHero {
+                                    visible: root.mp.kind === "track"
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    card: root.mp.track || ({})
+                                    qualityLabel: root.mp.qualityLabel || ""
+                                }
+                                CardArtSkeleton {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    card: root.mp.kind === "album" ? (root.mp.album || ({}))
+                                        : root.mp.kind === "track" ? (root.mp.track || ({}))
+                                        : ({})
+                                    phase: root.skelPhase
+                                }
+                            }
+                        }
+                        Column {
+                            visible: root.artistsCarousel.length > 0
+                            width: parent.width
+                            spacing: 12
+                            QbzSectionHeader {
+                                title: QbzSession.tr("Artists", QbzSession.trRev)
+                                showViewAll: true
+                                viewAllAccent: true
+                                showChevrons: false
+                                onViewAllClicked: QbzSearch.searchTabChanged(3)
+                            }
+                            ListView {
+                                width: parent.width
+                                height: 246
+                                orientation: ListView.Horizontal
+                                spacing: 16
+                                clip: true
+                                boundsBehavior: Flickable.StopAtBounds
+                                model: root.tab === 0 ? root.artistsCarousel : []
+                                delegate: ArtistCard {
+                                    item: modelData
+                                    artSource: modelData.artPath || ""
+                                    isPinned: modelData.isPinned === true
+                                    artworkUrl: modelData.artUrl || ""
+                                }
+                            }
+                        }
+                    }
                     Row {
-                        visible: root.tab === 0 && (root.mp.kind || "") !== ""
+                        visible: root.tab === 0 && (root.mp.kind || "") !== "" && !root.isMobile
                         width: parent.width
                         spacing: 24
                         // Hero column, fixed 200px (the carousel always starts

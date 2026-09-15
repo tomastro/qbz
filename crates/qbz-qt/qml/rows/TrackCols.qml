@@ -45,45 +45,29 @@ import QtQuick
 
 QtObject {
     property bool kioskHost: false
+    property bool isMobile: Qt.platform.os === "android"
 
     /// Row-body horizontal padding (TrackRow.slint:265-266).
-    readonly property int padH: 12
+    readonly property int padH: isMobile ? 8 : 12
     /// Inter-column gap (TrackRow.slint:267).
-    readonly property int gap: kioskHost ? 8 : 14
+    readonly property int gap: isMobile ? 8 : (kioskHost ? 8 : 14)
 
-    /// Reorder gutter — the up/down chevron stack at the LEADING edge of a
-    /// custom-order row (TrackRow.slint:272-280, `width: 22px`). Drawn only
-    /// on a reorderable surface (the playlist detail under custom sort, and
-    /// a local playlist under its natural order), so it is the one arm the
-    /// Slint header does NOT reserve. It is reserved here, because a header
-    /// that ignores a column the row draws slides every label after it by
-    /// width + gap — the exact drift this file exists to prevent.
-    readonly property int colReorder: kioskHost ? 44 : 22
-    /// Number / play-cell (TrackRow.slint:344 `number-width: 32px`).
-    readonly property int colNumber: kioskHost ? 44 : 32
-    /// Artwork thumbnail (TrackRow.slint:336, show-artwork arm).
-    readonly property int colArt: 36
-    /// Origin mark for mixed/offline playlist rows.
+    readonly property int colReorder: isMobile ? 24 : (kioskHost ? 44 : 22)
+    readonly property int colNumber: isMobile ? 28 : (kioskHost ? 44 : 32)
+    readonly property int colArt: isMobile ? 38 : 36
     readonly property int colSource: 22
-    /// Album link column (TrackRow.slint:540, show-album arm).
-    readonly property int colAlbum: 220
-    /// Duration (TrackRow.slint:569).
-    readonly property int colDuration: kioskHost ? 60 : 70
-    /// Quality badge cell (TrackRow.slint:581).
-    readonly property int colQuality: 92
-    /// Heart (TrackRow.slint:600, show-favorite arm).
-    readonly property int colFavorite: kioskHost ? 44 : 28
-    /// Offline/cloud slot (TrackRow.slint:650, show-download arm).
-    readonly property int colDownload: kioskHost ? 44 : 28
-    /// ⋯ context menu (TrackRow.slint:740, show-menu arm).
-    readonly property int colMenu: kioskHost ? 44 : 32
+    readonly property int colAlbum: isMobile ? 0 : 220
+    readonly property int colDuration: isMobile ? 44 : (kioskHost ? 60 : 70)
+    readonly property int colQuality: isMobile ? 0 : 92
+    readonly property int colFavorite: isMobile ? 0 : (kioskHost ? 44 : 28)
+    readonly property int colDownload: isMobile ? 0 : (kioskHost ? 44 : 28)
+    readonly property int colMenu: isMobile ? 36 : (kioskHost ? 44 : 32)
 
-    /// Sum of every FIXED cell that is actually drawn for these arms.
-    ///
-    /// `reorder` is TRAILING and optional on all three functions: it landed
-    /// after the call sites did, and `undefined` is falsy, so a caller that
-    /// does not know about the gutter keeps its old answer exactly.
     function fixedWidth(artwork, albumCol, favorite, download, menu, reorder, source) {
+        if (isMobile) {
+            return colNumber + (artwork ? colArt : 0) + colDuration
+                + (menu ? colMenu : 0) + (reorder ? colReorder : 0)
+        }
         return colNumber + (artwork ? colArt : 0) + (albumCol ? colAlbum : 0)
             + colDuration + colQuality
             + (favorite ? colFavorite : 0) + (download ? colDownload : 0)
@@ -91,22 +75,18 @@ QtObject {
             + (source ? colSource : 0)
     }
 
-    /// Sum of the inter-column gaps. The unconditional cells are number,
-    /// title, duration and quality = 3 gaps; each arm adds exactly one.
-    /// (QML's Row skips invisible children entirely — no cell, no gap — and
-    /// so does Slint's `if` in a HorizontalLayout, which is why the count is
-    /// arm-dependent on both sides.)
     function gapWidth(artwork, albumCol, favorite, download, menu, reorder, source) {
+        if (isMobile) {
+            return (2 + (artwork ? 1 : 0) + (menu ? 1 : 0) + (reorder ? 1 : 0)) * gap
+        }
         return (3 + (artwork ? 1 : 0) + (albumCol ? 1 : 0) + (favorite ? 1 : 0)
             + (download ? 1 : 0) + (menu ? 1 : 0) + (reorder ? 1 : 0)
             + (source ? 1 : 0)) * gap
     }
 
-    /// The stretch column. `rowWidth` is the OUTER width of the row (the
-    /// padding is subtracted here), so a header and a row that are the same
-    /// width place every column at the same x.
     function titleWidth(rowWidth, artwork, albumCol, favorite, download, menu, reorder, source) {
-        return Math.max(0, rowWidth - 2 * padH
+        var w = isMobile ? (rowWidth > 0 ? rowWidth : 360) : rowWidth
+        return Math.max(isMobile ? 120 : 0, w - 2 * padH
             - fixedWidth(artwork, albumCol, favorite, download, menu, reorder, source)
             - gapWidth(artwork, albumCol, favorite, download, menu, reorder, source))
     }

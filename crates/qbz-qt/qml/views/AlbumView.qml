@@ -32,6 +32,7 @@ import "../theme"
 
 Rectangle {
     id: root
+    readonly property bool isMobile: Qt.platform.os === "android" || (root.width > 0 && root.width < 600)
     // Transparent while the ambient background is active (phase 14 —
     // HomeView.slint:163: the frosted content panel shows through).
     color: ambientOn ? "transparent" : theme.surfaceMain
@@ -358,7 +359,7 @@ Rectangle {
     // variable delegates/sections, which makes a scrollbar thumb resize and
     // skip as new sizes are discovered. Here count * 10 is exact from frame 1.
     readonly property int listCellPx: 10
-    readonly property int trackRowPx: 50
+    readonly property int trackRowPx: root.isMobile ? 56 : 50
     readonly property int trackHeaderPx: 40
     // SectionRail/RailSkeleton are 286px. Reserve 290 so the tape stays on
     // the 10px grid; the final 4px is harmless air before the next section.
@@ -828,9 +829,9 @@ Rectangle {
     readonly property string brandDir: "qrc:/qt/qml/com/blitzfc/qbz/qml/assets/brand/"
 
     // Whether the right-hand album sidebar has anything to show at all.
-    readonly property bool hasSidebar: (albumHeader.label || "") !== ""
+    readonly property bool hasSidebar: !root.isMobile && ((albumHeader.label || "") !== ""
                                        || awards.length > 0
-                                       || albumHeader.showExternalLinks === true
+                                       || albumHeader.showExternalLinks === true)
     // Same contract as ShellState.content-constrained in the Slint view: the
     // album sidebar gives the track table priority only when a right panel is
     // consuming a sub-1366px window. In that state it becomes the 56px icon
@@ -930,9 +931,102 @@ Rectangle {
                 }
             }
 
-            // --- Album header -------------------------------------------
+            // --- Album header (Mobile) ---------------------------------
+            Column {
+                id: mobileAlbumHdr
+                visible: !root.primaryLoading && root.isMobile
+                width: parent.width - 32
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 14
+
+                Rectangle {
+                    width: Math.min(220, parent.width * 0.6)
+                    height: width
+                    radius: 12
+                    color: theme.surfaceElevated
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    RoundedImage {
+                        anchors.fill: parent
+                        source: (albumHeader.customCoverPath || "") !== ""
+                            ? "file://" + albumHeader.customCoverPath
+                            : (root.coverMap[albumHeader.artUrl] || "")
+                        radius: 12
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: coverLightbox.openWith(root.bestCoverSource())
+                    }
+                }
+
+                Column {
+                    width: parent.width
+                    spacing: 4
+                    Text {
+                        width: parent.width
+                        text: albumHeader.title || ""
+                        color: root.hdrStrong
+                        font.pixelSize: 18
+                        font.weight: theme.weightBold
+                        horizontalAlignment: Text.AlignHCenter
+                        elide: Text.ElideRight
+                    }
+                    Text {
+                        width: parent.width
+                        text: albumHeader.artist || ""
+                        color: theme.accent
+                        font.pixelSize: 14
+                        font.weight: theme.weightMedium
+                        horizontalAlignment: Text.AlignHCenter
+                        elide: Text.ElideRight
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: if (albumHeader.artistId) QbzArtist.openArtist(albumHeader.artistId)
+                        }
+                    }
+                    Text {
+                        width: parent.width
+                        text: [albumHeader.year, albumHeader.genre, albumHeader.qualityTier].filter(Boolean).join("  •  ")
+                        color: root.hdrBody
+                        font.pixelSize: 12
+                        horizontalAlignment: Text.AlignHCenter
+                        elide: Text.ElideRight
+                    }
+                }
+
+                Row {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: 16
+                    QbzCircleAction {
+                        name: "play"
+                        diameterOverride: 44
+                        overlay: root.hdrOverlay
+                        onClicked: QbzAlbum.playAlbum(albumHeader.id)
+                    }
+                    QbzCircleAction {
+                        name: "shuffle"
+                        diameterOverride: 44
+                        overlay: root.hdrOverlay
+                        onClicked: QbzAlbum.shuffleAlbum(albumHeader.id)
+                    }
+                    QbzCircleAction {
+                        name: root.albumFavorite ? "heart-filled" : "heart"
+                        diameterOverride: 44
+                        overlay: root.hdrOverlay
+                        onClicked: root.toggleAlbumFavorite()
+                    }
+                    QbzCircleAction {
+                        id: mobileAlbumMenuBtn
+                        name: "ellipsis"
+                        diameterOverride: 44
+                        overlay: root.hdrOverlay
+                        onClicked: function (mouse) { albumMenu.openAtCursor(mobileAlbumMenuBtn, mouse.x, mouse.y) }
+                    }
+                }
+            }
+
+            // --- Album header (Desktop) ----------------------------------
             Row {
-                visible: !root.primaryLoading
+                visible: !root.primaryLoading && !root.isMobile
                 width: parent.width - 64
                 spacing: root.headerGapPx
 
@@ -1548,7 +1642,7 @@ Rectangle {
                     // the band so `centerIn` centres them, which is the fix
                     // this block used to document at length.
                     TrackListHeader {
-                        visible: !QbzAlbum.albumLoading
+                        visible: !root.isMobile && !QbzAlbum.albumLoading
                         width: parent.width
                         bandHeight: 40
                         labelSpacing: 0.5
@@ -1806,12 +1900,12 @@ Rectangle {
 
                     TrackRow {
                         id: trackDelegate
-                        x: 32
-                        width: parent.width - 64 - root.sidebarReservePx
+                        x: root.isMobile ? 16 : 32
+                        width: root.isMobile ? (parent.width - 32) : (parent.width - 64 - root.sidebarReservePx)
                         item: trackCell.modelData.track
                         number: trackCell.modelData.trackNumber
                         zebra: true
-                        clickPlays: false
+                        clickPlays: true
                         artistLink: true
                         qualityStyle: "text"
                         showDownload: true
