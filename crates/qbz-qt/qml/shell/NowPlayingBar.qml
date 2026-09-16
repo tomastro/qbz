@@ -1,4 +1,4 @@
-﻿// NowPlayingBar SHELL — the mode seam (NowPlayingBar.slint, phase 18):
+// NowPlayingBar SHELL — the mode seam (NowPlayingBar.slint, phase 18):
 // mounts NowPlayingBarSmall for mode 2 (Small) and the full PlayerBar for
 // modes 0 (New) / 1 (Classic) / 3 (Large). AppShell pins the height
 // mode-aware (42px Small / 112px otherwise).
@@ -19,7 +19,7 @@ Rectangle {
     property bool isMobile: false
 
     QbzTheme { id: theme }
-    color: theme.surfaceCard
+    color: root.isMobile ? "transparent" : theme.surfaceCard
 
     Loader {
         id: barLoader
@@ -27,7 +27,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: root.bottomSafeInset
+        anchors.bottomMargin: root.isMobile ? 0 : root.bottomSafeInset
         source: root.isMobile ? "NowPlayingBarMobile.qml" : (QbzShell.npbMode === 2 ? "NowPlayingBarSmall.qml" : "PlayerBar.qml")
     }
 

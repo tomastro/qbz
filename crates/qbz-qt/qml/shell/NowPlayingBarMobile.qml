@@ -1,5 +1,4 @@
-﻿// NowPlayingBarMobile — Streamlined Now Playing Bar for Smartphone / Portrait view.
-// Replaces the 3-column desktop PlayerBar with a clean, touch-friendly mobile miniplayer.
+// NowPlayingBarMobile — Modern Apple Music-style floating mini-player card for mobile.
 
 import QtQuick
 import QtQuick.Controls
@@ -10,7 +9,12 @@ import "../theme"
 Rectangle {
     id: root
 
-    color: ambientOn ? theme.surfaceCardA50 : theme.surfaceCard
+    radius: 12
+    color: theme.ambientOn ? theme.surfaceElevatedA50 : theme.surfaceElevated
+    border.width: 1
+    border.color: theme.borderSubtle
+    clip: true
+
     readonly property bool ambientOn: theme.ambientOn
     property Item tooltip: null
 
@@ -25,85 +29,29 @@ Rectangle {
         return m + ":" + (sec < 10 ? "0" : "") + sec
     }
 
-    // 1. TOP 3px Seekbar / Progress
+    // Main Row Content
     Item {
-        id: seekbarContainer
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        height: 3
-        z: 10
-
-        Rectangle {
-            id: seekBg
-            anchors.fill: parent
-            color: theme.surfaceElevated
-
-            // Buffered progress
-            Rectangle {
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                width: parent.width * Math.min(Math.max(QbzPlayer.npCacheProgress, 0), 1)
-                color: Qt.rgba(theme.textMuted.r, theme.textMuted.g, theme.textMuted.b, 0.35)
-            }
-
-            // Played progress
-            Rectangle {
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                width: parent.width * Math.min(Math.max(QbzPlayer.npProgress, 0), 1)
-                color: theme.accent
-            }
-        }
-
-        // Expanded touch target for scrubbing
-        MouseArea {
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.topMargin: -8
-            anchors.bottomMargin: -8
-            enabled: QbzPlayer.npHasTrack
-            onPressed: function(mouse) {
-                if (QbzPlayer.npHasTrack && width > 0) {
-                    var frac = Math.min(Math.max(mouse.x / width, 0), 1)
-                    QbzPlayer.seek(frac)
-                }
-            }
-            onPositionChanged: function(mouse) {
-                if (pressed && QbzPlayer.npHasTrack && width > 0) {
-                    var frac = Math.min(Math.max(mouse.x / width, 0), 1)
-                    QbzPlayer.seek(frac)
-                }
-            }
-        }
-    }
-
-    // 2. Main Content Area
-    Item {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: seekbarContainer.bottom
-        anchors.bottom: parent.bottom
+        anchors.bottom: seekbarContainer.top
 
         // A. Album Artwork (Left)
         Item {
             id: artBox
             anchors.left: parent.left
-            anchors.leftMargin: 10
+            anchors.leftMargin: 8
             anchors.verticalCenter: parent.verticalCenter
-            width: 48
-            height: 48
+            width: 40
+            height: 40
 
             Rectangle {
                 anchors.fill: parent
                 radius: 6
-                color: theme.surfaceElevated
+                color: theme.surfaceCard
                 border.width: 1
                 border.color: theme.borderSubtle
+                clip: true
 
                 RoundedImage {
                     visible: QbzPlayer.npHasTrack && QbzPlayer.npArtworkPath !== ""
@@ -115,8 +63,8 @@ Rectangle {
                 QbzIcon {
                     visible: !QbzPlayer.npHasTrack || QbzPlayer.npArtworkPath === ""
                     name: "disc"
-                    width: 24
-                    height: 24
+                    width: 20
+                    height: 20
                     anchors.centerIn: parent
                     tintName: "muted"
                 }
@@ -132,41 +80,31 @@ Rectangle {
             }
         }
 
-        // B. Right Transport Controls
+        // B. Right Transport Controls (Play/Pause + Skip)
         Row {
             id: rightControls
             anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 2
+            spacing: 4
 
-            // Previous
-            QbzIconButton {
-                name: "skip-back"
-                btnSize: 36
-                iconSize: 18
-                btnEnabled: QbzPlayer.npHasTrack
-                anchors.verticalCenter: parent.verticalCenter
-                onClicked: QbzPlayer.previous()
-            }
-
-            // Big Play / Pause Circle
+            // Play / Pause Button
             Rectangle {
                 id: playBtn
-                width: 42
-                height: 42
-                radius: 21
+                width: 38
+                height: 38
+                radius: 19
                 anchors.verticalCenter: parent.verticalCenter
-                color: playArea.containsMouse ? theme.accentHover : theme.accent
+                color: playArea.containsMouse ? theme.surfaceHover : "transparent"
                 opacity: (QbzPlayer.npHasTrack || QbzQueue.hasPlayTarget) ? 1.0 : 0.4
 
                 QbzIcon {
                     visible: !QbzPlayer.npLoading
                     name: QbzPlayer.npPlaying ? "pause" : "play-fill"
-                    width: 20
-                    height: 20
+                    width: 22
+                    height: 22
                     anchors.centerIn: parent
-                    tintName: theme.accentGlyphTint
+                    tintName: "textPrimary"
                 }
 
                 // Loading Spinner
@@ -175,9 +113,9 @@ Rectangle {
                     visible: QbzPlayer.npLoading
                     Rectangle {
                         anchors.centerIn: parent
-                        width: 26
-                        height: 26
-                        radius: 13
+                        width: 22
+                        height: 22
+                        radius: 11
                         color: "transparent"
                         border.width: 2
                         border.color: theme.accentText
@@ -197,28 +135,18 @@ Rectangle {
                 }
             }
 
-            // Next
+            // Next / Skip
             QbzIconButton {
                 name: "skip-forward"
                 btnSize: 36
-                iconSize: 18
+                iconSize: 20
                 btnEnabled: QbzPlayer.npHasTrack
                 anchors.verticalCenter: parent.verticalCenter
                 onClicked: QbzPlayer.next()
             }
-
-            // Queue toggle
-            QbzIconButton {
-                name: "list-ordered"
-                btnSize: 36
-                iconSize: 18
-                active: QbzShell.queueOpen
-                anchors.verticalCenter: parent.verticalCenter
-                onClicked: QbzShell.toggleQueue()
-            }
         }
 
-        // C. Middle Song Info (Expands to fill all space between Art and Controls)
+        // C. Middle Song Info
         Item {
             id: infoArea
             anchors.left: artBox.right
@@ -226,31 +154,29 @@ Rectangle {
             anchors.right: rightControls.left
             anchors.rightMargin: 8
             anchors.verticalCenter: parent.verticalCenter
-            height: 40
+            height: 36
 
             Column {
                 anchors.fill: parent
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 2
+                spacing: 1
 
                 // Song Title
                 Text {
                     width: parent.width
                     text: QbzPlayer.npHasTrack ? QbzPlayer.npTitle : QbzSession.tr("Not Playing", QbzSession.trRev)
-                    font.pixelSize: 14
+                    font.pixelSize: 13
                     font.weight: Font.DemiBold
                     color: theme.textPrimary
                     elide: Text.ElideRight
                     maximumLineCount: 1
                 }
 
-                // Artist & Quality / Duration
+                // Artist
                 Text {
                     width: parent.width
-                    readonly property string artistText: QbzPlayer.npHasTrack ? QbzPlayer.npArtist : ""
-                    readonly property string qualityText: QbzPlayer.npQualityTier ? (" • " + QbzPlayer.npQualityTier) : ""
-                    text: (artistText !== "" ? (artistText + qualityText) : QbzSession.tr("Select a track", QbzSession.trRev))
-                    font.pixelSize: 12
+                    text: QbzPlayer.npHasTrack ? QbzPlayer.npArtist : ""
+                    font.pixelSize: 11
                     color: theme.textMuted
                     elide: Text.ElideRight
                     maximumLineCount: 1
@@ -264,6 +190,28 @@ Rectangle {
                         QbzShell.toggleQueue()
                     }
                 }
+            }
+        }
+    }
+
+    // Bottom 2px Progress Bar
+    Item {
+        id: seekbarContainer
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        height: 2
+
+        Rectangle {
+            anchors.fill: parent
+            color: Qt.rgba(theme.textMuted.r, theme.textMuted.g, theme.textMuted.b, 0.2)
+
+            Rectangle {
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                width: parent.width * Math.min(Math.max(QbzPlayer.npProgress, 0), 1)
+                color: theme.accent
             }
         }
     }

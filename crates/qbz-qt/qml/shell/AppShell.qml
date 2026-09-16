@@ -246,16 +246,32 @@ Rectangle {
         // the compositor's business).
     }
 
+    BottomNavBar {
+        id: bottomNavBar
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        bottomSafeInset: root.bottomSafeInset
+        visible: root.isMobile
+    }
+
     NowPlayingBar {
         id: npb
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        anchors.leftMargin: root.isMobile ? 12 : 0
+        anchors.rightMargin: root.isMobile ? 12 : 0
+        anchors.bottom: root.isMobile ? bottomNavBar.top : parent.bottom
+        anchors.bottomMargin: root.isMobile ? 8 : 0
         // Mode-aware height (AppShell.slint:396): Small collapses to one
-        // header-tall row; New/Classic/Large keep the full 112px.
-        height: (root.isMobile ? 60 : (QbzShell.npbMode === 2 ? theme.npbSmallHeight : theme.npbLargeHeight)) + root.bottomSafeInset
-        bottomSafeInset: root.bottomSafeInset
+        // header-tall row; New/Classic/Large keep the full 112px. Floating card on mobile.
+        height: root.isMobile
+            ? (QbzPlayer.npHasTrack ? 54 : 0)
+            : ((QbzShell.npbMode === 2 ? theme.npbSmallHeight : theme.npbLargeHeight) + root.bottomSafeInset)
+        bottomSafeInset: root.isMobile ? 0 : root.bottomSafeInset
         isMobile: root.isMobile
+        visible: root.isMobile ? QbzPlayer.npHasTrack : true
+        z: 950
         // The shared hover-tooltip overlay (declared further down — id
         // references resolve at completion). All four modes consume it for
         // Shuffle/Repeat state; the full bar also uses it for Qobuz Connect.
@@ -377,7 +393,7 @@ Rectangle {
         anchors.left: root.isMobile ? parent.left : sidebar.right
         anchors.right: root.isMobile ? parent.right : queueColumn.left
         anchors.top: header.bottom
-        anchors.bottom: npb.top
+        anchors.bottom: root.isMobile ? bottomNavBar.top : npb.top
         color: root.ambientOn ? theme.surfaceCardA50 : theme.surfaceCard
 
         // Content PANE — the rounded, inset surface-main panel (Radius.md,

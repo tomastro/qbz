@@ -1910,6 +1910,7 @@ Rectangle {
                         qualityStyle: "text"
                         showDownload: true
                         downloadGlyph: true
+                        fallbackArtwork: (albumHeader && (albumHeader.artUrl || albumHeader.artPath)) || ""
                         selectMode: root.multiSelect
                         checked: root.selected[item.id] === true
                         onToggleSelect: function (mods) { root.toggleSelected(item.id, mods) }
@@ -2048,7 +2049,24 @@ Rectangle {
         // cheap fixed spacer matching the page's old bottomPadding.
         footer: Item {
             width: ListView.view.width
-            height: 100
+            height: root.isMobile ? 140 : 100
+
+            Column {
+                visible: root.isMobile
+                anchors.top: parent.top
+                anchors.topMargin: 20
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 4
+
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: (albumHeader.trackCount ? (albumHeader.trackCount + " " + QbzSession.tr("tracks", QbzSession.trRev)) : "")
+                          + (albumHeader.duration ? ("、" + albumHeader.duration) : "")
+                    color: theme.textMuted
+                    font.pixelSize: 13
+                    font.weight: theme.weightMedium
+                }
+            }
         }
     }
 

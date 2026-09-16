@@ -81,6 +81,7 @@ Rectangle {
     property var item: ({})
     property int number: 0
     property bool showArtwork: false
+    property string fallbackArtwork: ""
     property bool showSource: false
     property bool showAlbum: false
     property bool showFavorite: true
@@ -675,7 +676,8 @@ Rectangle {
         // carries the separation on its own.
         Item {
             id: playCell
-            width: cols.colNumber
+            visible: !root.isMobile
+            width: root.isMobile ? 0 : cols.colNumber
             height: 40
             anchors.verticalCenter: parent.verticalCenter
             // `show-overlay: row-hovered || is-active` (TrackPlayCell.slint
@@ -841,30 +843,53 @@ Rectangle {
                 }
             }
         }
-        // 36px artwork cell (showArtwork arm).
+        // 36px/42px artwork cell (showArtwork arm or isMobile).
         Rectangle {
-            visible: root.showArtwork
-            width: cols.colArt
-            height: cols.colArt
+            visible: root.isMobile || root.showArtwork
+            width: root.isMobile ? 42 : cols.colArt
+            height: root.isMobile ? 42 : cols.colArt
             anchors.verticalCenter: parent.verticalCenter
-            radius: 4
+            radius: root.isMobile ? 6 : 4
             color: theme.surfaceElevated
-            // No clip: RoundedImage confines itself on both of its arms, and a
-            // rectangular scissor never produced this radius anyway. Same
-            // per-row batch-root cost as the quality cell above.
+            clip: true
+
             RoundedImage {
                 anchors.fill: parent
-                source: root.item.artPath || ""
-                radius: 4
+                source: (root.item.artPath || root.item.artworkUrl || root.fallbackArtwork || "")
+                radius: root.isMobile ? 6 : 4
             }
-            // Per-item cover placeholder — clears when THIS row's cover lands,
-            // which is what makes a long list read as progressive instead of
-            // filling in one lump. Host views drive the three properties;
-            // default-off, so no existing call site changes.
+
+            QbzIcon {
+                visible: !(root.item.artPath || root.item.artworkUrl || root.fallbackArtwork)
+                name: "disc"
+                width: 20
+                height: 20
+                anchors.centerIn: parent
+                tintName: "muted"
+            }
+
+            // Active/Playing overlay on mobile thumbnail
+            Rectangle {
+                anchors.fill: parent
+                radius: root.isMobile ? 6 : 4
+                color: "#7f000000"
+                visible: root.isMobile && root.isActive
+
+                Loader {
+                    anchors.centerIn: parent
+                    active: root.isActive
+                    sourceComponent: EqualizerBars {
+                        active: QbzPlayer.npPlaying
+                        tint: theme.accent
+                    }
+                }
+            }
+
+            // Per-item cover placeholder
             QbzSkeleton {
                 variant: "art"
                 anchors.fill: parent
-                blockRadius: 4
+                blockRadius: root.isMobile ? 6 : 4
                 visible: root.artPending
                 phase: root.skelPhase
                 settleMs: root.artSettleMs
@@ -1027,13 +1052,14 @@ Rectangle {
         }
         // Duration.
         Text {
+            visible: !root.isMobile
             width: cols.colDuration
             anchors.verticalCenter: parent.verticalCenter
             text: root.item.duration || ""
             color: theme.textMuted
             font.pixelSize: 12
-                horizontalAlignment: Text.AlignHCenter
-            }
+            horizontalAlignment: Text.AlignHCenter
+        }
             QbzIcon {
                 visible: !playCell.showOverlay && !root.selectMode
                     && root.leadingMarkerIcon !== ""
@@ -1616,5 +1642,17 @@ Rectangle {
             if (mouse.button === Qt.LeftButton)
                 root.playRequested()
         }
+    }
+
+    // Hairline divider for mobile (Apple Music style)
+    Rectangle {
+        visible: root.isMobile
+        anchors.left: parent.left
+        anchors.leftMargin: cols.padH + 42 + cols.gap
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        height: 1
+        color: theme.borderSubtle
+        opacity: 0.35
     }
 }

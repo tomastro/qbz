@@ -1,4 +1,4 @@
-﻿// Top header bar — QML port of crates/qbz-ui/ui/shell/HeaderBar.slint.
+// Top header bar — QML port of crates/qbz-ui/ui/shell/HeaderBar.slint.
 //
 // Left: the three "sacred" nav buttons (sidebar cycle, back, forward) and,
 // after them, the section nav in whichever form the placement prefs ask for
@@ -414,9 +414,10 @@ Rectangle {
 
         QbzNavButton {
             name: "panel-left"
-            width: root.isMobile ? 32 : 28
-            height: root.isMobile ? 32 : 28
+            width: root.isMobile ? 34 : 28
+            height: root.isMobile ? 34 : 28
             anchors.verticalCenter: parent.verticalCenter
+            visible: !root.isMobile || !QbzShell.canBack
             onClicked: {
                 if (root.isMobile) {
                     QbzShell.sidebarState = (QbzShell.sidebarState === 2 ? 0 : 2)
@@ -427,14 +428,18 @@ Rectangle {
         }
         QbzNavButton {
             name: "chevron-left"
+            width: root.isMobile ? 34 : 28
+            height: root.isMobile ? 34 : 28
             anchors.verticalCenter: parent.verticalCenter
             btnEnabled: QbzShell.canBack
+            visible: !root.isMobile || QbzShell.canBack
             onClicked: QbzShell.navigateBack()
         }
         QbzNavButton {
             name: "chevron-right"
             anchors.verticalCenter: parent.verticalCenter
             btnEnabled: QbzShell.canForward
+            visible: !root.isMobile
             onClicked: QbzShell.navigateForward()
         }
 
@@ -860,8 +865,35 @@ Rectangle {
         searchInput.forceActiveFocus()
     }
 
+    // Mobile View Title (Centered Apple Music style)
+    Text {
+        visible: root.isMobile
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: root.topSafeInset / 2
+        text: {
+            var v = QbzShell.currentView
+            if (v === "home") return QbzSession.tr("Home", QbzSession.trRev)
+            if (v === "album") return QbzSession.tr("Album", QbzSession.trRev)
+            if (v === "playlist") return QbzSession.tr("Playlist", QbzSession.trRev)
+            if (v === "artist") return QbzSession.tr("Artist", QbzSession.trRev)
+            if (v === "search") return QbzSession.tr("Search", QbzSession.trRev)
+            if (v === "library") return QbzSession.tr("Library", QbzSession.trRev)
+            if (v === "discoverbrowse") return QbzSession.tr("Browse", QbzSession.trRev)
+            if (v === "mix") return QbzSession.tr("Radio", QbzSession.trRev)
+            return ""
+        }
+        font.pixelSize: 16
+        font.weight: Font.DemiBold
+        color: theme.textPrimary
+        elide: Text.ElideRight
+        maximumLineCount: 1
+        width: Math.min(implicitWidth, root.width - 120)
+        horizontalAlignment: Text.AlignHCenter
+    }
+
     Rectangle {
         id: searchBox
+        visible: !root.isMobile
         x: root.isMobile ? (leftControls.x + leftControls.width + 8) : ((root.width - width) / 2)
         y: root.topSafeInset + (theme.headerHeight - height) / 2
         // 80% of the prior search width; gives up 60px to the section nav
