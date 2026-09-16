@@ -1,4 +1,4 @@
-// BottomNavBar — Apple Music style bottom navigation bar for mobile / portrait mode.
+﻿// BottomNavBar — Apple Music style bottom navigation bar for mobile / portrait mode.
 // Provides 5 primary tabs: Home, Browse, Radio, Library, Search.
 
 import QtQuick
@@ -99,7 +99,7 @@ Rectangle {
                             name: modelData.icon
                             width: 20
                             height: 20
-                            tintName: tabItem.active ? "accent" : "muted"
+                            tintName: tabItem.active ? "accent" : "textMuted"
                         }
                     }
 

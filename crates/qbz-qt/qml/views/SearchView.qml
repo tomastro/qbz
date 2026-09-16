@@ -1,4 +1,4 @@
-// Search results view — the QML port of search/SearchResultsView.slint
+﻿// Search results view — the QML port of search/SearchResultsView.slint
 // (phase 15). One JSON document (QbzSearch.searchJson, search_qt.rs
 // SearchPageDoc: query/tab/loading/filterIndex + the four category lists,
 // totals, the most-popular hero, the carousel-only artists list).
@@ -628,29 +628,16 @@ Rectangle {
         anchors.fill: parent
         spacing: 0
 
-        // --- Row 1: title (left) + filter radios (right) -------------------
+        // --- Row 1: title (left) + filter radios (right) + mobile search bar ---
         Item {
+            id: headerRow
             width: parent.width
-            height: 56
+            height: root.isMobile ? 54 : 56
 
             // Thin-bar tier: surface-main @ bar-alpha (0.3) under the app-wide
             // dynamic background, opaque surface-main otherwise (SearchResultsView.slint:386).
-            // The toolbar had NO fill of its own — with the background off the
-            // view root's surface-main showed through and it looked right, but
-            // the view root goes transparent under the background, so the bar
-            // lost its backing exactly when it needed one.
             Rectangle {
                 anchors.fill: parent
-                // Rounded at the TOP because this bar is full-bleed at y=0 of
-                // the content pane, and under the dynamic background the pane's
-                // own rounding cannot reach it: Qt's `clip` is a rectangular
-                // scissor that ignores `radius`, and AppShell hides its bezel
-                // nubs while the field is meant to show through the corners.
-                // So a full-bleed pane child rounds ITSELF — AppShell.qml says
-                // exactly this ("there is no mask that can do it for it here")
-                // and this bar was the counterexample the owner spotted in
-                // Discover. Invisible with the background off: the view root
-                // paints the same colour underneath.
                 topLeftRadius: theme.radiusMd
                 topRightRadius: theme.radiusMd
                 color: root.ambientOn ? theme.surfaceMainA30 : theme.surfaceMain
@@ -665,15 +652,125 @@ Rectangle {
                 font.pixelSize: theme.fontSection
                 font.weight: theme.weightBold
             }
-            Flickable {
-                visible: root.hasResults
-                anchors.left: root.isMobile ? parent.left : undefined
-                anchors.leftMargin: root.isMobile ? 16 : 0
+
+            // Mobile search input bar (Apple Music style)
+            Rectangle {
+                id: mobileSearchField
+                visible: root.isMobile
+                anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.rightMargin: root.isMobile ? 16 : 32
+                anchors.leftMargin: 16
+                anchors.rightMargin: 16
+                anchors.verticalCenter: parent.verticalCenter
+                height: 38
+                radius: 10
+                color: theme.surfaceElevated
+                border.width: 1
+                border.color: mobileInput.activeFocus ? theme.accent : theme.borderSubtle
+
+                Row {
+                    anchors.fill: parent
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+                    spacing: 8
+
+                    QbzIcon {
+                        name: "search"
+                        width: 16
+                        height: 16
+                        anchors.verticalCenter: parent.verticalCenter
+                        tintName: mobileInput.activeFocus ? "textPrimary" : "muted"
+                    }
+
+                    Item {
+                        width: parent.width - 24 - (clearBtn.visible ? 24 : 0)
+                        height: parent.height
+
+                        TextInput {
+                            id: mobileInput
+                            anchors.fill: parent
+                            verticalAlignment: TextInput.AlignVCenter
+                            color: theme.textPrimary
+                            font.pixelSize: 14
+                            clip: true
+                            text: root.query
+                            selectByMouse: true
+                            inputMethodHints: Qt.ImhNoPredictiveText
+
+                            Text {
+                                visible: mobileInput.text === "" && !mobileInput.activeFocus
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: QbzSession.tr("Search songs, artists, albums...", QbzSession.trRev)
+                                color: theme.textMuted
+                                font.pixelSize: 14
+                            }
+
+                            onTextEdited: {
+                                liveSearchTimer.restart()
+                            }
+
+                            onAccepted: {
+                                liveSearchTimer.stop()
+                                if (mobileInput.text.trim().length >= 2) {
+                                    QbzSearch.searchSubmit(mobileInput.text.trim())
+                                }
+                            }
+                        }
+
+                        Timer {
+                            id: liveSearchTimer
+                            interval: 600
+                            repeat: false
+                            onTriggered: {
+                                if (mobileInput.text.trim().length >= 2 && mobileInput.text.trim() !== root.query) {
+                                    QbzSearch.searchSubmit(mobileInput.text.trim())
+                                }
+                            }
+                        }
+                    }
+
+                    Item {
+                        id: clearBtn
+                        visible: mobileInput.text !== ""
+                        width: 20
+                        height: 20
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        Rectangle {
+                            anchors.centerIn: parent
+                            width: 18
+                            height: 18
+                            radius: 9
+                            color: theme.surfaceHover
+                            QbzIcon {
+                                name: "x"
+                                width: 12
+                                height: 12
+                                anchors.centerIn: parent
+                                tintName: "textMuted"
+                            }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                mobileInput.text = ""
+                                mobileInput.forceActiveFocus()
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Desktop filter radios
+            Flickable {
+                visible: !root.isMobile && root.hasResults
+                anchors.right: parent.right
+                anchors.rightMargin: 32
                 anchors.verticalCenter: parent.verticalCenter
                 height: 32
-                width: root.isMobile ? parent.width - 32 : filterRow.width
+                width: filterRow.width
                 contentWidth: filterRow.width
                 contentHeight: height
                 flickableDirection: Flickable.HorizontalFlick
@@ -707,11 +804,56 @@ Rectangle {
             }
         }
 
-        // --- Row 2: the five-tab strip (collapsed during the initial load) --
+        // --- Row 1.5: Mobile horizontal filter radios (when results exist) ---
         Item {
-            visible: !(root.loading && !root.hasResults)
+            id: mobileFilterRow
+            visible: root.isMobile && root.hasResults
             width: parent.width
-            height: 40
+            height: visible ? 34 : 0
+
+            Flickable {
+                anchors.fill: parent
+                anchors.leftMargin: 16
+                anchors.rightMargin: 16
+                contentWidth: mobileFilterInnerRow.width
+                contentHeight: height
+                flickableDirection: Flickable.HorizontalFlick
+                boundsBehavior: Flickable.StopAtBounds
+                clip: true
+                Row {
+                    id: mobileFilterInnerRow
+                    spacing: 12
+                    FilterRadio { label: QbzSession.tr("Main Artist", QbzSession.trRev); selected: root.filterIndex === 1; onPicked: QbzSearch.searchFilterChanged(1) }
+                    FilterRadio { label: QbzSession.tr("Performer", QbzSession.trRev); selected: root.filterIndex === 2; onPicked: QbzSearch.searchFilterChanged(2) }
+                    FilterRadio { label: QbzSession.tr("Composer", QbzSession.trRev); selected: root.filterIndex === 3; onPicked: QbzSearch.searchFilterChanged(3) }
+                    FilterRadio { label: QbzSession.tr("Label", QbzSession.trRev); selected: root.filterIndex === 4; onPicked: QbzSearch.searchFilterChanged(4) }
+                    FilterRadio { label: QbzSession.tr("Release Name", QbzSession.trRev); selected: root.filterIndex === 5; onPicked: QbzSearch.searchFilterChanged(5) }
+                    Rectangle {
+                        visible: root.filterIndex !== 0
+                        width: 24
+                        height: 24
+                        radius: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: clrAreaMobile.containsMouse ? theme.surfaceHover : theme.surfaceElevated
+                        QbzIcon { name: "x"; width: 13; height: 13; anchors.centerIn: parent; tintName: clrAreaMobile.containsMouse ? "textPrimary" : "muted" }
+                        MouseArea {
+                            id: clrAreaMobile
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: QbzSearch.searchFilterChanged(0)
+                        }
+                    }
+                }
+            }
+        }
+
+        // --- Row 2: the five-tab strip (collapsed during the initial load or when no results on mobile) --
+        Item {
+            id: tabsRow
+            visible: !(root.loading && !root.hasResults) && (!root.isMobile || root.hasResults)
+            width: parent.width
+            height: visible ? 40 : 0
             Row {
                 x: root.isMobile ? 16 : 32
                 anchors.bottom: parent.bottom
@@ -756,12 +898,12 @@ Rectangle {
         // --- Scrollable body ------------------------------------------------
         Item {
             width: parent.width
-            height: parent.height - 56 - 40
+            height: parent.height - headerRow.height - mobileFilterRow.height - tabsRow.height
             Flickable {
                 id: bodyFlick
                 anchors.fill: parent
                 contentWidth: width
-                contentHeight: bodyCol.height + 32
+                contentHeight: bodyCol.height + (root.isMobile ? 140 : 32)
                 clip: true
                 boundsBehavior: Flickable.StopAtBounds
                 onContentYChanged: root.ensureBodyBandCoverage()
@@ -1416,13 +1558,55 @@ Rectangle {
                         phase: root.skelPhase
                     }
                 }
-                Text {
-                    visible: !root.loading && !root.hasResults
-                    x: 32
-                    y: 8
-                    text: QbzSession.tr("No results.", QbzSession.trRev)
-                    color: theme.textMuted
-                    font.pixelSize: 14
+                // Apple Music style clean empty state
+                Column {
+                    visible: !root.loading && !root.hasResults && root.query === ""
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    y: 60
+                    spacing: 12
+
+                    QbzIcon {
+                        name: "search"
+                        width: 48
+                        height: 48
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        tintName: "muted"
+                        opacity: 0.4
+                    }
+                    Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: QbzSession.tr("Search Music", QbzSession.trRev)
+                        color: theme.textSecondary
+                        font.pixelSize: 16
+                        font.weight: theme.weightSemibold
+                    }
+                    Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: QbzSession.tr("Find songs, artists, albums, and playlists", QbzSession.trRev)
+                        color: theme.textMuted
+                        font.pixelSize: 13
+                    }
+                }
+
+                Column {
+                    visible: !root.loading && !root.hasResults && root.query !== ""
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    y: 60
+                    spacing: 8
+
+                    Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: QbzSession.tr("No results for", QbzSession.trRev) + " \"" + root.query + "\""
+                        color: theme.textPrimary
+                        font.pixelSize: 16
+                        font.weight: theme.weightSemibold
+                    }
+                    Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: QbzSession.tr("Check the spelling or try another search term.", QbzSession.trRev)
+                        color: theme.textMuted
+                        font.pixelSize: 13
+                    }
                 }
             }
             // Back/forward scroll memory (controls/ScrollMemory.qml): reports

@@ -1,4 +1,4 @@
-//! Runtime icon tinting — the Qt equivalent of Slint's render-time `colorize`.
+﻿//! Runtime icon tinting — the Qt equivalent of Slint's render-time `colorize`.
 //!
 //! # Why this file exists
 //!
@@ -215,6 +215,7 @@ const MASTERS: &[(&str, &str)] = &[
     ("heart-filled", include_str!("../qml/assets/icons/primary/heart-filled.svg")),
     ("heart", include_str!("../qml/assets/icons/primary/heart.svg")),
     ("home-gear", include_str!("../qml/assets/icons/primary/home-gear.svg")),
+    ("house", include_str!("../qml/assets/icons/primary/house.svg")),
     ("image", include_str!("../qml/assets/icons/primary/image.svg")),
     ("image-plus", include_str!("../qml/assets/icons/primary/image-plus.svg")),
     ("import", include_str!("../qml/assets/icons/primary/import.svg")),
