@@ -1017,10 +1017,54 @@ pub async fn load_library(runtime: &Arc<AppRuntime<LoggingAdapter>>) -> Result<u
     let t_map = Instant::now();
     let mut feed: Vec<FeedItem> = Vec::new();
 
+    let mut seen_artists: HashSet<String> = HashSet::new();
+    let mut library_artists: Vec<FeedItem> = Vec::new();
+
+    let artists: Vec<Artist> = parse_items(raw_artists, "artist");
+    let n_artists = artists.len();
+    for (i, item) in artists.into_iter().map(map_artist).enumerate() {
+        seen_artists.insert(item.id.clone());
+        let mut item = item;
+        item.added_rank = rank(i, n_artists);
+        library_artists.push(item);
+    }
+
     let tracks: Vec<Track> = parse_items(raw_tracks, "track");
     let unavailable_releases = unavailable_release_ids(runtime, &tracks).await;
     let n = tracks.len();
     for (i, track) in tracks.into_iter().enumerate() {
+        let (artist_id, artist_name) = if let Some(ref a) = track.album.as_ref().and_then(|alb| alb.artist.as_ref()) {
+            (a.id.to_string(), a.name.trim().to_string())
+        } else if let Some(ref p) = track.performer {
+            (p.id.to_string(), p.name.trim().to_string())
+        } else {
+            (String::new(), String::new())
+        };
+        if !artist_id.is_empty()
+            && artist_id != "0"
+            && !artist_name.is_empty()
+            && artist_name != "Various Artists"
+            && artist_name != "Various"
+            && seen_artists.insert(artist_id.clone())
+        {
+            let is_fav = crate::fav_cache_qt::is_favorite("artist", &artist_id);
+            let is_pinned = crate::sidebar_qt::is_pinned("artist", &artist_id);
+            library_artists.push(
+                FeedItem {
+                    is_pinned,
+                    kind: "artist".into(),
+                    group: if is_fav { "following".into() } else { "favorites".into() },
+                    source: "qobuz".into(),
+                    id: artist_id,
+                    title: artist_name,
+                    image_url: String::new(),
+                    is_favorite: is_fav,
+                    added_rank: rank(i, n),
+                    ..Default::default()
+                }
+                .keyed(),
+            );
+        }
         let mut item = map_track(track);
         item.release_unavailable = unavailable_releases.contains(&item.album_id);
         item.added_rank = rank(i, n);
@@ -1030,18 +1074,47 @@ pub async fn load_library(runtime: &Arc<AppRuntime<LoggingAdapter>>) -> Result<u
     let ready_album_tracks = ready_offline_album_track_counts().await;
     let n = albums.len();
     for (i, album) in albums.into_iter().enumerate() {
+        let artist_id = album.artist.id.to_string();
+        let artist_name = album.artist.name.trim().to_string();
+        let artist_image = album
+            .artist
+            .image
+            .as_ref()
+            .and_then(|img| img.best().cloned())
+            .unwrap_or_default();
+        if !artist_id.is_empty()
+            && artist_id != "0"
+            && !artist_name.is_empty()
+            && artist_name != "Various Artists"
+            && artist_name != "Various"
+            && seen_artists.insert(artist_id.clone())
+        {
+            let is_fav = crate::fav_cache_qt::is_favorite("artist", &artist_id);
+            let is_pinned = crate::sidebar_qt::is_pinned("artist", &artist_id);
+            library_artists.push(
+                FeedItem {
+                    is_pinned,
+                    kind: "artist".into(),
+                    group: if is_fav { "following".into() } else { "favorites".into() },
+                    source: "qobuz".into(),
+                    id: artist_id,
+                    title: artist_name,
+                    image_url: artist_image,
+                    is_favorite: is_fav,
+                    added_rank: rank(i, n),
+                    ..Default::default()
+                }
+                .keyed(),
+            );
+        }
         let ready = ready_album_tracks.get(&album.id).copied().unwrap_or(0);
         let mut item = map_album(album, ready);
         item.added_rank = rank(i, n);
         feed.push(item);
     }
-    let artists: Vec<Artist> = parse_items(raw_artists, "artist");
-    let n = artists.len();
-    for (i, item) in artists.into_iter().map(map_artist).enumerate() {
-        let mut item = item;
-        item.added_rank = rank(i, n);
-        feed.push(item);
-    }
+
+    feed.extend(library_artists);
+
     let n = pl_favorites.len();
     for (i, item) in pl_favorites.into_iter().enumerate() {
         let mut item = item;
@@ -1056,6 +1129,33 @@ pub async fn load_library(runtime: &Arc<AppRuntime<LoggingAdapter>>) -> Result<u
     }
     let n = purchase_albums.len();
     for (i, mut item) in purchase_albums.into_iter().enumerate() {
+        let artist_id = item.artist_id.trim().to_string();
+        let artist_name = item.artist.trim().to_string();
+        if !artist_id.is_empty()
+            && artist_id != "0"
+            && !artist_name.is_empty()
+            && artist_name != "Various Artists"
+            && artist_name != "Various"
+            && seen_artists.insert(artist_id.clone())
+        {
+            let is_fav = crate::fav_cache_qt::is_favorite("artist", &artist_id);
+            let is_pinned = crate::sidebar_qt::is_pinned("artist", &artist_id);
+            feed.push(
+                FeedItem {
+                    is_pinned,
+                    kind: "artist".into(),
+                    group: if is_fav { "following".into() } else { "favorites".into() },
+                    source: item.source.clone(),
+                    id: artist_id,
+                    title: artist_name,
+                    image_url: String::new(),
+                    is_favorite: is_fav,
+                    added_rank: item.added_rank,
+                    ..Default::default()
+                }
+                .keyed(),
+            );
+        }
         item.added_rank = rank(i, n);
         feed.push(item);
     }
@@ -1184,10 +1284,11 @@ pub async fn load_library(runtime: &Arc<AppRuntime<LoggingAdapter>>) -> Result<u
         feed.len()
     );
 
+    let total_artists = feed.iter().filter(|i| i.kind == "artist").count() as i64;
     let counts = LibraryCounts {
         tracks: tracks_total as i64,
         albums: albums_total as i64,
-        artists: artists_total as i64,
+        artists: total_artists,
         playlists: playlists_total,
         labels: labels_total as i64,
         all: all_total,

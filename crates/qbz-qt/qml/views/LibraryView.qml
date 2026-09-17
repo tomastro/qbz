@@ -40,6 +40,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Window
 import com.blitzfc.qbz
+import "../cards"
 import "../controls"
 import "../rows"
 import "../theme"
@@ -56,6 +57,8 @@ Rectangle {
     function handleBack() {
         if (root.isMobile && root.mobileSection !== "") {
             root.mobileSection = ""
+            root.activeTab = "all"
+            root.requestRecentArtwork()
             return true
         }
         return false
@@ -250,7 +253,11 @@ Rectangle {
         root.artistsView = p.artistsView
         root.showLocal = p.allShowLocal === true
     }
-    Component.onCompleted: root.applyPrefs()
+    onFeedChanged: root.requestRecentArtwork()
+    Component.onCompleted: {
+        root.applyPrefs()
+        root.requestRecentArtwork()
+    }
     Connections {
         target: QbzLibrary
         function onLibraryPrefsJsonChanged() { root.applyPrefs() }
@@ -843,6 +850,12 @@ Rectangle {
         // keeps `undefined` out of the keep-set and the pending count.
         for (var i = keepLo; i <= keepHi; i++)
             if (visibleArray[i].kind !== "group-header") keep[visibleArray[i].artKey] = true
+        if (recentGrid && recentGrid.recentItems) {
+            var rec = recentGrid.recentItems
+            for (var r = 0; r < rec.length; r++) {
+                if (rec[r] && rec[r].artKey) keep[rec[r].artKey] = true
+            }
+        }
         var m = artMap
         var inbox = root._artInbox
         var pending = 0
@@ -986,6 +999,26 @@ Rectangle {
         id: allSearchDebounce
         interval: 250
         onTriggered: root.queueWindowReport(0, 59)
+    }
+
+    function requestRecentArtwork() {
+        if (!root.feed || root.feed.length === 0) return
+        var items = recentGrid ? recentGrid.recentItems : null
+        if (!items || items.length === 0) return
+        var keys = []
+        for (var i = 0; i < items.length; i++) {
+            var it = items[i]
+            if (it && it.artKey) {
+                root._artKeep[it.artKey] = true
+                if (it.imageUrl && !root.artMap[it.artKey] && !root._artInbox[it.artKey]) {
+                    root._artRequested[it.artKey] = true
+                    keys.push(it.artKey)
+                }
+            }
+        }
+        if (keys.length > 0) {
+            QbzLibrary.libraryArtworkWindow(JSON.stringify(keys))
+        }
     }
 
     // ------------------- per-row play (PARITY-DEBT #5) -------------------
@@ -1258,6 +1291,7 @@ Rectangle {
                     }
                     return res
                 }
+                onRecentItemsChanged: root.requestRecentArtwork()
 
                 Repeater {
                     model: recentGrid.recentItems
@@ -1278,20 +1312,47 @@ Rectangle {
                             border.color: theme.borderSubtle
                             clip: true
 
-                            RoundedImage {
+                            Loader {
                                 anchors.fill: parent
-                                radius: 10
-                                source: modelData.imageUrl || root.artMap[modelData.artKey] || ""
-                                visible: source != ""
+                                sourceComponent: {
+                                    if (modelData.kind === "playlist" && !modelData.playlistOwnImage && modelData.covers && modelData.covers.length > 0) {
+                                        return playlistCollageComp
+                                    }
+                                    if (root.artMap[modelData.artKey]) {
+                                        return singleCoverComp
+                                    }
+                                    return placeholderComp
+                                }
                             }
 
-                            QbzIcon {
-                                anchors.centerIn: parent
-                                name: modelData.kind === "playlist" ? "list-music" : "disc"
-                                width: 36
-                                height: 36
-                                tintName: "muted"
-                                visible: !modelData.imageUrl && !root.artMap[modelData.artKey]
+                            Component {
+                                id: playlistCollageComp
+                                PlaylistCollage {
+                                    anchors.fill: parent
+                                    radius: 10
+                                    urls: modelData.covers || []
+                                }
+                            }
+
+                            Component {
+                                id: singleCoverComp
+                                RoundedImage {
+                                    anchors.fill: parent
+                                    radius: 10
+                                    source: root.artMap[modelData.artKey] || ""
+                                    fit: (modelData.kind === "playlist" && modelData.playlistOwnImage) ? "pad" : "crop"
+                                }
+                            }
+
+                            Component {
+                                id: placeholderComp
+                                QbzIcon {
+                                    anchors.centerIn: parent
+                                    name: modelData.kind === "playlist" ? "list-music" : "disc"
+                                    width: 36
+                                    height: 36
+                                    tintName: "muted"
+                                }
                             }
                         }
 
@@ -1548,7 +1609,7 @@ Rectangle {
             readonly property bool showPlaylistsList:
                 content.ready && root.activeTab === "playlists" && root.playlistsView === "list"
             readonly property bool showArtistsPanel:
-                content.ready && root.activeTab === "artists" && root.artistsView === "sidepanel"
+                content.ready && !root.isMobile && root.activeTab === "artists" && root.artistsView === "sidepanel"
             readonly property bool showList:
                 content.ready && ((root.activeTab === "all" && root.viewMode === "list")
                                   || root.activeTab === "tracks")
