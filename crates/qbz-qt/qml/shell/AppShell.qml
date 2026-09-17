@@ -161,8 +161,8 @@ Rectangle {
         if (header && typeof header.closeAppMenu === "function" && header.closeAppMenu()) {
             return true
         }
-        if (QbzShell.sidebarState === 2) {
-            QbzShell.sidebarState = 0
+        if (QbzShell.sidebarState !== 2) {
+            QbzShell.sidebarState = 2
             return true
         }
         if (contentRouter.currentItem && contentRouter.currentItem.mobileSection !== undefined && contentRouter.currentItem.mobileSection !== "") {
@@ -195,6 +195,16 @@ Rectangle {
     // only flipped cortinilla_open with no visible effect on an empty
     // query): the Rust dispatch emits this signal and the field lands
     // focused and ready to type.
+    Connections {
+        target: QbzShell
+        function onBackRequested() {
+            if (root.handleBackKey()) {
+                return
+            }
+            QbzShell.minimizeToBackground()
+        }
+    }
+
     Connections {
         target: QbzHotkeys
         function onFocusSearchRequested() { header.focusSearch() }

@@ -799,17 +799,7 @@ ApplicationWindow {
     // free (Rust's >0.5px dirty check drops it), and either way a resize in the
     // last 400ms still lands, including the taskbar close of a minimized window
     // (that is what the exit variant and the floating cache are for).
-    onClosing: function (close) {
-        if (window.isAndroid) {
-            if (screenLoader.item && typeof screenLoader.item.handleBackKey === "function") {
-                if (screenLoader.item.handleBackKey()) {
-                    close.accepted = false
-                    return
-                }
-            }
-        }
-        window.closeOrHide(close)
-    }
+    onClosing: function (close) { window.closeOrHide(close) }
     Connections {
         target: Qt.application
         function onAboutToQuit() { window.persistWindowGeometryOnExit() }

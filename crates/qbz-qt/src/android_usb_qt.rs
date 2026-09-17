@@ -295,3 +295,13 @@ fn java_error(env: &mut jni::JNIEnv<'_>, context: &str, error: jni::errors::Erro
     };
     format!("{context}: {error}{detail}")
 }
+
+pub fn minimize_activity() {
+    if let Some(vm) = JAVA_VM.get() {
+        if let Ok(mut env) = vm.attach_current_thread() {
+            if let Ok(class) = env.find_class("dev/qbz/android/qt/QbzActivity") {
+                let _ = env.call_static_method(class, "minimize", "()V", &[]);
+            }
+        }
+    }
+}

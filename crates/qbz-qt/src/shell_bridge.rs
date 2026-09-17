@@ -764,6 +764,10 @@ pub mod qbz_shell {
         fn select_all_requested(self: Pin<&mut QbzShell>);
         #[qsignal]
         fn exit_multi_select_requested(self: Pin<&mut QbzShell>);
+        #[qsignal]
+        fn back_requested(self: Pin<&mut QbzShell>);
+        #[qinvokable]
+        fn minimize_to_background(self: Pin<&mut QbzShell>);
         /// Offline-cache row status fan-out (offline_cache_qt::row_sink):
         /// 0 none · 1 queued · 2 downloading · 3 ready · 4 failed. Views
         /// patch the matching track row inside their own document copy.
@@ -1569,10 +1573,34 @@ impl qbz_shell::QbzShell {
     pub fn exit_multi_select(mut self: Pin<&mut Self>) {
         self.as_mut().exit_multi_select_requested();
     }
+
+    pub fn minimize_to_background(self: Pin<&mut Self>) {
+        #[cfg(target_os = "android")]
+        {
+            crate::android_usb_qt::minimize_activity();
+        }
+    }
     pub fn open_external_url(self: Pin<&mut Self>, url: QString) {
         let url = url.to_string();
         if let Err(e) = open::that(&url) {
             log::warn!("[qbz-qt] failed to open '{url}': {e}");
         }
     }
+}
+
+pub fn request_back() {
+    if let Some(thread) = QT_THREAD.get() {
+        let _ = thread.queue(|mut qbz_shell| {
+            qbz_shell.as_mut().back_requested();
+        });
+    }
+}
+
+#[cfg(target_os = "android")]
+#[no_mangle]
+pub extern "system" fn Java_dev_qbz_android_qt_QbzActivity_requestAppBack(
+    _env: jni::JNIEnv,
+    _class: jni::objects::JClass,
+) {
+    request_back();
 }
