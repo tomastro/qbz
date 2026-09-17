@@ -517,10 +517,13 @@ fn map_track(track: Track) -> FeedItem {
         .and_then(|a| a.artist.as_ref())
         .map(|x| x.name.clone())
         .unwrap_or_default();
-    let (artist, artist_id) = track
-        .performer
-        .map(|p| (p.name, p.id.to_string()))
-        .unwrap_or_default();
+    let (artist, artist_id) = if let Some(ref p) = track.performer.filter(|p| !p.name.trim().is_empty()) {
+        (p.name.trim().to_string(), p.id.to_string())
+    } else if !album_artist.trim().is_empty() {
+        (album_artist.trim().to_string(), album_artist_id.clone())
+    } else {
+        (String::new(), String::new())
+    };
     FeedItem {
         kind: "track".into(),
         group: "favorites".into(),
@@ -557,6 +560,39 @@ fn map_track(track: Track) -> FeedItem {
     .keyed()
 }
 
+/// Resolve primary album artist: rtist.name first, then the rtists[]
+/// array (the entry with the main-artist role, else the first entry).
+fn album_artist_primary(album: &Album) -> (String, String) {
+    if !album.artist.name.trim().is_empty() && album.artist.id != 0 {
+        return (album.artist.name.trim().to_string(), album.artist.id.to_string());
+    }
+    if let Some(list) = album.artists.as_ref() {
+        let pick = list
+            .iter()
+            .find(|a| {
+                a.roles
+                    .as_ref()
+                    .map(|r| r.iter().any(|role| role == "main-artist"))
+                    .unwrap_or(false)
+            })
+            .or_else(|| list.first());
+        if let Some(a) = pick {
+            return (a.name.trim().to_string(), a.id.to_string());
+        }
+    }
+    (album.artist.name.trim().to_string(), album.artist.id.to_string())
+}
+
+fn is_placeholder_artist(name: &str) -> bool {
+    let s = name.trim().to_lowercase();
+    s.is_empty()
+        || s == "various artists"
+        || s == "various"
+        || s == "various composers"
+        || s == "unknown artist"
+        || s == "unknown"
+}
+
 fn map_album(album: Album, ready_offline_tracks: usize) -> FeedItem {
     // Same absence contract as Track: only an explicit false is a catalog
     // withdrawal. A COMPLETE offline copy remains live because playAlbum has
@@ -584,15 +620,7 @@ fn map_album(album: Album, ready_offline_tracks: usize) -> FeedItem {
                 .or(d.stream.clone())
         })
         .or(album.release_date_original.clone());
-    let artist = if !album.artist.name.is_empty() {
-        album.artist.name
-    } else {
-        album
-            .artists
-            .as_ref()
-            .and_then(|c| c.first().map(|a| a.name.clone()))
-            .unwrap_or_default()
-    };
+    let (artist, artist_id) = album_artist_primary(&album);
     let is_pinned = crate::sidebar_qt::is_pinned("album", &album.id);
     FeedItem {
         is_pinned,
@@ -603,7 +631,7 @@ fn map_album(album: Album, ready_offline_tracks: usize) -> FeedItem {
         title: album.title,
         subtitle: artist.clone(),
         artist,
-        artist_id: album.artist.id.to_string(),
+        artist_id,
         genre: album.genre.map(|g| g.name).unwrap_or_default(),
         year: qbz_text_utils::dates::release_label(date.as_deref()),
         quality_tier: home_qt::quality_tier_from_depth(bit_depth).to_string(),
@@ -1017,103 +1045,139 @@ pub async fn load_library(runtime: &Arc<AppRuntime<LoggingAdapter>>) -> Result<u
     let t_map = Instant::now();
     let mut feed: Vec<FeedItem> = Vec::new();
 
-    let mut seen_artists: HashSet<String> = HashSet::new();
+    let mut seen_artist_ids: HashSet<String> = HashSet::new();
+    let mut seen_artist_names: HashSet<String> = HashSet::new();
     let mut library_artists: Vec<FeedItem> = Vec::new();
 
-    let artists: Vec<Artist> = parse_items(raw_artists, "artist");
-    let n_artists = artists.len();
-    for (i, item) in artists.into_iter().map(map_artist).enumerate() {
-        seen_artists.insert(item.id.clone());
-        let mut item = item;
-        item.added_rank = rank(i, n_artists);
-        library_artists.push(item);
-    }
+    let mut register_artist =
+        |id: String, name: String, image_url: String, is_followed: bool, rank_val: f32, source: &str| {
+            let name_trimmed = name.trim().to_string();
+            if is_placeholder_artist(&name_trimmed) {
+                return;
+            }
+            let norm_name = name_trimmed.to_lowercase();
+            let valid_id = !id.is_empty() && id != "0";
+            if valid_id && seen_artist_ids.contains(&id) {
+                return;
+            }
+            if seen_artist_names.contains(&norm_name) {
+                return;
+            }
+            if valid_id {
+                seen_artist_ids.insert(id.clone());
+            }
+            seen_artist_names.insert(norm_name);
 
-    let tracks: Vec<Track> = parse_items(raw_tracks, "track");
-    let unavailable_releases = unavailable_release_ids(runtime, &tracks).await;
-    let n = tracks.len();
-    for (i, track) in tracks.into_iter().enumerate() {
-        let (artist_id, artist_name) = if let Some(ref a) = track.album.as_ref().and_then(|alb| alb.artist.as_ref()) {
-            (a.id.to_string(), a.name.trim().to_string())
-        } else if let Some(ref p) = track.performer {
-            (p.id.to_string(), p.name.trim().to_string())
-        } else {
-            (String::new(), String::new())
-        };
-        if !artist_id.is_empty()
-            && artist_id != "0"
-            && !artist_name.is_empty()
-            && artist_name != "Various Artists"
-            && artist_name != "Various"
-            && seen_artists.insert(artist_id.clone())
-        {
-            let is_fav = crate::fav_cache_qt::is_favorite("artist", &artist_id);
-            let is_pinned = crate::sidebar_qt::is_pinned("artist", &artist_id);
+            let is_fav = is_followed || (valid_id && crate::fav_cache_qt::is_favorite("artist", &id));
+            let is_pinned = valid_id && crate::sidebar_qt::is_pinned("artist", &id);
+            let final_id = if valid_id {
+                id
+            } else {
+                format!("artist:{}", name_trimmed)
+            };
             library_artists.push(
                 FeedItem {
                     is_pinned,
                     kind: "artist".into(),
-                    group: if is_fav { "following".into() } else { "favorites".into() },
-                    source: "qobuz".into(),
-                    id: artist_id,
-                    title: artist_name,
-                    image_url: String::new(),
+                    group: if is_fav {
+                        "following".into()
+                    } else {
+                        "favorites".into()
+                    },
+                    source: source.into(),
+                    id: final_id,
+                    title: name_trimmed,
+                    image_url,
                     is_favorite: is_fav,
-                    added_rank: rank(i, n),
+                    added_rank: rank_val,
                     ..Default::default()
                 }
                 .keyed(),
             );
+        };
+
+    let artists: Vec<Artist> = parse_items(raw_artists, "artist");
+    let n_artists = artists.len();
+    for (i, artist) in artists.into_iter().enumerate() {
+        let id = artist.id.to_string();
+        let name = artist.name;
+        let image_url = artist
+            .image
+            .and_then(|img| img.best().cloned())
+            .unwrap_or_default();
+        register_artist(id, name, image_url, true, rank(i, n_artists), "qobuz");
+    }
+
+    let tracks: Vec<Track> = parse_items(raw_tracks, "track");
+    let unavailable_releases = unavailable_release_ids(runtime, &tracks).await;
+    let n_tracks = tracks.len();
+    for (i, track) in tracks.into_iter().enumerate() {
+        let r = rank(i, n_tracks);
+        if let Some(ref p) = track.performer.as_ref().filter(|p| !p.name.trim().is_empty()) {
+            let img = p
+                .image
+                .as_ref()
+                .and_then(|im| im.best().cloned())
+                .unwrap_or_default();
+            register_artist(p.id.to_string(), p.name.clone(), img, false, r, "qobuz");
+        }
+        if let Some(ref a) = track
+            .album
+            .as_ref()
+            .and_then(|alb| alb.artist.as_ref())
+            .filter(|a| !a.name.trim().is_empty())
+        {
+            let img = a
+                .image
+                .as_ref()
+                .and_then(|im| im.best().cloned())
+                .unwrap_or_default();
+            register_artist(a.id.to_string(), a.name.clone(), img, false, r, "qobuz");
         }
         let mut item = map_track(track);
         item.release_unavailable = unavailable_releases.contains(&item.album_id);
-        item.added_rank = rank(i, n);
+        item.added_rank = r;
         feed.push(item);
     }
+
     let albums: Vec<Album> = parse_items(raw_albums, "album");
     let ready_album_tracks = ready_offline_album_track_counts().await;
-    let n = albums.len();
+    let n_albums = albums.len();
     for (i, album) in albums.into_iter().enumerate() {
-        let artist_id = album.artist.id.to_string();
-        let artist_name = album.artist.name.trim().to_string();
-        let artist_image = album
+        let r = rank(i, n_albums);
+        let (primary_name, primary_id) = album_artist_primary(&album);
+        let primary_image = album
             .artist
             .image
             .as_ref()
             .and_then(|img| img.best().cloned())
             .unwrap_or_default();
-        if !artist_id.is_empty()
-            && artist_id != "0"
-            && !artist_name.is_empty()
-            && artist_name != "Various Artists"
-            && artist_name != "Various"
-            && seen_artists.insert(artist_id.clone())
-        {
-            let is_fav = crate::fav_cache_qt::is_favorite("artist", &artist_id);
-            let is_pinned = crate::sidebar_qt::is_pinned("artist", &artist_id);
-            library_artists.push(
-                FeedItem {
-                    is_pinned,
-                    kind: "artist".into(),
-                    group: if is_fav { "following".into() } else { "favorites".into() },
-                    source: "qobuz".into(),
-                    id: artist_id,
-                    title: artist_name,
-                    image_url: artist_image,
-                    is_favorite: is_fav,
-                    added_rank: rank(i, n),
-                    ..Default::default()
+        register_artist(primary_id, primary_name, primary_image, false, r, "qobuz");
+
+        if let Some(ref list) = album.artists {
+            for a in list {
+                let is_main = a
+                    .roles
+                    .as_ref()
+                    .map(|roles| roles.iter().any(|role| role == "main-artist"))
+                    .unwrap_or(false);
+                if is_main {
+                    register_artist(
+                        a.id.to_string(),
+                        a.name.clone(),
+                        String::new(),
+                        false,
+                        r,
+                        "qobuz",
+                    );
                 }
-                .keyed(),
-            );
+            }
         }
         let ready = ready_album_tracks.get(&album.id).copied().unwrap_or(0);
         let mut item = map_album(album, ready);
-        item.added_rank = rank(i, n);
+        item.added_rank = r;
         feed.push(item);
     }
-
-    feed.extend(library_artists);
 
     let n = pl_favorites.len();
     for (i, item) in pl_favorites.into_iter().enumerate() {
@@ -1127,44 +1191,37 @@ pub async fn load_library(runtime: &Arc<AppRuntime<LoggingAdapter>>) -> Result<u
         item.added_rank = rank(i, n);
         feed.push(item);
     }
-    let n = purchase_albums.len();
+
+    let n_purch_alb = purchase_albums.len();
     for (i, mut item) in purchase_albums.into_iter().enumerate() {
-        let artist_id = item.artist_id.trim().to_string();
-        let artist_name = item.artist.trim().to_string();
-        if !artist_id.is_empty()
-            && artist_id != "0"
-            && !artist_name.is_empty()
-            && artist_name != "Various Artists"
-            && artist_name != "Various"
-            && seen_artists.insert(artist_id.clone())
-        {
-            let is_fav = crate::fav_cache_qt::is_favorite("artist", &artist_id);
-            let is_pinned = crate::sidebar_qt::is_pinned("artist", &artist_id);
-            feed.push(
-                FeedItem {
-                    is_pinned,
-                    kind: "artist".into(),
-                    group: if is_fav { "following".into() } else { "favorites".into() },
-                    source: item.source.clone(),
-                    id: artist_id,
-                    title: artist_name,
-                    image_url: String::new(),
-                    is_favorite: is_fav,
-                    added_rank: item.added_rank,
-                    ..Default::default()
-                }
-                .keyed(),
-            );
-        }
-        item.added_rank = rank(i, n);
+        let r = rank(i, n_purch_alb);
+        register_artist(
+            item.artist_id.clone(),
+            item.artist.clone(),
+            String::new(),
+            false,
+            r,
+            &item.source,
+        );
+        item.added_rank = r;
         feed.push(item);
     }
-    let n = purchase_tracks.len();
+    let n_purch_trk = purchase_tracks.len();
     for (i, mut item) in purchase_tracks.into_iter().enumerate() {
-        item.added_rank = rank(i, n);
+        let r = rank(i, n_purch_trk);
+        register_artist(
+            item.artist_id.clone(),
+            item.artist.clone(),
+            String::new(),
+            false,
+            r,
+            &item.source,
+        );
+        item.added_rank = r;
         feed.push(item);
     }
 
+    feed.extend(library_artists);
     // Labels (no card artwork fields beyond the image + "{n} albums" line).
     /// favorites.rs-local richer label shape (image + count).
     #[derive(serde::Deserialize)]

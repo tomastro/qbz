@@ -1,4 +1,4 @@
-﻿// No console window beside the GUI on Windows (W4). The file logger
+// No console window beside the GUI on Windows (W4). The file logger
 // (`qbz_log::install`) is unaffected; only the inherited stdio console goes.
 // If the offscreen smoke ever comes back with an empty log because of this,
 // the fix is AttachConsole(ATTACH_PARENT_PROCESS), not reverting this.
@@ -1441,6 +1441,15 @@ pub(crate) fn open_album(album_id: String) {
 
 /// Open the artist detail view: push the nav entry, then fetch + publish.
 pub(crate) fn open_artist(artist_id: String) {
+    if artist_id.parse::<u64>().is_err() {
+        let name = if let Some(stripped) = artist_id.strip_prefix("artist:") {
+            stripped.to_string()
+        } else {
+            artist_id
+        };
+        local_album_actions::open_artist_by_name(name);
+        return;
+    }
     // Learn from results-page interactions too, not only from the
     // cortinilla. Self-gated on the Search view being current, so every other
     // caller of this router is unaffected.
