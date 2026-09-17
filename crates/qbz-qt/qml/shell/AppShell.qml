@@ -1,4 +1,4 @@
-﻿// App shell — the QML port of crates/qbz-ui/ui/shell/AppShell.slint's
+// App shell — the QML port of crates/qbz-ui/ui/shell/AppShell.slint's
 // chrome: HeaderBar (top, 42px) / { Sidebar | content frame | queue
 // column } / NowPlayingBarSmall (bottom).
 //
@@ -153,6 +153,13 @@ Rectangle {
     // before they bubble here; in particular a focused Settings toggle owns
     // Space, so toggling it cannot also trigger global play/pause (§4.1).
     Keys.onPressed: function (event) {
+        if (root.isMobile && (event.key === Qt.Key_Back || event.key === Qt.Key_Escape)) {
+            if (mobileNowPlayingSheet && mobileNowPlayingSheet.open) {
+                mobileNowPlayingSheet.open = false
+                event.accepted = true
+                return
+            }
+        }
         var w = root.Window.window
         var afi = w !== null ? w.activeFocusItem : null
         var textInputFocused = (afi instanceof TextInput) || (afi instanceof TextEdit)
@@ -246,6 +253,23 @@ Rectangle {
         // the compositor's business).
     }
 
+    MobileNowPlayingSheet {
+        id: mobileNowPlayingSheet
+        z: 2500
+        anchors.fill: parent
+        topSafeInset: root.topSafeInset
+        bottomSafeInset: root.bottomSafeInset
+        open: false
+        onQueueRequested: {
+            mobileNowPlayingSheet.open = false
+            QbzShell.toggleQueue()
+        }
+        onLyricsRequested: {
+            mobileNowPlayingSheet.open = false
+            QbzShell.toggleLyrics()
+        }
+    }
+
     BottomNavBar {
         id: bottomNavBar
         anchors.left: parent.left
@@ -276,6 +300,7 @@ Rectangle {
         // references resolve at completion). All four modes consume it for
         // Shuffle/Repeat state; the full bar also uses it for Qobuz Connect.
         tooltip: tooltipOverlay
+        onNowPlayingSheetRequested: mobileNowPlayingSheet.open = true
     }
 
     // Drawer backdrop scrim for mobile

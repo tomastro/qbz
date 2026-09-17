@@ -1,4 +1,4 @@
-﻿// MobileNowPlayingSheet — Apple Music style full-screen Now Playing modal sheet.
+// MobileNowPlayingSheet — Apple Music style full-screen Now Playing modal sheet.
 // Slides up from bottom when tapping the floating mini-player.
 
 import QtQuick
@@ -11,6 +11,8 @@ Rectangle {
     id: root
 
     property bool open: false
+    property real topSafeInset: 0
+    property real bottomSafeInset: 0
     signal queueRequested()
     signal lyricsRequested()
 
@@ -86,7 +88,8 @@ Rectangle {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: 52
+        anchors.topMargin: root.topSafeInset
+        height: 48
         z: 10
 
         Rectangle {
@@ -112,7 +115,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.leftMargin: 24
         anchors.rightMargin: 24
-        anchors.bottomMargin: 24
+        anchors.bottomMargin: 20 + root.bottomSafeInset
 
         // 1. Center Artwork Card
         Item {

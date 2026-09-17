@@ -1146,15 +1146,18 @@ Rectangle {
                             color: rowArea.containsMouse ? theme.surfaceHover : "transparent"
                         }
 
-                        Row {
+                        Item {
+                            id: rowContent
                             anchors.fill: parent
-                            anchors.leftMargin: 4
-                            anchors.rightMargin: 8
-                            spacing: 14
+                            anchors.leftMargin: 8
+                            anchors.rightMargin: 12
 
                             Item {
-                                width: 24
-                                height: parent.height
+                                id: iconContainer
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 26
+                                height: 26
 
                                 QbzIcon {
                                     anchors.centerIn: parent
@@ -1166,19 +1169,20 @@ Rectangle {
                             }
 
                             Text {
+                                anchors.left: iconContainer.right
+                                anchors.leftMargin: 14
+                                anchors.right: chevronIcon.left
+                                anchors.rightMargin: 8
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: modelData.label
                                 font.pixelSize: 18
                                 font.weight: Font.Normal
                                 color: theme.textPrimary
-                            }
-
-                            Item {
-                                width: Math.max(1, parent.width - 24 - 14 - 150)
-                                height: 1
+                                elide: Text.ElideRight
                             }
 
                             QbzIcon {
+                                id: chevronIcon
                                 anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
                                 name: "chevron-right"
@@ -1339,25 +1343,35 @@ Rectangle {
             width: parent.width
             height: visible ? 48 : 0
 
-            Row {
+            Item {
+                id: backBtn
                 anchors.left: parent.left
-                anchors.leftMargin: 12
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 4
+                anchors.leftMargin: 8
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                width: backRow.width + 16
 
-                QbzIcon {
-                    name: "chevron-left"
-                    width: 22
-                    height: 22
+                Row {
+                    id: backRow
                     anchors.verticalCenter: parent.verticalCenter
-                    tintName: "accent"
-                }
+                    anchors.left: parent.left
+                    anchors.leftMargin: 4
+                    spacing: 4
 
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: QbzSession.tr("Library", QbzSession.trRev)
-                    font.pixelSize: 17
-                    color: theme.accent
+                    QbzIcon {
+                        name: "chevron-left"
+                        width: 22
+                        height: 22
+                        anchors.verticalCenter: parent.verticalCenter
+                        tintName: "accent"
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: QbzSession.tr("Library", QbzSession.trRev)
+                        font.pixelSize: 17
+                        color: theme.accent
+                    }
                 }
 
                 MouseArea {

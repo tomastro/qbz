@@ -650,6 +650,7 @@ fn main() {
                 "qml/shell/NowPlayingBar.qml",
                 "qml/shell/NowPlayingBarSmall.qml",
                 "qml/shell/NowPlayingBarMobile.qml",
+                "qml/shell/MobileNowPlayingSheet.qml",
                 "qml/shell/BottomNavBar.qml",
                 "qml/shell/PlayerBar.qml",
                 "qml/shell/QueuePanel.qml",
