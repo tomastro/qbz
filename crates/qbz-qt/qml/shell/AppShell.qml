@@ -141,7 +141,10 @@ Rectangle {
     // until the first click (measured 2026-08-03, RFB H0 first pass). Grab
     // once at mount; every other lifecycle arm (immersive close, modal
     // closes) hands focus BACK here.
-    Component.onCompleted: root.forceActiveFocus()
+    Component.onCompleted: {
+        root.forceActiveFocus()
+        if (root.isMobile) QbzShell.sidebarState = 2
+    }
 
     // THE ONE key entry (§1.1 route (b), divergence K1): NOTHING is handled
     // locally. The ordered pipeline (capture steal, search-dropdown Up/Down
@@ -270,7 +273,6 @@ Rectangle {
     readonly property real topSafeInset: (Qt.platform.os === "android" || (hostWindow && hostWindow.isAndroid)) ? 36 : 0
     readonly property real bottomSafeInset: (Qt.platform.os === "android" || (hostWindow && hostWindow.isAndroid)) ? 16 : 0
 
-    Component.onCompleted: { if (root.isMobile) QbzShell.sidebarState = 2 }
 
     Connections {
         target: QbzShell
