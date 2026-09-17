@@ -1,4 +1,4 @@
-// FeedGridCell — one 200x246 slot of the Library GRID, dispatched by `kind`
+﻿// FeedGridCell — one 200x246 slot of the Library GRID, dispatched by `kind`
 // to the SAME card family the Slint mounts (FavoritesView.slint:1084-1187):
 // track -> discover/TrackCard, album -> discover/AlbumCard, artist ->
 // discover/ArtistGridCard, playlist -> discover/PlaylistCard, label ->
@@ -65,8 +65,16 @@ Item {
     GridView.onPooled: cell.releaseLoadedCard()
     GridView.onReused: cell.scheduleMutableRestore()
 
-    width: 200
-    height: 246
+    readonly property bool isMobile: cell.view && cell.view.isMobile
+    readonly property real cellW: isMobile ? (GridView.view ? GridView.view.cellWidth : 160) : 220
+    readonly property real cellH: isMobile ? (GridView.view ? GridView.view.cellHeight : 266) : 266
+    readonly property real cardW: isMobile ? Math.max(120, cellW - 8) : 200
+    readonly property real cardH: isMobile ? Math.round(cardW * 246 / 200) : 246
+    readonly property real cardScale: isMobile ? (cardW / 200.0) : 1.0
+
+    width: cellW
+    height: cellH
+    clip: true
 
     // Lifetime-bound counterpart to Qt.callLater: recycling may destroy this
     // cell before a global deferred closure runs.
@@ -183,38 +191,48 @@ Item {
             artSource: cell.view.artMap[cell.item.artKey] || ""
         }
     }
-    Loader {
-        id: cardLoader
-        anchors.fill: parent
-        sourceComponent: cell.item.kind === "group-header" ? groupHeaderComp
-            : cell.item.kind === "album" ? albumCardComp
-            : cell.item.kind === "track" ? trackCardComp
-            : cell.item.kind === "artist" ? artistCardComp
-            : cell.item.kind === "playlist" ? playlistCardComp
-            : labelCardComp
-        onLoaded: cell.restoreMutableBindings()
-    }
-    // THE fix for "many grey squares that fill in unevenly": each pending
-    // cover shimmers on its own and stops the moment ITS file:// path lands in
-    // artMap, so the grid resolves progressively instead of looking like a
-    // wall of dead tiles. Artists and labels are excluded — their cards
-    // already draw a designed round gradient+glyph portrait placeholder
-    // (ArtistGridCard/LabelCard). A bare Rectangle: it does not take pointer
-    // events, so the card's hover/click areas keep working underneath.
-    QbzSkeleton {
-        variant: "art"
+    Item {
+        id: cardContainer
+        x: cell.isMobile ? Math.round((cell.cellW - cell.cardW) / 2) : 0
+        y: 0
         width: 200
-        height: 200
-        visible: (cell.item.kind === "album"
-                  || cell.item.kind === "track"
-                  || cell.item.kind === "playlist")
-            && cell.item.imageUrl !== ""
-            && (cell.view.artMap[cell.item.artKey] || "") === ""
-            // TrackCard's unavailable scrim is semantic content. A pending
-            // artwork skeleton must never paint over it and turn the honest
-            // state back into an ambiguous grey tile.
-            && !(cardLoader.item && cardLoader.item.pulledDead === true)
-        phase: cell.view.skelPhase
-        cellIndex: cell.cellIndex
+        height: 246
+        scale: cell.cardScale
+        transformOrigin: Item.TopLeft
+
+        Loader {
+            id: cardLoader
+            anchors.fill: parent
+            sourceComponent: cell.item.kind === "group-header" ? groupHeaderComp
+                : cell.item.kind === "album" ? albumCardComp
+                : cell.item.kind === "track" ? trackCardComp
+                : cell.item.kind === "artist" ? artistCardComp
+                : cell.item.kind === "playlist" ? playlistCardComp
+                : labelCardComp
+            onLoaded: cell.restoreMutableBindings()
+        }
+        // THE fix for "many grey squares that fill in unevenly": each pending
+        // cover shimmers on its own and stops the moment ITS file:// path lands in
+        // artMap, so the grid resolves progressively instead of looking like a
+        // wall of dead tiles. Artists and labels are excluded — their cards
+        // already draw a designed round gradient+glyph portrait placeholder
+        // (ArtistGridCard/LabelCard). A bare Rectangle: it does not take pointer
+        // events, so the card's hover/click areas keep working underneath.
+        QbzSkeleton {
+            variant: "art"
+            width: 200
+            height: 200
+            visible: (cell.item.kind === "album"
+                      || cell.item.kind === "track"
+                      || cell.item.kind === "playlist")
+                && cell.item.imageUrl !== ""
+                && (cell.view.artMap[cell.item.artKey] || "") === ""
+                // TrackCard's unavailable scrim is semantic content. A pending
+                // artwork skeleton must never paint over it and turn the honest
+                // state back into an ambiguous grey tile.
+                && !(cardLoader.item && cardLoader.item.pulledDead === true)
+            phase: cell.view.skelPhase
+            cellIndex: cell.cellIndex
+        }
     }
 }

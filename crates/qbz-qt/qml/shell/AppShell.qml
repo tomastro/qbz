@@ -159,6 +159,25 @@ Rectangle {
                 event.accepted = true
                 return
             }
+            if (header && typeof header.closeAppMenu === "function" && header.closeAppMenu()) {
+                event.accepted = true
+                return
+            }
+            if (QbzShell.sidebarState === 2) {
+                QbzShell.sidebarState = 0
+                event.accepted = true
+                return
+            }
+            if (contentRouter.currentItem && contentRouter.currentItem.mobileSection !== undefined && contentRouter.currentItem.mobileSection !== "") {
+                contentRouter.currentItem.mobileSection = ""
+                event.accepted = true
+                return
+            }
+            if (QbzShell.canBack) {
+                QbzShell.navigateBack()
+                event.accepted = true
+                return
+            }
         }
         var w = root.Window.window
         var afi = w !== null ? w.activeFocusItem : null

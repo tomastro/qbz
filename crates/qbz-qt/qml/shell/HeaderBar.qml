@@ -402,6 +402,14 @@ Rectangle {
         }
     }
 
+    function closeAppMenu() {
+        if (appMenu.visible) {
+            appMenu.close()
+            return true
+        }
+        return false
+    }
+
     // --- Left controls ---------------------------------------------------
     Row {
         id: leftControls
@@ -411,6 +419,7 @@ Rectangle {
         y: root.topSafeInset + (theme.headerHeight - height) / 2
         height: 36
         spacing: 6
+        visible: !root.isMobile
 
         QbzNavButton {
             name: "panel-left"

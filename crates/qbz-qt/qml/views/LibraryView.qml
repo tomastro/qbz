@@ -1320,7 +1320,7 @@ Rectangle {
                                 if (modelData.kind === "album") {
                                     QbzAlbum.openAlbum(modelData.id)
                                 } else if (modelData.kind === "playlist") {
-                                    QbzPlaylist.openPlaylist(modelData.id)
+                                    QbzBridge.openPlaylist(modelData.id)
                                 }
                             }
                         }
@@ -1579,8 +1579,8 @@ Rectangle {
                 anchors.topMargin: 16
                 height: grid.visible ? parent.height - 16 - (root.isMobile ? 140 : 0) : 0
                 visible: content.showGrid && root.activeTab !== "tracks"
-                cellWidth: root.isMobile ? Math.floor((grid.width - 8) / 2) : 220
-                cellHeight: root.isMobile ? (cellWidth + 56) : 266
+                cellWidth: root.isMobile ? Math.floor(grid.width / 2) : 220
+                cellHeight: root.isMobile ? Math.round(cellWidth * 246 / 200) + 12 : 266
                 cacheBuffer: 266 * 2
                 // Mixed cards are expensive to construct. FeedGridCell resets
                 // optimistic heart/pin bindings and closes transient popups at
