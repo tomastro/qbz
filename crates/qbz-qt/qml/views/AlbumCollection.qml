@@ -566,30 +566,32 @@ Column {
                 opacity: (sg.seenIds && gcell.modelData && gcell.modelData.id
                           && sg.seenIds[gcell.modelData.id] !== true)
                     ? sg.reveal : 1.0
-                AlbumCard {
-                    albumId: gcell.modelData.id
-                    source: gcell.modelData.source || ""
-                    sources: gcell.modelData.sources || []
-                    title: gcell.modelData.title
-                    artist: gcell.modelData.artist
-                    artistId: gcell.modelData.historyArtistLink ? "" : gcell.modelData.artistId
-                    hostArtistLink: gcell.modelData.historyArtistLink === true && (gcell.modelData.artist || "").trim() !== ""
-                    onArtistRequested: QbzHome.openHistoryAlbumArtist(
-                        gcell.modelData.id, gcell.modelData.source || "", gcell.modelData.artist || "", gcell.modelData.artistId || "")
-                    genre: gcell.modelData.genre
-                    year: gcell.modelData.year
-                    qualityTier: gcell.modelData.qualityTier
-                    qualityDetail: gcell.modelData.qualityDetail || ""
-                    ribbon: gcell.modelData.ribbon || ""
-                    ribbonKind: gcell.modelData.ribbonKind || ""
-                    artSource: root.artOf(gcell.modelData)
-                    isPinned: gcell.modelData.isPinned === true
-                    // Snapshot url the pin payload persists (artPath is the
-                    // local cache path — see AlbumCard.artworkUrl).
-                    artworkUrl: gcell.modelData.artUrl || ""
-                    // Stamped on the row (AlbumCardData / HomeCard); false
-                    // made the glyph lie and inverted the first click.
-                    isFavorite: gcell.modelData.isFavorite === true
+                Item {
+                    width: 200
+                    height: 246
+                    scale: root.cardWidth < 200 ? (root.cardWidth / 200.0) : 1.0
+                    transformOrigin: Item.TopLeft
+                    AlbumCard {
+                        albumId: gcell.modelData.id
+                        source: gcell.modelData.source || ""
+                        sources: gcell.modelData.sources || []
+                        title: gcell.modelData.title
+                        artist: gcell.modelData.artist
+                        artistId: gcell.modelData.historyArtistLink ? "" : gcell.modelData.artistId
+                        hostArtistLink: gcell.modelData.historyArtistLink === true && (gcell.modelData.artist || "").trim() !== ""
+                        onArtistRequested: QbzHome.openHistoryAlbumArtist(
+                            gcell.modelData.id, gcell.modelData.source || "", gcell.modelData.artist || "", gcell.modelData.artistId || "")
+                        genre: gcell.modelData.genre
+                        year: gcell.modelData.year
+                        qualityTier: gcell.modelData.qualityTier
+                        qualityDetail: gcell.modelData.qualityDetail || ""
+                        ribbon: gcell.modelData.ribbon || ""
+                        ribbonKind: gcell.modelData.ribbonKind || ""
+                        artSource: root.artOf(gcell.modelData)
+                        isPinned: gcell.modelData.isPinned === true
+                        artworkUrl: gcell.modelData.artUrl || ""
+                        isFavorite: gcell.modelData.isFavorite === true
+                    }
                 }
             }
         }
@@ -813,28 +815,34 @@ Column {
                     })
                 }
 
-                AlbumCard {
-                    id: mountedCard
-                    albumId: cell.cardData.id
-                    source: cell.cardData.source || ""
-                    sources: cell.cardData.sources || []
-                    title: cell.cardData.title
-                    artist: cell.cardData.artist
-                    artistId: cell.cardData.historyArtistLink ? "" : cell.cardData.artistId
-                    hostArtistLink: cell.cardData.historyArtistLink === true && (cell.cardData.artist || "").trim() !== ""
-                    onArtistRequested: QbzHome.openHistoryAlbumArtist(
-                        cell.cardData.id, cell.cardData.source || "", cell.cardData.artist || "", cell.cardData.artistId || "")
-                    genre: cell.cardData.genre
-                    year: cell.cardData.year
-                    qualityTier: cell.cardData.qualityTier
-                    qualityDetail: cell.cardData.qualityDetail || ""
-                    ribbon: cell.cardData.ribbon || ""
-                    ribbonKind: cell.cardData.ribbonKind || ""
-                    artSource: root.artOf(cell.cardData)
-                    isPinned: cell.cardData.isPinned === true
-                    artworkUrl: cell.cardData.artUrl || ""
-                    plays: root.showPlays ? (cell.cardData.plays || 0) : 0
-                    isFavorite: cell.cardData.isFavorite === true
+                Item {
+                    width: 200
+                    height: 246
+                    scale: root.cardWidth < 200 ? (root.cardWidth / 200.0) : 1.0
+                    transformOrigin: Item.TopLeft
+                    AlbumCard {
+                        id: mountedCard
+                        albumId: cell.cardData.id
+                        source: cell.cardData.source || ""
+                        sources: cell.cardData.sources || []
+                        title: cell.cardData.title
+                        artist: cell.cardData.artist
+                        artistId: cell.cardData.historyArtistLink ? "" : cell.cardData.artistId
+                        hostArtistLink: cell.cardData.historyArtistLink === true && (cell.cardData.artist || "").trim() !== ""
+                        onArtistRequested: QbzHome.openHistoryAlbumArtist(
+                            cell.cardData.id, cell.cardData.source || "", cell.cardData.artist || "", cell.cardData.artistId || "")
+                        genre: cell.cardData.genre
+                        year: cell.cardData.year
+                        qualityTier: cell.cardData.qualityTier
+                        qualityDetail: cell.cardData.qualityDetail || ""
+                        ribbon: cell.cardData.ribbon || ""
+                        ribbonKind: cell.cardData.ribbonKind || ""
+                        artSource: root.artOf(cell.cardData)
+                        isPinned: cell.cardData.isPinned === true
+                        artworkUrl: cell.cardData.artUrl || ""
+                        plays: root.showPlays ? (cell.cardData.plays || 0) : 0
+                        isFavorite: cell.cardData.isFavorite === true
+                    }
                 }
             }
         }

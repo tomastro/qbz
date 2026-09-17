@@ -31,6 +31,7 @@ import "../theme"
 Rectangle {
     id: root
     property bool kioskHost: false
+    readonly property bool isMobile: Qt.platform.os === "android" || (root.width > 0 && root.width < 700)
 
     color: ambientOn ? "transparent" : theme.surfaceMain
     readonly property bool ambientOn: theme.ambientOn
@@ -69,7 +70,12 @@ Rectangle {
             QbzHome.discoverBrowseGenreChanged()
         root.lastGenreSig = root.genreSig
     }
-    Component.onCompleted: root.lastGenreSig = root.genreSig
+    Component.onCompleted: {
+        root.lastGenreSig = root.genreSig
+        if ((!root.doc.endpoint || root.doc.endpoint === "") && root.items.length === 0) {
+            QbzHome.openDiscoverBrowse("/discover/newReleases", QbzSession.tr("New Releases", QbzSession.trRev))
+        }
+    }
 
     // ============================ offline gate ============================
     QbzOfflinePlaceholder {
@@ -108,37 +114,39 @@ Rectangle {
             }
 
             Text {
-                x: 48
+                x: root.isMobile ? 16 : 48
                 y: (root.kioskHost ? 32 : 25) - height / 2
-                width: Math.max(0, tools.x - 48 - 16)
+                width: Math.max(0, tools.x - x - 8)
                 text: root.doc.title || ""
                 color: theme.textPrimary
-                font.pixelSize: theme.fontSection
+                font.pixelSize: root.isMobile ? 18 : theme.fontSection
                 font.weight: theme.weightBold
                 elide: Text.ElideRight
             }
 
             Row {
                 id: tools
-                x: parent.width - width - 32
-                y: (root.kioskHost ? 32 : 25) - height / 2
-                spacing: 8
+                anchors.right: parent.right
+                anchors.rightMargin: root.isMobile ? 12 : 32
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: root.isMobile ? 4 : 8
 
                 QbzLineEdit {
                     kioskHost: root.kioskHost
                     searchMode: true
-                    width: 200
+                    width: root.isMobile ? 110 : 200
                     placeholder: QbzSession.tr("Search…", QbzSession.trRev)
                     text: root.query
                     onEdited: function (v) { QbzHome.discoverBrowseSearch(v) }
                 }
                 BrowseGenreButton {
                     btnHeight: root.kioskHost ? 44 : 34
+                    compact: root.isMobile
                     context: "discover"
                     onClicked: genrePopup.toggle()
                 }
                 ViewModeToggle {
-                    visible: !root.kioskHost
+                    visible: !root.kioskHost && !root.isMobile
                     mode: root.viewMode
                     onSetMode: function (m) { QbzHome.discoverBrowseSetViewMode(m) }
                 }
@@ -161,10 +169,10 @@ Rectangle {
                 Column {
                     id: page
                     width: parent.width
-                    leftPadding: 32
-                    rightPadding: 32
+                    leftPadding: root.isMobile ? 16 : 32
+                    rightPadding: root.isMobile ? 16 : 32
                     topPadding: 8
-                    bottomPadding: 100
+                    bottomPadding: root.isMobile ? 140 : 100
                     spacing: 0
 
                     QbzSpinner {
@@ -184,16 +192,16 @@ Rectangle {
                     }
 
                     AlbumCollection {
-                kioskHost: root.kioskHost
+                        kioskHost: root.kioskHost
                         id: collection
                         visible: !QbzHome.discoverBrowseLoading
-                        width: parent.width - 64
+                        width: parent.width - (root.isMobile ? 32 : 64)
                         collectionKey: root.doc.endpoint || ""
                         albums: root.items
                         viewMode: root.viewMode
-                        cardWidth: 200
-                        cardHeight: 266
-                        cardGap: 24
+                        cardWidth: root.isMobile ? Math.floor((width - 16) / 2) : 200
+                        cardHeight: root.isMobile ? Math.round(cardWidth * 266 / 200) : 266
+                        cardGap: root.isMobile ? 16 : 24
                         listRowGap: 4
                         flick: flick
                         contentOffset: root.kioskHost ? y : (8)
@@ -204,7 +212,7 @@ Rectangle {
                             && root.items.length > 0
                             && root.doc.hasMore === true
                             && root.query === ""
-                        width: parent.width - 64
+                        width: parent.width - (root.isMobile ? 32 : 64)
                         height: visible ? loadMore.height : 0
 
                         QbzLoadMore {
@@ -214,8 +222,8 @@ Rectangle {
                             busy: QbzHome.discoverBrowseLoadingMore
                             skeleton: root.viewMode === "list" ? "rows" : "cards"
                             // AlbumCollection pitch: 200x266 + 24px gutter.
-                            cellW: 224
-                            cellH: 290
+                            cellW: root.isMobile ? Math.floor((collection.width - 16) / 2) + 16 : 224
+                            cellH: root.isMobile ? Math.round(Math.floor((collection.width - 16) / 2) * 266 / 200) + 24 : 290
                             rowH: 64
                             rowGap: 4
                             rowCount: 2
@@ -252,6 +260,6 @@ Rectangle {
         context: "discover"
         // The .slint anchors this page's popup at y=56 (not HomeView's 52).
         anchorTop: 56
-        anchorRight: 32
+        anchorRight: root.isMobile ? 12 : 32
     }
 }

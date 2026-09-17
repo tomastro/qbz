@@ -58,6 +58,7 @@ Rectangle {
     // HomeView.slint:163: the frosted content panel shows through).
     color: ambientOn ? "transparent" : theme.surfaceMain
     readonly property bool ambientOn: theme.ambientOn
+    readonly property bool isMobile: Qt.platform.os === "android" || (root.width > 0 && root.width < 700)
 
     // Round to the AppShell content-frame bezel (Radius.md): QML clips
     // are rectangular, so the frame's own rounding never reaches the
@@ -1612,62 +1613,22 @@ Rectangle {
                 color: root.ambientOn ? theme.surfaceMainA30 : theme.surfaceMain
             }
 
-            Row {
-                // Slint left-controls: x 32 + NavButtons (now a 0px
-                // placeholder) + 16px spacing -> the pill starts at 48.
-                x: 48
-                y: 25 - height / 2
-                spacing: 16
-
-                QbzTabBar {
-                    // The 4th tab is present only while the pref is on (1:1
-                    // with the Slint `if SettingsState.show-recommendations`).
-                    tabs: {
-                        var t = [
-                            { "id": "home", "label": QbzSession.tr("Home", QbzSession.trRev) },
-                            { "id": "editorPicks", "label": QbzSession.tr("Editor's Picks", QbzSession.trRev) },
-                            { "id": "forYou", "label": QbzSession.tr("For You", QbzSession.trRev) },
-                        ]
-                        if (root.showRecommendations)
-                            t.push({ "id": "recommendations", "label": QbzSession.tr("Recommendations", QbzSession.trRev) })
-                        return t
-                    }
-                    activeId: root.activeTab
-                    // Data is per-tab JSON (no refetch on switch); scroll
-                    // resets to top.
-                    onSelected: function (id) {
-                        root.activeTab = id
-                        homeFlick.contentY = 0
-                    }
-                }
-            }
-
             // Genre filter + configurator gear (HomeView.slint right-controls).
             Row {
-                x: parent.width - width - 32
-                y: 25 - height / 2
+                id: homeRightTools
+                anchors.right: parent.right
+                anchors.rightMargin: root.isMobile ? 12 : 32
+                anchors.verticalCenter: parent.verticalCenter
                 height: 32
-                spacing: 6
+                spacing: root.isMobile ? 4 : 6
 
-                // GenreButton — now the SHARED controls/BrowseGenreButton
-                // (the browse pages draw the same control; this was a
-                // verbatim copy of it). HomeView.slint:85 is the 32px
-                // variant, BrowseHeaderTools.slint:108 the 34px one.
                 BrowseGenreButton {
                     context: "discover"
                     btnHeight: 32
+                    compact: root.isMobile
                     onClicked: genrePopup.toggle()
                 }
 
-                // GearButton — per-tab show/hide + reorder of the Discover
-                // sections, and on Recommendations the cache window +
-                // "Refresh now" instead (that tab has no orderable sections).
-                //
-                // It used to be DISABLED on Recommendations, on the grounds
-                // that the external reco engine was not ported and the modal
-                // would open empty. The engine is ported, and the modal now
-                // carries that tab's own arm — so the gear is live on all four
-                // and `gearEnabled` is gone with the condition it existed for.
                 Rectangle {
                     id: gearBtn
                     width: 32
@@ -1687,6 +1648,42 @@ Rectangle {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: configModal.open(root.activeTab)
+                    }
+                }
+            }
+
+            // Tab bar in a Flickable bounded to available width
+            Flickable {
+                id: tabFlick
+                anchors.left: parent.left
+                anchors.leftMargin: root.isMobile ? 12 : 48
+                anchors.right: homeRightTools.left
+                anchors.rightMargin: root.isMobile ? 8 : 16
+                anchors.verticalCenter: parent.verticalCenter
+                height: tabBar.height
+                contentWidth: tabBar.width
+                contentHeight: tabBar.height
+                flickableDirection: Flickable.HorizontalFlick
+                boundsBehavior: Flickable.StopAtBounds
+                clip: true
+                interactive: contentWidth > width
+
+                QbzTabBar {
+                    id: tabBar
+                    tabs: {
+                        var t = [
+                            { "id": "home", "label": QbzSession.tr("Home", QbzSession.trRev) },
+                            { "id": "editorPicks", "label": QbzSession.tr("Editor's Picks", QbzSession.trRev) },
+                            { "id": "forYou", "label": QbzSession.tr("For You", QbzSession.trRev) },
+                        ]
+                        if (root.showRecommendations)
+                            t.push({ "id": "recommendations", "label": QbzSession.tr("Recommendations", QbzSession.trRev) })
+                        return t
+                    }
+                    activeId: root.activeTab
+                    onSelected: function (id) {
+                        root.activeTab = id
+                        homeFlick.contentY = 0
                     }
                 }
             }
@@ -1855,7 +1852,7 @@ Rectangle {
         context: "discover"
         // Under the toolbar (56px + the 1px divider + a 5px gap).
         anchorTop: 62
-        anchorRight: 32
+        anchorRight: root.isMobile ? 12 : 32
     }
 
     // Per-tab section configurator (the gear).

@@ -2678,6 +2678,9 @@ fn hydrate_view(view: &str) {
     if view == "settings" {
         publish_settings();
     }
+    if view == "discoverbrowse" {
+        browse_qt::open_discover_browse_default();
+    }
     // MyQBZ: BOTH grids reload on EVERY visit — deliberately no once-flag
     // (contrast `library` above). A create from the Add picker, a delete from
     // the detail view or a new Artist Collection from the builder all change

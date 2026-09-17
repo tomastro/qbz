@@ -24,6 +24,7 @@ Rectangle {
     /// "discover" | "library-all" — whose selection this button reports.
     property string context: "discover"
     property int btnHeight: 34
+    property bool compact: false
     signal clicked()
 
     QbzTheme { id: theme }
@@ -69,7 +70,7 @@ Rectangle {
         groups: root.summaryGroups
     }
 
-    width: genreRow.width
+    width: root.compact ? btnHeight : genreRow.width
     height: btnHeight
     radius: 6
     // Resting fill translucent under the dynamic background
@@ -83,9 +84,10 @@ Rectangle {
     Row {
         id: genreRow
         height: parent.height
-        leftPadding: 12
-        rightPadding: 14
-        spacing: 7
+        leftPadding: root.compact ? 0 : 12
+        rightPadding: root.compact ? 0 : 14
+        spacing: root.compact ? 0 : 7
+        anchors.centerIn: root.compact ? parent : undefined
         QbzIcon {
             name: "list-filter"
             width: 14
@@ -104,6 +106,7 @@ Rectangle {
             tintName: root.active ? theme.accentGlyphTint : "secondary"
         }
         Text {
+            visible: !root.compact
             text: root.count === 0
                 ? QbzSession.tr("Filter by genre", QbzSession.trRev)
                 : root.count === 1

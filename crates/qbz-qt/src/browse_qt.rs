@@ -143,6 +143,22 @@ fn json_str(value: &str) -> String {
 /// second `set_current_view` call) -> clear the document + raise `loading`
 /// in ONE bridge hop -> fetch. Without the clear the page renders the
 /// PREVIOUS module until the fetch lands.
+/// Default opener for the Browse tab: loads New Releases if no module is currently loaded.
+pub fn open_discover_browse_default() {
+    let needs_load = {
+        let Ok(s) = DISCOVER.lock() else {
+            return;
+        };
+        s.endpoint.is_empty() || s.cards.is_empty()
+    };
+    if needs_load {
+        open_discover_browse(
+            "/discover/newReleases".to_string(),
+            qbz_i18n::t("New Releases"),
+        );
+    }
+}
+
 pub fn open_discover_browse(endpoint: String, title: String) {
     if crate::offline_fwd::engine().status().is_offline() {
         return;
