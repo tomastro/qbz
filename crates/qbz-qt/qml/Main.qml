@@ -260,6 +260,18 @@ ApplicationWindow {
     }
     color: "#1a1a1a"
 
+    // Intercept hardware/system back key on Android (ApplicationWindow closing signal)
+    onClosing: function(close) {
+        if (window.isAndroid) {
+            if (screenLoader.item && typeof screenLoader.item.handleBackKey === "function") {
+                if (screenLoader.item.handleBackKey()) {
+                    close.accepted = false
+                    return
+                }
+            }
+        }
+    }
+
     // Phase 23: every domain singleton boots (registers its Qt-thread
     // hop; QbzSession.boot additionally fires the app boot sequence).
     // ── The renderer probe ────────────────────────────────────────────────

@@ -152,29 +152,33 @@ Rectangle {
     // only what it owns. Shared controls accept their Space/Enter events
     // before they bubble here; in particular a focused Settings toggle owns
     // Space, so toggling it cannot also trigger global play/pause (§4.1).
+    function handleBackKey() {
+        if (!root.isMobile) return false
+        if (mobileNowPlayingSheet && mobileNowPlayingSheet.open) {
+            mobileNowPlayingSheet.open = false
+            return true
+        }
+        if (header && typeof header.closeAppMenu === "function" && header.closeAppMenu()) {
+            return true
+        }
+        if (QbzShell.sidebarState === 2) {
+            QbzShell.sidebarState = 0
+            return true
+        }
+        if (contentRouter.currentItem && contentRouter.currentItem.mobileSection !== undefined && contentRouter.currentItem.mobileSection !== "") {
+            contentRouter.currentItem.mobileSection = ""
+            return true
+        }
+        if (QbzShell.canBack) {
+            QbzShell.navigateBack()
+            return true
+        }
+        return false
+    }
+
     Keys.onPressed: function (event) {
         if (root.isMobile && (event.key === Qt.Key_Back || event.key === Qt.Key_Escape)) {
-            if (mobileNowPlayingSheet && mobileNowPlayingSheet.open) {
-                mobileNowPlayingSheet.open = false
-                event.accepted = true
-                return
-            }
-            if (header && typeof header.closeAppMenu === "function" && header.closeAppMenu()) {
-                event.accepted = true
-                return
-            }
-            if (QbzShell.sidebarState === 2) {
-                QbzShell.sidebarState = 0
-                event.accepted = true
-                return
-            }
-            if (contentRouter.currentItem && contentRouter.currentItem.mobileSection !== undefined && contentRouter.currentItem.mobileSection !== "") {
-                contentRouter.currentItem.mobileSection = ""
-                event.accepted = true
-                return
-            }
-            if (QbzShell.canBack) {
-                QbzShell.navigateBack()
+            if (root.handleBackKey()) {
                 event.accepted = true
                 return
             }
