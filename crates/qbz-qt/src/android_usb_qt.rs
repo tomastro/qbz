@@ -9,6 +9,7 @@ use std::sync::{Arc, OnceLock};
 
 static JAVA_VM: OnceLock<JavaVM> = OnceLock::new();
 static USB_DIRECT_BRIDGE_CLASS: OnceLock<GlobalRef> = OnceLock::new();
+static QBZ_ACTIVITY_CLASS: OnceLock<GlobalRef> = OnceLock::new();
 static TLS_INITIALIZED: OnceLock<()> = OnceLock::new();
 static FACTORY_INSTALLED: OnceLock<()> = OnceLock::new();
 
@@ -42,6 +43,16 @@ pub extern "system" fn Java_dev_qbz_android_qt_QbzActivity_initializeNativeBridg
                         let _ = env.exception_clear();
                     }
                     log::error!("[android_usb_qt] Failed to find UsbDirectBridge class: {e}");
+                }
+            }
+        }
+
+        // Cache QbzActivity class
+        if QBZ_ACTIVITY_CLASS.get().is_none() {
+            if let Ok(class) = env.find_class("dev/qbz/android/qt/QbzActivity") {
+                if let Ok(global_ref) = env.new_global_ref(class) {
+                    let _ = QBZ_ACTIVITY_CLASS.set(global_ref);
+                    log::info!("[android_usb_qt] Successfully cached QbzActivity GlobalRef");
                 }
             }
         }
@@ -297,11 +308,9 @@ fn java_error(env: &mut jni::JNIEnv<'_>, context: &str, error: jni::errors::Erro
 }
 
 pub fn minimize_activity() {
-    if let Some(vm) = JAVA_VM.get() {
-        if let Ok(mut env) = vm.attach_current_thread() {
-            if let Ok(class) = env.find_class("dev/qbz/android/qt/QbzActivity") {
-                let _ = env.call_static_method(class, "minimize", "()V", &[]);
-            }
-        }
+    let Some(vm) = JAVA_VM.get() else { return; };
+    let Some(class_ref) = QBZ_ACTIVITY_CLASS.get() else { return; };
+    if let Ok(mut env) = vm.attach_current_thread() {
+        let _ = env.call_static_method(class_ref.as_obj(), "minimize", "()V", &[]);
     }
 }

@@ -161,13 +161,18 @@ Rectangle {
         if (header && typeof header.closeAppMenu === "function" && header.closeAppMenu()) {
             return true
         }
-        if (QbzShell.sidebarState !== 2) {
+        if (sidebar && sidebar.visible && QbzShell.sidebarState !== 2) {
             QbzShell.sidebarState = 2
             return true
         }
-        if (contentRouter.currentItem && contentRouter.currentItem.mobileSection !== undefined && contentRouter.currentItem.mobileSection !== "") {
-            contentRouter.currentItem.mobileSection = ""
-            return true
+        if (contentRouter.currentItem) {
+            if (typeof contentRouter.currentItem.handleBack === "function" && contentRouter.currentItem.handleBack()) {
+                return true
+            }
+            if (contentRouter.currentItem.mobileSection !== undefined && contentRouter.currentItem.mobileSection !== "") {
+                contentRouter.currentItem.mobileSection = ""
+                return true
+            }
         }
         if (QbzShell.canBack) {
             QbzShell.navigateBack()
@@ -264,6 +269,8 @@ Rectangle {
     readonly property bool isMobile: (hostWindow && hostWindow.isAndroid) || Qt.platform.os === "android" || (root.width > 0 && root.width < 600)
     readonly property real topSafeInset: (Qt.platform.os === "android" || (hostWindow && hostWindow.isAndroid)) ? 36 : 0
     readonly property real bottomSafeInset: (Qt.platform.os === "android" || (hostWindow && hostWindow.isAndroid)) ? 16 : 0
+
+    Component.onCompleted: { if (root.isMobile) QbzShell.sidebarState = 2 }
 
     Connections {
         target: QbzShell

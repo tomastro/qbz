@@ -53,6 +53,13 @@ Rectangle {
     readonly property bool ambientOn: theme.ambientOn
     readonly property bool isMobile: Qt.platform.os === "android" || (root.width > 0 && root.width < 600)
     property string mobileSection: ""
+    function handleBack() {
+        if (root.isMobile && root.mobileSection !== "") {
+            root.mobileSection = ""
+            return true
+        }
+        return false
+    }
 
     // Round to the AppShell content-frame bezel (Radius.md): QML clips
     // are rectangular, so the frame's own rounding never reaches the
