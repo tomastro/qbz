@@ -33,9 +33,10 @@ Rectangle {
         return m + ":" + (sec < 10 ? "0" : "") + sec
     }
 
-    width: parent.width
-    height: parent.height
-    y: root.open ? 0 : parent.height
+    width: parent ? parent.width : 0
+    height: parent ? parent.height : 0
+    y: root.open ? 0 : (parent ? parent.height : 0)
+    visible: root.open || (parent && y < parent.height)
     color: "#0d0d10"
     clip: true
 
@@ -103,6 +104,13 @@ Rectangle {
         MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
+            property real startY: 0
+            onPressed: function(mouse) { startY = mouse.y }
+            onPositionChanged: function(mouse) {
+                if (mouse.y - startY > 20) {
+                    root.open = false
+                }
+            }
             onClicked: root.open = false
         }
     }

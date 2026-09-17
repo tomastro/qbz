@@ -256,7 +256,9 @@ Rectangle {
     MobileNowPlayingSheet {
         id: mobileNowPlayingSheet
         z: 2500
-        anchors.fill: parent
+        width: parent.width
+        height: parent.height
+        visible: root.isMobile && (open || y < parent.height)
         topSafeInset: root.topSafeInset
         bottomSafeInset: root.bottomSafeInset
         open: false
