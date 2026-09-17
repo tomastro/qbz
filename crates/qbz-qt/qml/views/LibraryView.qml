@@ -1,4 +1,4 @@
-// Library view — QML port of crates/qbz-ui/ui/favorites/FavoritesView.slint
+﻿// Library view — QML port of crates/qbz-ui/ui/favorites/FavoritesView.slint
 // + the Library "All" mixed feed (library_all.rs semantics).
 //
 // Data: QbzLibrary.libraryJson (ONE JSON document — the full merged feed;
@@ -1082,17 +1082,314 @@ Rectangle {
         onSettingsClicked: QbzShell.navigateTo("settings")
     }
 
+    // --- Mobile Apple Music Library Hub ---
+    Flickable {
+        id: mobileHub
+        anchors.fill: parent
+        visible: !QbzSession.offline && root.isMobile && root.mobileSection === ""
+        contentHeight: mobileHubCol.height + 140
+        boundsBehavior: Flickable.StopAtBounds
+        clip: true
+
+        Column {
+            id: mobileHubCol
+            width: parent.width - 32
+            x: 16
+            spacing: 16
+            topPadding: 16
+
+            // Large Title + Edit
+            Item {
+                width: parent.width
+                height: 44
+
+                Text {
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: QbzSession.tr("Library", QbzSession.trRev)
+                    font.pixelSize: 32
+                    font.weight: Font.Bold
+                    color: theme.textPrimary
+                }
+
+                Text {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: QbzSession.tr("Edit", QbzSession.trRev)
+                    font.pixelSize: 16
+                    color: theme.accent
+                }
+            }
+
+            // Category Menu
+            Column {
+                width: parent.width
+                spacing: 0
+
+                Repeater {
+                    model: [
+                        { "id": "playlists", "label": QbzSession.tr("Playlists", QbzSession.trRev), "icon": "list-music", "tab": "playlists" },
+                        { "id": "artists", "label": QbzSession.tr("Artists", QbzSession.trRev), "icon": "mic-vocal", "tab": "artists" },
+                        { "id": "albums", "label": QbzSession.tr("Albums", QbzSession.trRev), "icon": "disc", "tab": "albums" },
+                        { "id": "songs", "label": QbzSession.tr("Songs", QbzSession.trRev), "icon": "music", "tab": "tracks" },
+                        { "id": "downloaded", "label": QbzSession.tr("Downloaded", QbzSession.trRev), "icon": "cloud-download", "tab": "all" }
+                    ]
+
+                    Item {
+                        width: parent.width
+                        height: 52
+
+                        Rectangle {
+                            anchors.fill: parent
+                            color: rowArea.containsMouse ? theme.surfaceHover : "transparent"
+                        }
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.leftMargin: 4
+                            anchors.rightMargin: 8
+                            spacing: 14
+
+                            Item {
+                                width: 24
+                                height: parent.height
+
+                                QbzIcon {
+                                    anchors.centerIn: parent
+                                    name: modelData.icon
+                                    width: 22
+                                    height: 22
+                                    tintName: "accent"
+                                }
+                            }
+
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: modelData.label
+                                font.pixelSize: 18
+                                font.weight: Font.Normal
+                                color: theme.textPrimary
+                            }
+
+                            Item {
+                                width: Math.max(1, parent.width - 24 - 14 - 150)
+                                height: 1
+                            }
+
+                            QbzIcon {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                name: "chevron-right"
+                                width: 16
+                                height: 16
+                                tintName: "muted"
+                            }
+                        }
+
+                        Rectangle {
+                            anchors.left: parent.left
+                            anchors.leftMargin: 42
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            height: 1
+                            color: theme.borderSubtle
+                            opacity: 0.6
+                        }
+
+                        MouseArea {
+                            id: rowArea
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                root.activeTab = modelData.tab
+                                root.mobileSection = modelData.id
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Recently Added Heading
+            Item {
+                width: parent.width
+                height: 36
+
+                Text {
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: QbzSession.tr("Recently Added", QbzSession.trRev)
+                    font.pixelSize: 21
+                    font.weight: Font.Bold
+                    color: theme.textPrimary
+                }
+            }
+
+            // Recently Added 2-Col Grid
+            Grid {
+                id: recentGrid
+                width: parent.width
+                columns: 2
+                columnSpacing: 14
+                rowSpacing: 16
+
+                readonly property var recentItems: {
+                    var res = []
+                    if (root.feed && root.feed.length > 0) {
+                        for (var i = 0; i < root.feed.length; i++) {
+                            var it = root.feed[i]
+                            if (it.kind === "album" || it.kind === "playlist") {
+                                res.push(it)
+                                if (res.length >= 12) break
+                            }
+                        }
+                    }
+                    return res
+                }
+
+                Repeater {
+                    model: recentGrid.recentItems
+
+                    Item {
+                        width: (recentGrid.width - 14) / 2
+                        height: width + 52
+
+                        Rectangle {
+                            id: artCard
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            height: width
+                            radius: 10
+                            color: theme.surfaceCard
+                            border.width: 1
+                            border.color: theme.borderSubtle
+                            clip: true
+
+                            RoundedImage {
+                                anchors.fill: parent
+                                radius: 10
+                                source: modelData.imageUrl || root.artMap[modelData.artKey] || ""
+                                visible: source != ""
+                            }
+
+                            QbzIcon {
+                                anchors.centerIn: parent
+                                name: modelData.kind === "playlist" ? "list-music" : "disc"
+                                width: 36
+                                height: 36
+                                tintName: "muted"
+                                visible: !modelData.imageUrl && !root.artMap[modelData.artKey]
+                            }
+                        }
+
+                        Text {
+                            anchors.top: artCard.bottom
+                            anchors.topMargin: 6
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            text: modelData.title || ""
+                            font.pixelSize: 13
+                            font.weight: Font.Medium
+                            color: theme.textPrimary
+                            elide: Text.ElideRight
+                            maximumLineCount: 1
+                        }
+
+                        Text {
+                            anchors.top: artCard.bottom
+                            anchors.topMargin: 24
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            text: modelData.artist || (modelData.kind === "playlist" ? QbzSession.tr("Playlist", QbzSession.trRev) : "")
+                            font.pixelSize: 12
+                            color: theme.textMuted
+                            elide: Text.ElideRight
+                            maximumLineCount: 1
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (modelData.kind === "album") {
+                                    QbzAlbum.openAlbum(modelData.id)
+                                } else if (modelData.kind === "playlist") {
+                                    QbzPlaylist.openPlaylist(modelData.id)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // --- Standard Desktop Column or Mobile Section Drill-down ---
     Column {
         anchors.fill: parent
         spacing: 0
-        visible: !QbzSession.offline
+        visible: !QbzSession.offline && (!root.isMobile || root.mobileSection !== "")
+
+        // Mobile Drill-down Back Bar
+        Item {
+            id: mobileSubNavBar
+            visible: root.isMobile && root.mobileSection !== ""
+            width: parent.width
+            height: 48
+
+            Row {
+                anchors.left: parent.left
+                anchors.leftMargin: 12
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 4
+
+                QbzIcon {
+                    name: "chevron-left"
+                    width: 22
+                    height: 22
+                    anchors.verticalCenter: parent.verticalCenter
+                    tintName: "accent"
+                }
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: QbzSession.tr("Library", QbzSession.trRev)
+                    font.pixelSize: 17
+                    color: theme.accent
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        root.mobileSection = ""
+                        root.activeTab = "all"
+                    }
+                }
+            }
+
+            Text {
+                anchors.centerIn: parent
+                text: root.mobileSection === "playlists" ? QbzSession.tr("Playlists", QbzSession.trRev)
+                    : root.mobileSection === "artists" ? QbzSession.tr("Artists", QbzSession.trRev)
+                    : root.mobileSection === "albums" ? QbzSession.tr("Albums", QbzSession.trRev)
+                    : root.mobileSection === "tracks" ? QbzSession.tr("Songs", QbzSession.trRev)
+                    : QbzSession.tr("Downloaded", QbzSession.trRev)
+                font.pixelSize: 17
+                font.weight: Font.Bold
+                color: theme.textPrimary
+            }
+        }
 
         LibraryToolbar {
             id: toolbar
+            visible: !root.isMobile
             width: parent.width
+            height: visible ? 56 : 0
             view: root
         }
         Rectangle {
+            visible: !root.isMobile
             width: parent.width
             height: 1
             color: theme.borderSubtle
@@ -1102,7 +1399,7 @@ Rectangle {
         Item {
             id: content
             width: parent.width
-            height: parent.height - 57
+            height: parent.height - (root.isMobile ? mobileSubNavBar.height : 57)
             clip: true
 
             // The tracks bulk bar is pinned above the list (the Slint scrolls
@@ -1261,13 +1558,13 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                anchors.leftMargin: 32
-                anchors.rightMargin: root.alphaVisible ? 52 : 32
+                anchors.leftMargin: root.isMobile ? 16 : 32
+                anchors.rightMargin: root.isMobile ? 16 : (root.alphaVisible ? 52 : 32)
                 anchors.topMargin: 16
-                height: grid.visible ? parent.height - 16 : 0
+                height: grid.visible ? parent.height - 16 - (root.isMobile ? 140 : 0) : 0
                 visible: content.showGrid && root.activeTab !== "tracks"
-                cellWidth: 220
-                cellHeight: 266
+                cellWidth: root.isMobile ? Math.floor((grid.width - 8) / 2) : 220
+                cellHeight: root.isMobile ? (cellWidth + 56) : 266
                 cacheBuffer: 266 * 2
                 // Mixed cards are expensive to construct. FeedGridCell resets
                 // optimistic heart/pin bindings and closes transient popups at
@@ -1323,10 +1620,10 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                anchors.leftMargin: 32
-                anchors.rightMargin: root.alphaVisible ? 52 : 32
+                anchors.leftMargin: root.isMobile ? 16 : 32
+                anchors.rightMargin: root.isMobile ? 16 : (root.alphaVisible ? 52 : 32)
                 anchors.topMargin: 10 + content.barInset
-                height: list.visible ? parent.height - (10 + content.barInset) : 0
+                height: list.visible ? parent.height - (10 + content.barInset) - (root.isMobile ? 140 : 0) : 0
                 visible: content.showList
                 spacing: root.activeTab === "all" ? 2 : 0
                 cacheBuffer: 50 * 10

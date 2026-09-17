@@ -1,4 +1,4 @@
-// NowPlayingBarMobile — Modern Apple Music-style floating mini-player card for mobile.
+﻿// NowPlayingBarMobile — Modern Apple Music-style floating mini-player card for mobile.
 
 import QtQuick
 import QtQuick.Controls
@@ -17,6 +17,8 @@ Rectangle {
 
     readonly property bool ambientOn: theme.ambientOn
     property Item tooltip: null
+
+    signal nowPlayingSheetRequested()
 
     QbzTheme { id: theme }
 
@@ -74,7 +76,7 @@ Rectangle {
                 anchors.fill: parent
                 onClicked: {
                     if (QbzPlayer.npHasTrack) {
-                        QbzShell.toggleQueue()
+                        root.nowPlayingSheetRequested()
                     }
                 }
             }
@@ -187,7 +189,7 @@ Rectangle {
                 anchors.fill: parent
                 onClicked: {
                     if (QbzPlayer.npHasTrack) {
-                        QbzShell.toggleQueue()
+                        root.nowPlayingSheetRequested()
                     }
                 }
             }

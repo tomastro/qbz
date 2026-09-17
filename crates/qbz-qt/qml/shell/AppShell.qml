@@ -1,4 +1,4 @@
-// App shell — the QML port of crates/qbz-ui/ui/shell/AppShell.slint's
+﻿// App shell — the QML port of crates/qbz-ui/ui/shell/AppShell.slint's
 // chrome: HeaderBar (top, 42px) / { Sidebar | content frame | queue
 // column } / NowPlayingBarSmall (bottom).
 //

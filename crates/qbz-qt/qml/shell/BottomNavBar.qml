@@ -43,12 +43,6 @@ Rectangle {
             "route": "discoverbrowse"
         },
         {
-            "id": "mix",
-            "label": QbzSession.tr("Radio", QbzSession.trRev),
-            "icon": "radio",
-            "route": "mix"
-        },
-        {
             "id": "library",
             "label": QbzSession.tr("Library", QbzSession.trRev),
             "icon": "library",
