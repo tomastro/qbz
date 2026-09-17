@@ -311,6 +311,6 @@ pub fn minimize_activity() {
     let Some(vm) = JAVA_VM.get() else { return; };
     let Some(class_ref) = QBZ_ACTIVITY_CLASS.get() else { return; };
     if let Ok(mut env) = vm.attach_current_thread() {
-        let _ = env.call_static_method(class_ref.as_obj(), "minimize", "()V", &[]);
+        let _ = env.call_static_method(class_ref, "minimize", "()V", &[]);
     }
 }
