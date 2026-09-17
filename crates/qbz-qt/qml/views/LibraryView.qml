@@ -1,4 +1,4 @@
-﻿// Library view — QML port of crates/qbz-ui/ui/favorites/FavoritesView.slint
+// Library view — QML port of crates/qbz-ui/ui/favorites/FavoritesView.slint
 // + the Library "All" mixed feed (library_all.rs semantics).
 //
 // Data: QbzLibrary.libraryJson (ONE JSON document — the full merged feed;
@@ -51,6 +51,8 @@ Rectangle {
     // HomeView.slint:163: the frosted content panel shows through).
     color: ambientOn ? "transparent" : theme.surfaceMain
     readonly property bool ambientOn: theme.ambientOn
+    readonly property bool isMobile: Qt.platform.os === "android" || (root.width > 0 && root.width < 600)
+    property string mobileSection: ""
 
     // Round to the AppShell content-frame bezel (Radius.md): QML clips
     // are rectangular, so the frame's own rounding never reaches the
@@ -1335,7 +1337,7 @@ Rectangle {
             id: mobileSubNavBar
             visible: root.isMobile && root.mobileSection !== ""
             width: parent.width
-            height: 48
+            height: visible ? 48 : 0
 
             Row {
                 anchors.left: parent.left
@@ -1391,7 +1393,7 @@ Rectangle {
         Rectangle {
             visible: !root.isMobile
             width: parent.width
-            height: 1
+            height: visible ? 1 : 0
             color: theme.borderSubtle
         }
 
@@ -1399,7 +1401,7 @@ Rectangle {
         Item {
             id: content
             width: parent.width
-            height: parent.height - (root.isMobile ? mobileSubNavBar.height : 57)
+            height: parent.height - (root.isMobile ? (mobileSubNavBar.visible ? mobileSubNavBar.height : 0) : 57)
             clip: true
 
             // The tracks bulk bar is pinned above the list (the Slint scrolls
