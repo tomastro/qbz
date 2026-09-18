@@ -48,6 +48,7 @@ Rectangle {
     // HomeView.slint:163: the frosted content panel shows through).
     color: ambientOn ? "transparent" : theme.surfaceMain
     readonly property bool ambientOn: theme.ambientOn
+    readonly property bool isMobile: Qt.platform.os === "android" || (root.width > 0 && root.width < 700)
 
     // Round to the AppShell content-frame bezel (Radius.md): QML clips
     // are rectangular, so the frame's own rounding never reaches the
@@ -714,9 +715,13 @@ Rectangle {
     // the constrained layout; gaining room must not override that user choice.
     // A newly opened artist still starts from the available-space default in
     // syncArtistState(), matching the page-entry behaviour.
-    property bool networkOpen: !contentConstrained
+    property bool networkOpen: !root.isMobile && !contentConstrained
     onContentConstrainedChanged: {
-        if (contentConstrained)
+        if (contentConstrained || root.isMobile)
+            networkOpen = false
+    }
+    onIsMobileChanged: {
+        if (root.isMobile)
             networkOpen = false
     }
     property string netTab: "network"
@@ -1074,7 +1079,7 @@ Rectangle {
         // …and re-applies the room rule (ArtistPageView.slint:178, artist.rs
         // `reset_network_sidebar`): a new artist re-opens the panel unless
         // the content area is constrained.
-        networkOpen = !contentConstrained
+        networkOpen = !root.isMobile && !contentConstrained
         dismissedDiscovery = ({})
         localToggles = ({})
         // A fresh artist must never inherit the previous one's paging state:
@@ -2328,27 +2333,68 @@ Rectangle {
         Column {
             id: page
             width: parent.width
-            leftPadding: 32
-            rightPadding: 32
+            leftPadding: root.isMobile ? 16 : 32
+            rightPadding: root.isMobile ? 16 : 32
             topPadding: 11
             bottomPadding: 100
             spacing: 0
 
-            // Width available to the BODY sections: the page width less the
-            // 32+32 padding, less the sidebar reservation while it is open
-            // (.slint's empty 300px slot in the body row). The header and the
-            // jump strip deliberately do NOT subtract it.
-            readonly property real bodyWidth: width - 64 - (root.networkOpen ? 300 : 0)
+            readonly property real contentWidth: width - leftPadding - rightPadding
+            readonly property real bodyWidth: contentWidth - ((!root.isMobile && root.networkOpen) ? 300 : 0)
 
-            Item { width: 1; height: 22 }
+            Item { width: 1; height: root.isMobile ? 12 : 22 }
 
-            // --- Artist header skeleton ----------------------------------
-            // Mounted on the primary flag, and the real header is hidden by
-            // the same flag: opening artist B never renders a half-empty
-            // header frame while B's document is in flight.
+            // --- Artist header skeleton (Mobile) --------------------------
+            Column {
+                visible: root.primaryLoading && root.isMobile
+                width: page.contentWidth
+                spacing: 14
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                QbzSkeleton {
+                    variant: "circle"
+                    width: 130
+                    height: 130
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    phase: skeletonPhase.on
+                }
+                QbzSkeleton {
+                    variant: "block"
+                    width: Math.min(220, parent.width)
+                    height: 26
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    cellIndex: 0
+                    phase: skeletonPhase.on
+                }
+                QbzSkeleton {
+                    variant: "block"
+                    width: Math.min(300, parent.width)
+                    height: 14
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    cellIndex: 1
+                    phase: skeletonPhase.on
+                }
+                Row {
+                    spacing: 16
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    Repeater {
+                        model: 3
+                        delegate: QbzSkeleton {
+                            required property int index
+                            variant: "circle"
+                            width: 44
+                            height: 44
+                            cellIndex: index
+                            phase: skeletonPhase.on
+                        }
+                    }
+                }
+            }
+
+            // --- Artist header skeleton (Desktop) ------------------------
             Row {
-                visible: root.primaryLoading
-                width: parent.width - 64
+                visible: root.primaryLoading && !root.isMobile
+                width: page.contentWidth
                 spacing: 32
 
                 QbzSkeleton { variant: "circle"; width: 200; height: 200; phase: skeletonPhase.on }
@@ -2377,43 +2423,190 @@ Rectangle {
                 }
             }
 
-            // --- Artist header ------------------------------------------
+            // --- Artist header (Mobile) ----------------------------------
+            Column {
+                id: mobileHeader
+                visible: !root.primaryLoading && root.isMobile
+                width: page.contentWidth
+                spacing: 12
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                // Circular portrait with gradient & fallback glyph
+                Rectangle {
+                    width: 130
+                    height: 130
+                    radius: 65
+                    color: theme.surfaceElevated
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    gradient: Gradient {
+                        orientation: Gradient.Horizontal
+                        GradientStop { position: 0.0; color: theme.surfaceElevated }
+                        GradientStop { position: 1.0; color: theme.surfaceCard }
+                    }
+
+                    QbzIcon {
+                        name: "user"
+                        width: 52
+                        height: 52
+                        anchors.centerIn: parent
+                        tintName: "muted"
+                    }
+
+                    RoundedImage {
+                        anchors.fill: parent
+                        source: root.bestArtistImage()
+                        radius: 65
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: function (mouse) {
+                            if (mouse.button === Qt.RightButton)
+                                portraitMenu.openAtCursor(portraitMenuAnchorMobile, mouse.x, mouse.y)
+                            else if (root.bestArtistImage() !== "")
+                                portraitLightbox.openWith(root.bestArtistImage())
+                        }
+                    }
+                    Item { id: portraitMenuAnchorMobile; anchors.fill: parent }
+                }
+
+                // Name & bio
+                Column {
+                    width: parent.width
+                    spacing: 6
+
+                    Text {
+                        width: parent.width
+                        text: artist.name || ""
+                        color: root.hdrStrong
+                        font.pixelSize: theme.fontTitle
+                        font.weight: theme.weightBold
+                        horizontalAlignment: Text.AlignHCenter
+                        wrapMode: Text.WordWrap
+                    }
+
+                    Text {
+                        visible: (artist.bio || "") !== ""
+                        width: parent.width
+                        text: artist.bioShort || ""
+                        color: root.hdrBody
+                        font.pixelSize: theme.fontLegal
+                        lineHeight: 1.25
+                        wrapMode: Text.Wrap
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    Text {
+                        visible: artist.bioTruncated === true
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: QbzSession.tr("Read more", QbzSession.trRev)
+                        color: readMoreAreaMobile.containsMouse ? theme.accentHover : theme.accent
+                        font.pixelSize: theme.fontLegal
+
+                        MouseArea {
+                            id: readMoreAreaMobile
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                var shell = root.parent
+                                while (shell && shell.openTextModal === undefined) shell = shell.parent
+                                if (!shell) return
+                                var body = artist.bio || ""
+                                if ((artist.bioSource || "") !== "")
+                                    body += "\n\n" + QbzSession.tr("Source", QbzSession.trRev) + ": " + artist.bioSource
+                                shell.openTextModal(artist.name || "", body)
+                            }
+                        }
+                    }
+                }
+
+                // Actions row
+                Row {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: 16
+
+                    QbzCircleAction {
+                        readonly property bool following: root.toggleState("artist", artist.isFollowing)
+                        name: following ? "heart-filled" : "heart"
+                        overlay: root.hdrOverlay
+                        active: following
+                        anchors.verticalCenter: parent.verticalCenter
+                        onClicked: {
+                            root.setToggleState("artist", !following)
+                            QbzLibrary.libraryToggleFavorite("artist", artist.id)
+                        }
+                    }
+
+                    QbzCircleAction {
+                        id: radioBtnMobile
+                        name: "radio"
+                        overlay: root.hdrOverlay
+                        loading: QbzHome.radioPending === "artist:" + artist.id
+                        anchors.verticalCenter: parent.verticalCenter
+                        onClicked: radioMenu.openBelowLeft(radioBtnMobile)
+                    }
+
+                    QbzCircleAction {
+                        id: overflowBtnMobile
+                        name: "ellipsis"
+                        overlay: root.hdrOverlay
+                        anchors.verticalCenter: parent.verticalCenter
+                        onClicked: function (mouse) { overflowMenu.openAtCursor(overflowBtnMobile, mouse.x, mouse.y) }
+                    }
+                }
+
+                // Segmented tab bar if in library
+                QbzTabBar {
+                    visible: (artist.libraryCount || 0) > 0
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    counts: true
+                    underline: true
+                    activeId: root.artistTab
+                    tabs: [
+                        { "id": "catalog", "label": QbzSession.tr("From catalog", QbzSession.trRev), "count": 0 },
+                        { "id": "library", "label": QbzSession.tr("In library", QbzSession.trRev), "count": artist.libraryCount || 0 },
+                    ]
+                    onSelected: function (id) { root.artistTab = id }
+                }
+            }
+
+            // --- Artist header (Desktop) ---------------------------------
             Row {
-                visible: !root.primaryLoading
-                width: parent.width - 64
+                id: desktopHeader
+                visible: !root.primaryLoading && !root.isMobile
+                width: page.contentWidth
                 spacing: 32
 
-                // Circular portrait. The circle comes from RoundedImage's
-                // MASK, not from a clip: QML's `clip` is rectangular and does
-                // NOT follow a Rectangle's radius — theme/RoundedImage.qml:3-6
-                // says so and proved it with an isolated scene on this Qt
-                // build, and :508 measures this exact radius-100-on-200px
-                // case. The `clip: true` that used to sit here (with a comment
-                // claiming the opposite) therefore rounded nothing, cost an
-                // unconditional batch root, and would have swallowed anything
-                // mounted inside the frame — which is why the menu and the
-                // lightbox are view-root siblings, exactly as
-                // AlbumView.qml:586-588 keeps them.
                 Rectangle {
                     width: 200
                     height: 200
                     radius: 100
                     color: theme.surfaceElevated
+
+                    gradient: Gradient {
+                        orientation: Gradient.Horizontal
+                        GradientStop { position: 0.0; color: theme.surfaceElevated }
+                        GradientStop { position: 1.0; color: theme.surfaceCard }
+                    }
+
+                    QbzIcon {
+                        name: "user"
+                        width: 70
+                        height: 70
+                        anchors.centerIn: parent
+                        tintName: "muted"
+                    }
+
                     RoundedImage {
                         anchors.fill: parent
-                        // A custom portrait (the SHARED custom_artwork store,
-                        // keyed by artist NAME) beats the url-keyed pipeline
-                        // image — the album header's rule on the artist axis.
-                        source: (artist.customImageUrl || "") !== ""
-                            ? artist.customImageUrl
-                            : (root.coverMap[artist.artUrl] || "")
+                        source: root.bestArtistImage()
                         radius: 100
                     }
-                    // Left-click: the lightbox (NEW in this port — the
-                    // reference lets left clicks pass through,
-                    // ArtistPageView.slint:290-293). Right-click: the portrait
-                    // menu the reference DOES have (ArtistPageView.slint:292-353),
-                    // which this port simply never paid.
+
                     MouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -2467,10 +2660,6 @@ Rectangle {
                                 var shell = root.parent
                                 while (shell && shell.openTextModal === undefined) shell = shell.parent
                                 if (!shell) return
-                                // The Slint modal renders the attribution
-                                // ("Source: TiVo") as a small line under the
-                                // body; the shared text modal has one body
-                                // slot, so it rides at the end.
                                 var body = artist.bio || ""
                                 if ((artist.bioSource || "") !== "")
                                     body += "\n\n" + QbzSession.tr("Source", QbzSession.trRev) + ": " + artist.bioSource
@@ -2480,11 +2669,6 @@ Rectangle {
                     }
 
                     Item { width: 1; height: 18 }
-                    // Action row — ArtistPageView.slint:413-591. Four
-                    // circles (NO Play: Popular Tracks carries its own), then
-                    // a stretch, then the catalog/library toggle floated
-                    // right. The palette arm follows the header backdrop
-                    // (`on-surface: root.hdr-on-surface`, :417).
                     Row {
                         width: parent.width
                         spacing: 12
@@ -2499,30 +2683,10 @@ Rectangle {
                                 QbzLibrary.libraryToggleFavorite("artist", artist.id)
                             }
                         }
-                        // Radio — ArtistPageView.slint:426-461: the disc opens
-                        // a two-row dropdown, QBZ Radio (the local `qbz-radio`
-                        // pool builder) vs Qobuz Radio (the curated
-                        // `/radio/artist` endpoint).
-                        //
-                        // IT WAS `btnEnabled: false` — dimmed and inert by
-                        // declaration, because at the time neither engine had a
-                        // seam on a Qt bridge and the port refuses to render a
-                        // control that drives nothing. Both exist now:
-                        // `QbzHome.startArtistRadio` (the smart pool, already
-                        // shipping behind the Discover spotlight's RADIO card)
-                        // and `QbzHome.startQobuzArtistRadio`, added with this
-                        // change. So the disc goes live and the dropdown is the
-                        // reference's, verbatim.
                         QbzCircleAction {
                             id: radioBtn
                             name: "radio"
                             overlay: root.hdrOverlay
-                            // BOTH dropdown rows arm the same key: they are
-                            // two ways to fill one queue from one disc, and
-                            // the disc is what the user is looking at. The
-                            // control also gates its own clicks while loading,
-                            // so the dropdown cannot be re-opened over a
-                            // request that is already running.
                             loading: QbzHome.radioPending === "artist:" + artist.id
                             anchors.verticalCenter: parent.verticalCenter
                             onClicked: radioMenu.openBelowLeft(radioBtn)
@@ -2531,6 +2695,7 @@ Rectangle {
                             name: "element-connect"
                             overlay: root.hdrOverlay
                             active: root.networkOpen
+                            visible: !root.isMobile
                             anchors.verticalCenter: parent.verticalCenter
                             onClicked: root.networkOpen = !root.networkOpen
                         }
@@ -2541,24 +2706,11 @@ Rectangle {
                             anchors.verticalCenter: parent.verticalCenter
                             onClicked: function (mouse) { overflowMenu.openAtCursor(overflowBtn, mouse.x, mouse.y) }
                         }
-                        // Stretch (.slint:579 `Rectangle { horizontal-stretch: 1 }`).
-                        // Clamped: at a narrow window an unclamped negative
-                        // width silently reflows the whole row.
                         Item {
                             width: Math.max(0, parent.width - 4 * 32 - 4 * 12
                                                - (segTabs.visible ? segTabs.width + 12 : 0))
                             height: 1
                         }
-                        // From catalog / In library — .slint:582 mounts the
-                        // SHARED SegmentedTabBar; the port hand-rolled a copy
-                        // of it here whose delegate walked the wrong parent
-                        // chain (`parent.parent.modelData` on a Row, and the
-                        // count chip read `active` off the wrong node), so the
-                        // count badge never took its active colours. This is
-                        // the shared control (controls/QbzTabBar.qml), which
-                        // is that same SegmentedTabBar 1:1 — counts on, and
-                        // the 2px accent underline the .slint's Segment draws
-                        // for the active tab (:86-93).
                         QbzTabBar {
                             id: segTabs
                             visible: (artist.libraryCount || 0) > 0
@@ -2590,7 +2742,7 @@ Rectangle {
             Rectangle {
                 id: hiddenBanner
                 visible: root.artistBlacklisted
-                width: parent.width - 64
+                width: page.contentWidth
                 // .slint `height: banner-row.preferred-height` where the row is
                 // a HorizontalLayout with padding 12 (:602) — so 24 plus the
                 // tallest child: the 16px glyph, the wrapped copy, or the 28px
@@ -2682,7 +2834,7 @@ Rectangle {
             // the moment the bar was lifted out.
             Item {
                 id: jumpSlot
-                width: parent.width - 64
+                width: page.contentWidth
                 height: jumpBar.height
             }
 
@@ -2692,7 +2844,7 @@ Rectangle {
             // 50px pitch (the preview count), so nothing shifts on arrival.
             Column {
                 visible: root.primaryLoading
-                width: parent.width - 64
+                width: page.contentWidth
                 spacing: 0
 
                 QbzSkeleton { variant: "block"; width: 190; height: 22; phase: skeletonPhase.on }
@@ -3312,7 +3464,7 @@ Rectangle {
         id: jumpBar
         x: 0
         width: root.width
-        padH: 32
+        padH: root.isMobile ? 16 : 32
         y: Math.max(page.y + jumpSlot.y - flick.contentY, 0)
         // PINNED at the pane's top edge -> round the top corners, or the bar's
         // square ones poke out past the shell's rounded bezel (the Discover
@@ -3376,7 +3528,8 @@ Rectangle {
         anchors.right: parent.right
         y: Math.max(naturalTop, stickyTop)
         height: Math.max(0, root.height - y)
-        width: root.networkOpen ? 300 : 0
+        width: (!root.isMobile && root.networkOpen) ? 300 : 0
+        visible: !root.isMobile && width > 0
         clip: true
         // Chrome tier: surface-card @ 0.5 under the dynamic background
         // (ArtistPageView.slint:1196). Its 44px header row stays TRANSPARENT
@@ -4100,7 +4253,12 @@ Rectangle {
         if (custom !== "") return custom
         var cached = root.coverMap[artist.artUrl] || ""
         if (cached !== "") return cached
-        return artist.artUrl || ""
+        if ((artist.artUrl || "") !== "") return artist.artUrl
+        if (root.artist && root.artist.lastRelease && root.artist.lastRelease.artUrl) {
+            var relCover = root.coverMap[root.artist.lastRelease.artUrl] || root.artist.lastRelease.artUrl
+            if (relCover) return relCover
+        }
+        return ""
     }
 
     /// The portrait menu's rows, rebuilt per open so Add/Change/Remove track
