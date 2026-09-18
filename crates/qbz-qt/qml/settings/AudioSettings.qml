@@ -402,8 +402,8 @@ Column {
         text: QbzSession.tr("Reset to defaults", QbzSession.trRev)
         onClicked: QbzBridge.settingsReset()
     }
-}
 
     BitPerfectInspectorModal {
         id: bpModalAudio
     }
+}
