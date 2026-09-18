@@ -163,15 +163,39 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 1
 
-                // Song Title
-                Text {
+                // Song Title + BP Tag
+                Row {
                     width: parent.width
-                    text: QbzPlayer.npHasTrack ? QbzPlayer.npTitle : QbzSession.tr("Not Playing", QbzSession.trRev)
-                    font.pixelSize: 13
-                    font.weight: Font.DemiBold
-                    color: theme.textPrimary
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
+                    spacing: 5
+
+                    Text {
+                        width: Math.min(implicitWidth, parent.width - ((QbzPlayer.npBitPerfectMode === "direct") ? 28 : 0))
+                        text: QbzPlayer.npHasTrack ? QbzPlayer.npTitle : QbzSession.tr("Not Playing", QbzSession.trRev)
+                        font.pixelSize: 13
+                        font.weight: Font.DemiBold
+                        color: theme.textPrimary
+                        elide: Text.ElideRight
+                        maximumLineCount: 1
+                    }
+
+                    Rectangle {
+                        visible: QbzPlayer.npBitPerfectMode === "direct"
+                        width: 22
+                        height: 14
+                        radius: 3
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: Qt.rgba(0.18, 0.8, 0.44, 0.2)
+                        border.width: 1
+                        border.color: "#2ecc71"
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "BP"
+                            font.pixelSize: 8
+                            font.weight: Font.Bold
+                            color: "#2ecc71"
+                        }
+                    }
                 }
 
                 // Artist

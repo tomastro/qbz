@@ -224,6 +224,13 @@ pub mod qbz_bridge {
         /// "Reset to defaults" — that tab only.
         #[qinvokable]
         fn discover_reset_tab(self: Pin<&mut QbzBridge>, tab: QString);
+
+        /// Query Android USB Audio DAC status JSON (Bit-Perfect verification)
+        #[qinvokable]
+        fn get_android_usb_status(self: Pin<&mut QbzBridge>) -> QString;
+        /// Request USB Host permission for attached DAC on Android
+        #[qinvokable]
+        fn request_usb_permission(self: Pin<&mut QbzBridge>);
     }
 
     impl cxx_qt::Threading for QbzBridge {}
@@ -441,4 +448,22 @@ impl qbz_bridge::QbzBridge {
     pub fn discover_reset_tab(self: Pin<&mut Self>, tab: QString) {
         crate::discover_config_qt::reset_tab(&tab.to_string());
     }
+
+    #[cfg(target_os = "android")]
+    pub fn get_android_usb_status(self: Pin<&mut Self>) -> QString {
+        QString::from(crate::android_usb_qt::usb_audio_status_json().as_str())
+    }
+
+    #[cfg(not(target_os = "android"))]
+    pub fn get_android_usb_status(self: Pin<&mut Self>) -> QString {
+        QString::from(r#"{"is_android":false,"usb_connected":false}"#)
+    }
+
+    #[cfg(target_os = "android")]
+    pub fn request_usb_permission(self: Pin<&mut Self>) {
+        crate::android_usb_qt::request_usb_permission();
+    }
+
+    #[cfg(not(target_os = "android"))]
+    pub fn request_usb_permission(self: Pin<&mut Self>) {}
 }

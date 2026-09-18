@@ -314,3 +314,53 @@ pub fn minimize_activity() {
         let _ = env.call_static_method(class_ref, "minimize", "()V", &[]);
     }
 }
+
+/// Query the full USB Audio DAC status and parameters from UsbDirectBridge.
+pub fn usb_audio_status_json() -> String {
+    let Some(vm) = JAVA_VM.get() else {
+        return r#"{"is_android":false,"usb_connected":false}"#.to_string();
+    };
+    let Ok(mut env) = vm.attach_current_thread() else {
+        return r#"{"is_android":true,"usb_connected":false,"last_error":"JVM attach failed"}"#.to_string();
+    };
+    let Some(class) = USB_DIRECT_BRIDGE_CLASS.get() else {
+        return r#"{"is_android":true,"usb_connected":false,"last_error":"UsbDirectBridge class not cached"}"#.to_string();
+    };
+
+    let value = match env.call_static_method(
+        class,
+        "getUsbAudioStatusJson",
+        "()Ljava/lang/String;",
+        &[],
+    ) {
+        Ok(v) => v,
+        Err(e) => {
+            if env.exception_check().unwrap_or(false) {
+                let _ = env.exception_describe();
+                let _ = env.exception_clear();
+            }
+            log::warn!("[android_usb_qt] getUsbAudioStatusJson failed: {e}");
+            return format!(r#"{{"is_android":true,"usb_connected":false,"last_error":"{}"}}"#, e);
+        }
+    };
+    let Ok(obj) = value.l() else {
+        return r#"{"is_android":true,"usb_connected":false}"#.to_string();
+    };
+    if obj.is_null() {
+        return r#"{"is_android":true,"usb_connected":false}"#.to_string();
+    }
+    let jstr: jni::objects::JString = obj.into();
+    match env.get_string(&jstr) {
+        Ok(rust_str) => rust_str.into(),
+        Err(_) => r#"{"is_android":true,"usb_connected":false}"#.to_string(),
+    }
+}
+
+/// Request USB permission for the connected DAC.
+pub fn request_usb_permission() {
+    let Some(vm) = JAVA_VM.get() else { return; };
+    let Some(class) = USB_DIRECT_BRIDGE_CLASS.get() else { return; };
+    if let Ok(mut env) = vm.attach_current_thread() {
+        let _ = env.call_static_method(class, "requestPermission", "()V", &[]);
+    }
+}

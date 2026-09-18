@@ -108,6 +108,39 @@ Column {
 
     // ============================= OUTPUT ================================
     GroupHeader { kioskHost: root.kioskHost; text: QbzSession.tr("OUTPUT", QbzSession.trRev) }
+
+    // Android Bit-Perfect (USB Direct) Status & Diagnostic Row
+    SettingRow {
+        kioskHost: root.kioskHost
+        label: "Android Bit-Perfect (USB Direct)"
+        description: "USB DAC接続時にAndroid OSのAudioFlingerミキサーを完全バイパスし、音源データを1ビットも損なわずにダイレクト転送します。"
+        Row {
+            spacing: 8
+            Rectangle {
+                height: 32
+                radius: 6
+                color: Qt.rgba(0.18, 0.8, 0.44, 0.15)
+                border.width: 1
+                border.color: "#2ecc71"
+                implicitWidth: bpRowText.implicitWidth + 16
+
+                Text {
+                    id: bpRowText
+                    anchors.centerIn: parent
+                    text: "● Bit-Perfect 動作診断"
+                    font.pixelSize: 12
+                    font.weight: Font.Bold
+                    color: "#2ecc71"
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: bpModalAudio.open()
+                }
+            }
+        }
+    }
     SettingRow { kioskHost: root.kioskHost;
         label: QbzSession.tr("Audio backend", QbzSession.trRev)
         description: QbzSession.tr("The audio stack QBZ routes playback through.", QbzSession.trRev)
@@ -370,3 +403,7 @@ Column {
         onClicked: QbzBridge.settingsReset()
     }
 }
+
+    BitPerfectInspectorModal {
+        id: bpModalAudio
+    }

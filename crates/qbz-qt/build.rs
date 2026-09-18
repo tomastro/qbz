@@ -861,6 +861,7 @@ fn main() {
                 "qml/views/local/LocalTip.qml",
                 "qml/controls/QualityBadgeFull.qml",
                 "qml/controls/QualityInline.qml",
+                "qml/controls/BitPerfectInspectorModal.qml",
                 "qml/shell/AudioStamp.qml",
                 "qml/shell/SongCardStamp.qml",
                 "qml/shell/SpectrumBand.qml",

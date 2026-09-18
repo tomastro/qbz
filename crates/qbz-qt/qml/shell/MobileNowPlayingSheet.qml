@@ -259,11 +259,84 @@ Rectangle {
             }
         }
 
+        // 2.5. Bit-Perfect / Audio Quality Badge (Tappable for BP Inspector)
+        Item {
+            id: bpBadgeRow
+            anchors.top: metaRow.bottom
+            anchors.topMargin: 10
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 26
+
+            Rectangle {
+                id: bpPill
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                height: 24
+                radius: 12
+                color: bpPillArea.containsMouse ? Qt.rgba(1, 1, 1, 0.16) : Qt.rgba(1, 1, 1, 0.09)
+                border.width: 1
+                border.color: (QbzPlayer.npBitPerfectMode === "direct") ? "#2ecc71" : Qt.rgba(1, 1, 1, 0.15)
+                implicitWidth: bpPillContent.implicitWidth + 18
+
+                Row {
+                    id: bpPillContent
+                    anchors.centerIn: parent
+                    spacing: 6
+
+                    Rectangle {
+                        width: 7
+                        height: 7
+                        radius: 3.5
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: (QbzPlayer.npBitPerfectMode === "direct") ? "#2ecc71" : "#a1a1aa"
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: (QbzPlayer.npBitPerfectMode === "direct") ? "BIT-PERFECT" : "AUDIO INFO"
+                        font.pixelSize: 10
+                        font.weight: Font.Bold
+                        color: (QbzPlayer.npBitPerfectMode === "direct") ? "#2ecc71" : "#d4d4d8"
+                    }
+
+                    Rectangle {
+                        width: 1
+                        height: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: Qt.rgba(1, 1, 1, 0.2)
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: QbzPlayer.npQualityTrueDetail !== "" ? QbzPlayer.npQualityTrueDetail : (QbzPlayer.npQualityDetail !== "" ? QbzPlayer.npQualityDetail : "Lossless")
+                        font.pixelSize: 10
+                        font.weight: Font.Medium
+                        color: "#e4e4e7"
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "ⓘ"
+                        font.pixelSize: 10
+                        color: Qt.rgba(1, 1, 1, 0.5)
+                    }
+                }
+
+                MouseArea {
+                    id: bpPillArea
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: bpModal.open()
+                }
+            }
+        }
+
         // 3. Scrubber Bar & Times
         Item {
             id: scrubberArea
-            anchors.top: metaRow.bottom
-            anchors.topMargin: 20
+            anchors.top: bpBadgeRow.bottom
+            anchors.topMargin: 14
             anchors.left: parent.left
             anchors.right: parent.right
             height: 38
@@ -524,5 +597,8 @@ Rectangle {
                 }
             }
         }
+    
+    BitPerfectInspectorModal {
+        id: bpModal
     }
 }
