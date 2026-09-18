@@ -1275,7 +1275,7 @@ Rectangle {
             }
         }
 
-        TrackCols { id: cols }
+        TrackCols { id: cols; isMobile: root.isMobile }
 
         readonly property bool isActive: QbzPlayer.npTrackId !== "" && QbzPlayer.npTrackId === row.id
         readonly property bool hovered: trArea.containsMouse || favArea.containsMouse || moreArea.containsMouse
@@ -1300,7 +1300,7 @@ Rectangle {
         readonly property bool pulledDead: popRow.pulled && popRow.cacheStatus !== 3
 
         width: parent ? parent.width : 0
-        height: 50
+        height: root.isMobile ? 56 : 50
         radius: 8
         // Hover fill off on a dead row — a row that lights up reads clickable.
         color: (hovered && !popRow.pulledDead)
@@ -1334,7 +1334,7 @@ Rectangle {
             // FAILED CACHE (`cacheStatus === 4`), and one row must not carry
             // two identical glyphs meaning two different things (§A F11).
             Item {
-                visible: showAlbum
+                visible: !root.isMobile && showAlbum
                 width: cols.colNumber
                 height: parent.height
                 Text {
@@ -1392,10 +1392,10 @@ Rectangle {
             // corners stick out past the art. The ROW's own `radius: 8` above
             // is correct and matches TrackRow.qml:288; only the cover moved.
             Rectangle {
-                width: showAlbum ? cols.colArt : cols.colNumber
-                height: showAlbum ? cols.colArt : 28
+                width: root.isMobile ? 42 : (showAlbum ? cols.colArt : cols.colNumber)
+                height: root.isMobile ? 42 : (showAlbum ? cols.colArt : 28)
                 anchors.verticalCenter: parent.verticalCenter
-                radius: 4
+                radius: root.isMobile ? 6 : 4
                 color: theme.surfaceElevated
                 clip: true
                 // The select-mode checkbox (accent fill when checked).
@@ -1429,7 +1429,7 @@ Rectangle {
                     visible: !popRow.selectMode
                     anchors.fill: parent
                     source: root.coverMap[row.artUrl] || ""
-                    radius: 4
+                    radius: root.isMobile ? 6 : 4
                 }
                 // The hover scrim and its play glyph are the cover cell's play
                 // AFFORDANCE, and an affordance is a claim that clicking does
@@ -1439,7 +1439,7 @@ Rectangle {
                 Rectangle {
                     visible: !popRow.selectMode && !popRow.pulledDead
                     anchors.fill: parent
-                    radius: 4
+                    radius: root.isMobile ? 6 : 4
                     color: "#000000"
                     opacity: trArea.containsMouse || isActive ? 0.6 : 0.0
                     Behavior on opacity { NumberAnimation { duration: 150 } }
@@ -1508,19 +1508,41 @@ Rectangle {
                         }
                     }
                 }
-                Text {
+                Row {
                     width: parent.width
-                    visible: row.artist !== ""
-                    text: row.artist
-                    color: theme.textMuted
-                    font.pixelSize: 13
-                    elide: Text.ElideRight
+                    spacing: 6
+                    visible: row.artist !== "" || (root.isMobile && (row.qualityTier || "") !== "")
+                    Text {
+                        width: Math.min(implicitWidth, parent.width - (popQualityTag.visible ? popQualityTag.width + 6 : 0))
+                        visible: row.artist !== ""
+                        text: row.artist
+                        color: theme.textMuted
+                        font.pixelSize: 12
+                        elide: Text.ElideRight
+                    }
+                    Rectangle {
+                        id: popQualityTag
+                        visible: root.isMobile && (row.qualityTier || "") !== ""
+                        width: popQTxt.implicitWidth + 8
+                        height: 14
+                        radius: 3
+                        color: theme.surfaceElevated
+                        anchors.verticalCenter: parent.verticalCenter
+                        Text {
+                            id: popQTxt
+                            anchors.centerIn: parent
+                            text: (row.qualityTier || "").toUpperCase()
+                            color: theme.accent
+                            font.pixelSize: 9
+                            font.weight: theme.weightBold
+                        }
+                    }
                 }
             }
             // Album column.
             Text {
                 id: albumCell
-                visible: showAlbum
+                visible: !root.isMobile && showAlbum
                 width: showAlbum ? cols.colAlbum : 0
                 anchors.verticalCenter: parent.verticalCenter
                 text: row.album
@@ -1537,6 +1559,7 @@ Rectangle {
                 }
             }
             Text {
+                visible: !root.isMobile
                 width: cols.colDuration
                 anchors.verticalCenter: parent.verticalCenter
                 text: row.duration
@@ -1550,6 +1573,7 @@ Rectangle {
             // word ("HI-RES") even though the document has carried
             // qualityDetail all along.
             Item {
+                visible: !root.isMobile
                 width: cols.colQuality
                 height: parent.height
                 QualityBadgeFull {
@@ -1564,6 +1588,7 @@ Rectangle {
             // Favorite (live). Reads through the override map so the state
             // survives a document republish (see root.localToggles).
             Rectangle {
+                visible: !root.isMobile
                 property bool favorite: root.toggleState("track:" + row.id, row.isFavorite)
                 width: cols.colFavorite
                 height: cols.colFavorite
@@ -1600,6 +1625,7 @@ Rectangle {
             // to carry an inert stub). Same status vocabulary as the shared
             // TrackRow: 0 none · 1 queued · 2 downloading · 3 ready · 4 failed.
             Rectangle {
+                visible: !root.isMobile
                 width: cols.colDownload
                 height: cols.colDownload
                 anchors.verticalCenter: parent.verticalCenter
@@ -1669,6 +1695,18 @@ Rectangle {
                     onClicked: function (mouse) { popMenu.openAtCursor(moreArea, mouse.x, mouse.y) }
                 }
             }
+        }
+
+        // Hairline divider for mobile (Apple Music style)
+        Rectangle {
+            visible: root.isMobile
+            anchors.left: parent.left
+            anchors.leftMargin: cols.padH + 42 + cols.gap
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            height: 1
+            color: theme.borderSubtle
+            opacity: 0.35
         }
 
         // primitives/TrackContextMenu.slint, in ITS order, restricted to the

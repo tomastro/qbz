@@ -52,6 +52,7 @@ import "../theme"
 
 Rectangle {
     id: root
+    readonly property bool isMobile: Qt.platform.os === "android" || (root.width > 0 && root.width < 700)
     color: ambientOn ? "transparent" : theme.surfaceMain
     readonly property bool ambientOn: theme.ambientOn
     radius: 12
@@ -425,13 +426,70 @@ Rectangle {
     // --- Circular header action (CircleAction, on-surface variant) -------
 
 
+    QbzContextMenu {
+        id: sortMenu
+        menuWidth: 172
+        Repeater {
+            model: [
+                { "field": "default", "label": QbzSession.tr("Default", QbzSession.trRev) },
+                { "field": "title", "label": QbzSession.tr("Title", QbzSession.trRev) },
+                { "field": "artist", "label": QbzSession.tr("Artist", QbzSession.trRev) },
+                { "field": "album", "label": QbzSession.tr("Album", QbzSession.trRev) },
+                { "field": "duration", "label": QbzSession.tr("Duration", QbzSession.trRev) },
+                { "field": "added", "label": QbzSession.tr("Date added", QbzSession.trRev) },
+                { "field": "custom", "label": QbzSession.tr("Custom", QbzSession.trRev), "ownerOnly": true, "qobuzOnly": true },
+            ]
+            delegate: Rectangle {
+                required property var modelData
+                visible: (modelData.ownerOnly !== true || root.isOwner)
+                    && (modelData.qobuzOnly !== true || !root.isLocal)
+                width: parent ? parent.width : 0
+                height: visible ? 33 : 0
+                radius: 5
+                color: soArea.containsMouse ? theme.surfaceHover : "transparent"
+                Row {
+                    anchors.fill: parent
+                    anchors.leftMargin: 8
+                    spacing: 6
+                    Text {
+                        width: parent.width - 26
+                        height: parent.height
+                        text: modelData.label
+                        color: theme.textSecondary
+                        font.pixelSize: 13
+                        font.weight: root.sortField === modelData.field ? theme.weightSemibold : theme.weightRegular
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    QbzIcon {
+                        visible: root.sortField === modelData.field
+                        name: root.sortAsc ? "chevron-up" : "chevron-down"
+                        width: 12
+                        height: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                        tintName: "accent"
+                    }
+                }
+                MouseArea {
+                    id: soArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        sortMenu.close()
+                        QbzBridge.playlistSetSort(modelData.field)
+                    }
+                }
+            }
+        }
+    }
+
     // ============================ the view ================================
     Column {
         anchors.fill: parent
-        anchors.leftMargin: 32
-        anchors.rightMargin: 16
-        anchors.topMargin: 11
-        anchors.bottomMargin: 16
+        anchors.leftMargin: root.isMobile ? 12 : 32
+        anchors.rightMargin: root.isMobile ? 12 : 16
+        anchors.topMargin: root.isMobile ? 8 : 11
+        anchors.bottomMargin: root.isMobile ? 8 : 16
         spacing: 0
 
         Item { width: 1; height: 22 }
@@ -451,9 +509,9 @@ Rectangle {
             phase: root.skelPhase
         }
 
-        // --- Header ---------------------------------------------------------
+        // --- Header (Desktop) -----------------------------------------------
         Row {
-            visible: !root.headerPending
+            visible: !root.headerPending && !root.isMobile
             width: parent.width
             spacing: 24
 
@@ -780,76 +838,198 @@ Rectangle {
                             cursorShape: Qt.PointingHandCursor
                             onClicked: sortMenu.openBelowRight(sortArea)
                         }
-                        QbzContextMenu {
-                            id: sortMenu
-                            menuWidth: 172
-                            Repeater {
-                                model: [
-                                    { "field": "default", "label": QbzSession.tr("Default", QbzSession.trRev) },
-                                    { "field": "title", "label": QbzSession.tr("Title", QbzSession.trRev) },
-                                    { "field": "artist", "label": QbzSession.tr("Artist", QbzSession.trRev) },
-                                    { "field": "album", "label": QbzSession.tr("Album", QbzSession.trRev) },
-                                    { "field": "duration", "label": QbzSession.tr("Duration", QbzSession.trRev) },
-                                    { "field": "added", "label": QbzSession.tr("Date added", QbzSession.trRev) },
-                                    // Manual order — enables the per-row
-                                    // reorder chevrons. HIDDEN on a LOCAL
-                                    // playlist (PlaylistView.slint:945-952,
-                                    // B2): its Default order IS the editable
-                                    // repo order, so a separate custom
-                                    // sidecar is moot — and the sidecar is
-                                    // u64-keyed, which a local row's id is
-                                    // not.
-                                    { "field": "custom", "label": QbzSession.tr("Custom", QbzSession.trRev), "ownerOnly": true, "qobuzOnly": true },
-                                ]
-                                delegate: Rectangle {
-                                    required property var modelData
-                                    visible: (modelData.ownerOnly !== true || root.isOwner)
-                                        && (modelData.qobuzOnly !== true || !root.isLocal)
-                                    width: parent ? parent.width : 0
-                                    height: visible ? 33 : 0
-                                    radius: 5
-                                    color: soArea.containsMouse ? theme.surfaceHover : "transparent"
-                                    Row {
-                                        anchors.fill: parent
-                                        anchors.leftMargin: 8
-                                        spacing: 6
-                                        Text {
-                                            width: parent.width - 26
-                                            height: parent.height
-                                            text: modelData.label
-                                            color: theme.textSecondary
-                                            font.pixelSize: 13
-                                            font.weight: root.sortField === modelData.field ? theme.weightSemibold : theme.weightRegular
-                                            verticalAlignment: Text.AlignVCenter
-                                        }
-                                        QbzIcon {
-                                            visible: root.sortField === modelData.field
-                                            name: root.sortAsc ? "chevron-up" : "chevron-down"
-                                            width: 12
-                                            height: 12
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            tintName: "accent"
-                                        }
-                                    }
-                                    MouseArea {
-                                        id: soArea
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked: {
-                                            sortMenu.close()
-                                            QbzBridge.playlistSetSort(modelData.field)
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }
         }
 
-        Item { width: 1; height: 18 }
+        // --- Header (Mobile) ------------------------------------------------
+        Column {
+            id: mobilePlHdr
+            visible: !root.headerPending && root.isMobile
+            width: parent.width
+            spacing: 12
+
+            Rectangle {
+                width: Math.min(160, parent.width * 0.45)
+                height: width
+                radius: theme.radiusMd
+                color: theme.surfaceElevated
+                anchors.horizontalCenter: parent.horizontalCenter
+                clip: true
+
+                PlaylistCollage {
+                    anchors.fill: parent
+                    visible: (doc.coverPath || "") === ""
+                    urls: root.hasOwnArt ? [] : (doc.covers || [])
+                    radius: theme.radiusMd
+                }
+
+                RoundedImage {
+                    visible: (doc.coverPath || "") !== ""
+                    anchors.fill: parent
+                    source: doc.coverPath || ""
+                    radius: theme.radiusMd
+                    fit: root.hasOwnArt ? "pad" : "auto"
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        var src = (doc.coverUrl || "") !== "" ? doc.coverUrl
+                            : ((doc.covers || []).length > 0 ? doc.covers[0] : "")
+                        if (src !== "") plCoverLightbox.openWith(src)
+                    }
+                }
+            }
+
+            Column {
+                width: parent.width
+                spacing: 3
+                Text {
+                    width: parent.width
+                    text: doc.name || ""
+                    color: theme.textPrimary
+                    font.pixelSize: 18
+                    font.weight: theme.weightBold
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.WordWrap
+                }
+                Text {
+                    width: parent.width
+                    text: (doc.owner || "") + "  •  " + (doc.trackCount || 0) + " " + QbzSession.tr("tracks", QbzSession.trRev)
+                        + ((doc.totalDuration || "") !== "" ? ("  •  " + doc.totalDuration) : "")
+                    color: theme.textSecondary
+                    font.pixelSize: theme.fontLegal
+                    horizontalAlignment: Text.AlignHCenter
+                    elide: Text.ElideRight
+                }
+            }
+
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 10
+                QbzCircleAction {
+                    name: "play-fill"
+                    primary: true
+                    diameterOverride: 42
+                    btnEnabled: root.allTracks.length > 0
+                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: QbzBridge.playlistPlayAll()
+                }
+                QbzCircleAction {
+                    name: "shuffle"
+                    diameterOverride: 42
+                    btnEnabled: root.allTracks.length > 0
+                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: QbzBridge.playlistShuffle()
+                }
+                QbzCircleAction {
+                    name: root.headerFavorite ? "heart-filled" : "heart"
+                    diameterOverride: 42
+                    active: root.headerFavorite
+                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: QbzBridge.playlistToggleFavorite()
+                }
+                QbzCircleAction {
+                    name: "square-check-big"
+                    diameterOverride: 42
+                    active: root.multiSelect
+                    btnEnabled: root.tracks.length > 0
+                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: root.setMultiSelect(!root.multiSelect)
+                }
+                QbzCircleAction {
+                    id: mobilePlaylistMenuBtn
+                    name: "ellipsis"
+                    diameterOverride: 42
+                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: function (mouse) {
+                        playlistHeaderMenu.openAtCursor(mobilePlaylistMenuBtn, mouse.x, mouse.y)
+                    }
+                }
+            }
+
+            Row {
+                width: parent.width
+                spacing: 8
+                Rectangle {
+                    width: parent.width - mobileSortBtn.width - 8
+                    height: 32
+                    radius: 6
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: theme.surfaceElevated
+                    border.width: 1
+                    border.color: plSearchMobileInput.activeFocus ? theme.accent : theme.borderSubtle
+                    Row {
+                        anchors.fill: parent
+                        anchors.leftMargin: 8
+                        anchors.rightMargin: 8
+                        spacing: 6
+                        QbzIcon {
+                            name: "search"
+                            width: 13
+                            height: 13
+                            anchors.verticalCenter: parent.verticalCenter
+                            tintName: plSearchMobileInput.activeFocus ? "accent" : "muted"
+                        }
+                        TextInput {
+                            id: plSearchMobileInput
+                            width: parent.width - 19
+                            height: parent.height
+                            verticalAlignment: TextInput.AlignVCenter
+                            color: theme.textPrimary
+                            font.pixelSize: 12
+                            clip: true
+                            onTextEdited: QbzBridge.playlistSetSearch(text)
+                            Text {
+                                visible: parent.text === ""
+                                anchors.fill: parent
+                                text: QbzSession.tr("Search tracks", QbzSession.trRev)
+                                color: theme.textMuted
+                                font.pixelSize: 12
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                        }
+                    }
+                }
+
+                Rectangle {
+                    id: mobileSortBtn
+                    width: 110
+                    height: 32
+                    radius: 6
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: mobileSortArea.containsMouse ? theme.surfaceHover : theme.surfaceElevated
+                    border.width: 1
+                    border.color: theme.borderSubtle
+                    Row {
+                        anchors.fill: parent
+                        anchors.leftMargin: 8
+                        anchors.rightMargin: 6
+                        spacing: 4
+                        Text {
+                            width: parent.width - 13 - 4
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: root.sortLabel()
+                            color: theme.textSecondary
+                            font.pixelSize: theme.fontLegal
+                            elide: Text.ElideRight
+                        }
+                        QbzIcon { name: "chevron-down"; width: 11; height: 11; anchors.verticalCenter: parent.verticalCenter; tintName: "muted" }
+                    }
+                    MouseArea {
+                        id: mobileSortArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: sortMenu.openBelowRight(mobileSortArea)
+                    }
+                }
+            }
+        }
+
+        Item { visible: !root.isMobile; width: 1; height: 18 }
 
         // Empty. (The loading state is the row placeholders inside the
         // track-list area below — the Slint's bare LoadingSpinner said
@@ -893,7 +1073,7 @@ Rectangle {
         }
 
         TrackListHeader {
-            visible: root.tracks.length > 0
+            visible: !root.isMobile && root.tracks.length > 0
             width: parent.width - 14
             showArtwork: true
             showSource: root.isLocal || !root.online
@@ -909,14 +1089,16 @@ Rectangle {
             // moment the list becomes reorderable (TrackListHeader's rule 2).
             showReorder: root.canReorder
         }
-        Rectangle { visible: root.tracks.length > 0; width: 1; height: 3; color: "transparent" }
-        Rectangle { visible: root.tracks.length > 0; width: parent.width; height: 1; color: theme.borderSubtle }
-        Item { width: 1; height: 6 }
+        Rectangle { visible: !root.isMobile && root.tracks.length > 0; width: 1; height: 3; color: "transparent" }
+        Rectangle { visible: !root.isMobile && root.tracks.length > 0; width: parent.width; height: 1; color: theme.borderSubtle }
+        Item { visible: !root.isMobile && root.tracks.length > 0; width: 1; height: 6 }
 
         // --- Track list -------------------------------------------------------
         Item {
             width: parent.width
-            height: parent.height - 28 - 150 - 18 - 50 - (root.multiSelect ? 46 : 0)
+            height: root.isMobile
+                ? Math.max(100, parent.height - (mobilePlHdr.visible ? mobilePlHdr.height : 0) - 20 - (root.multiSelect ? 46 : 0))
+                : (parent.height - 28 - 150 - 18 - 50 - (root.multiSelect ? 46 : 0))
 
             // Track-list placeholder: the exact TrackRow footprint (50px
             // rows, no gap, 36px art cell), one instance for the whole
@@ -936,7 +1118,7 @@ Rectangle {
             ListView {
                 id: trackList
                 anchors.fill: parent
-                anchors.rightMargin: 14
+                anchors.rightMargin: root.isMobile ? 0 : 14
                 clip: true
                 boundsBehavior: Flickable.StopAtBounds
                 cacheBuffer: 500

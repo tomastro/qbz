@@ -76,7 +76,8 @@ Item {
     QbzTheme { id: theme }
 
     width: parent ? parent.width : 0
-    height: bandH
+    height: cols.isMobile ? 0 : bandH
+    visible: !cols.isMobile
 
     /// Resolved band height (see `bandHeight`). The metric below is the same
     /// font the labels use, so "natural" tracks a font-size change.
@@ -120,6 +121,7 @@ Item {
         // left-align this one over a centred number; the playlist header
         // centres it. Centred is the one that lines up.)
         ColLabel {
+            visible: !cols.isMobile
             width: cols.colNumber
             text: "#"
             horizontalAlignment: Text.AlignHCenter
@@ -136,22 +138,25 @@ Item {
             height: root.bandH
         }
         ColLabel {
+            visible: !cols.isMobile
             width: cols.titleWidth(root.innerWidth, root.showArtwork, root.showAlbum,
                                    root.showFavorite, root.showDownload, root.showMenu,
                                    root.showReorder, root.showSource)
             text: QbzSession.tr("Title", QbzSession.trRev)
         }
         ColLabel {
-            visible: root.showAlbum
+            visible: !cols.isMobile && root.showAlbum
             width: cols.colAlbum
             text: QbzSession.tr("Album", QbzSession.trRev)
         }
         ColLabel {
+            visible: !cols.isMobile
             width: cols.colDuration
             text: QbzSession.tr("Duration", QbzSession.trRev)
             horizontalAlignment: Text.AlignHCenter
         }
         ColLabel {
+            visible: !cols.isMobile
             width: cols.colQuality
             text: QbzSession.tr("Quality", QbzSession.trRev)
             horizontalAlignment: Text.AlignHCenter
@@ -160,7 +165,7 @@ Item {
         // centres the glyph on the band instead of pinning it to the top —
         // the bug AlbumView.qml carried and documented.
         Item {
-            visible: root.showFavorite
+            visible: !cols.isMobile && root.showFavorite
             width: cols.colFavorite
             height: root.bandH
             QbzIcon {
@@ -174,7 +179,7 @@ Item {
         }
         // Offline / cloud column.
         Item {
-            visible: root.showDownload
+            visible: !cols.isMobile && root.showDownload
             width: cols.colDownload
             height: root.bandH
             QbzIcon {
@@ -203,7 +208,7 @@ Item {
         }
         // ⋯ column.
         Item {
-            visible: root.showMenu
+            visible: !cols.isMobile && root.showMenu
             width: cols.colMenu
             height: root.bandH
         }

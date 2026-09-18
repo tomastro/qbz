@@ -744,6 +744,15 @@ Rectangle {
                 color: theme.textMuted
                 font.pixelSize: 13
             }
+            QbzIcon {
+                visible: !playCell.showOverlay && !root.selectMode && !root.pulledDead
+                    && root.leadingMarkerIcon !== ""
+                anchors.centerIn: parent
+                name: root.leadingMarkerIcon
+                width: 13
+                height: 13
+                tintName: "accent"
+            }
             // PULLED FROM THE CATALOGUE — the alert glyph takes the track
             // number's slot, so the leading column still says "what this row
             // is" and nothing reflows.
@@ -1060,15 +1069,6 @@ Rectangle {
             font.pixelSize: 12
             horizontalAlignment: Text.AlignHCenter
         }
-            QbzIcon {
-                visible: !playCell.showOverlay && !root.selectMode
-                    && root.leadingMarkerIcon !== ""
-                anchors.centerIn: parent
-                name: root.leadingMarkerIcon
-                width: 13
-                height: 13
-                tintName: "accent"
-            }
         // Quality (92px)
         Item {
             visible: !root.isMobile
@@ -1139,7 +1139,7 @@ Rectangle {
         // the glyph itself also shows when a surface that hides the column
         // has a row with a live copy (`cacheStatus > 0`).
         Item {
-            visible: root.showDownload || (root.hasOfflineCacheSeam && root.cacheStatus > 0)
+            visible: !root.isMobile && (root.showDownload || (root.hasOfflineCacheSeam && root.cacheStatus > 0))
             width: cols.colDownload
             height: cols.colDownload
             anchors.verticalCenter: parent.verticalCenter
