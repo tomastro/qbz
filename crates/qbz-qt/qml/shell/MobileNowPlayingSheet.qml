@@ -597,7 +597,8 @@ Rectangle {
                 }
             }
         }
-    
+    }
+
     BitPerfectInspectorModal {
         id: bpModal
     }
