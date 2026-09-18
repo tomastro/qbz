@@ -350,10 +350,14 @@ pub fn usb_audio_status_json() -> String {
         return r#"{"is_android":true,"usb_connected":false}"#.to_string();
     }
     let jstr: jni::objects::JString = obj.into();
-    match env.get_string(&jstr) {
-        Ok(rust_str) => rust_str.into(),
+    let res: String = match env.get_string(&jstr) {
+        Ok(rust_str) => {
+            let s: String = rust_str.into();
+            s
+        }
         Err(_) => r#"{"is_android":true,"usb_connected":false}"#.to_string(),
-    }
+    };
+    res
 }
 
 /// Request USB permission for the connected DAC.
