@@ -368,3 +368,12 @@ pub fn request_usb_permission() {
         let _ = env.call_static_method(class, "requestPermission", "()V", &[]);
     }
 }
+
+/// Notify the Android PlaybackService that playback has stopped completely.
+pub fn notify_playback_stopped() {
+    let Some(vm) = JAVA_VM.get() else { return; };
+    let Some(class) = USB_DIRECT_BRIDGE_CLASS.get() else { return; };
+    if let Ok(mut env) = vm.attach_current_thread() {
+        let _ = env.call_static_method(class, "notifyPlaybackStopped", "()V", &[]);
+    }
+}

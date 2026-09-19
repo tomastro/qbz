@@ -5079,6 +5079,8 @@ pub fn start_poll_loop(runtime: Arc<AppRuntime<LoggingAdapter>>) {
                     seen_position = 0;
                     gapless_requested_for = 0;
                     crate::now_playing::set_playing(false);
+                    #[cfg(target_os = "android")]
+                    crate::android_usb_qt::notify_playback_stopped();
                     // Republish so the row drops its CircleStop in the same
                     // frame the marker is consumed.
                     crate::queue_qt::publish(&runtime).await;
@@ -5139,6 +5141,8 @@ pub fn start_poll_loop(runtime: Arc<AppRuntime<LoggingAdapter>>) {
                     // the queue and published on its way in.
                 } else {
                     log::info!("[qbz-qt] poll: queue finished");
+                    #[cfg(target_os = "android")]
+                    crate::android_usb_qt::notify_playback_stopped();
                     crate::now_playing::set_playing(false);
                 }
             }
